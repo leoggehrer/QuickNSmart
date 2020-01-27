@@ -20,6 +20,8 @@ namespace QuickNSmart.Logic.Controllers
         where I : Contracts.IIdentifiable
         where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
     {
+        public int MaxPageSize => 500;
+
         protected IEnumerable<E> Set() => Context.Set<I, E>();
 
         protected GenericController(IContext context)
@@ -56,6 +58,19 @@ namespace QuickNSmart.Logic.Controllers
         internal virtual Task<IEnumerable<E>> QueryAsync(Func<E, bool> predicate)
         {
             return Task.Run(() => Set().Where(predicate));
+        }
+
+        public virtual Task<IEnumerable<I>> GetPageListAsync(int pageIndex, int pageSize)
+        {
+            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
+            return Task.Run<IEnumerable<I>>(() =>
+                Set().Skip(pageIndex * pageSize).Take(pageSize).Select(e =>
+                {
+                    var result = new E();
+
+                    result.CopyProperties(e);
+                    return result;
+                }));
         }
         public virtual Task<IEnumerable<I>> GetAllAsync()
         {

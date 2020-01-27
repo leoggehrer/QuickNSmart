@@ -35,6 +35,12 @@ namespace QuickNSmart.WebApi.Controllers
 
             return (await ctrl.GetAllAsync()).ToList().Select(i => ToModel(i));
         }
+        protected async Task<IEnumerable<M>> GetPageModelsAsync(int index, int size)
+        {
+            using var ctrl = CreateController();
+
+            return (await ctrl.GetPageListAsync(index, size)).ToList().Select(i => ToModel(i));
+        }
         protected async Task<M> GetModelByIdAsync(int id)
         {
             using var ctrl = CreateController();

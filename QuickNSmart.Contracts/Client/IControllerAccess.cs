@@ -13,12 +13,24 @@ namespace QuickNSmart.Contracts.Client
 	public partial interface IControllerAccess<T> : IDisposable
         where T : IIdentifiable
     {
+        /// <summary>
+        /// Gets the max page size.
+        /// </summary>
+        int MaxPageSize { get; }
+
         #region Async-Methods
         /// <summary>
         /// Gets the number of quantity in the collection.
         /// </summary>
         /// <returns>Number of entities in the collection.</returns>
         Task<int> CountAsync();
+        /// <summary>
+        /// Gets a subset of items from the repository.
+        /// </summary>
+        /// <param name="pageIndex">0 based page index.</param>
+        /// <param name="pageSize">The pagesize.</param>
+        /// <returns>Subset in accordance with the parameters.</returns>
+        Task<IEnumerable<T>> GetPageListAsync(int pageIndex, int pageSize);
         /// <summary>
         /// Returns all interfaces of the entities in the collection.
         /// </summary>

@@ -78,6 +78,13 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return GetModelByIdAsync(id);");
             result.Add("}");
 
+            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{index}/{size}\")]");
+            CreateActionAttributes(type, "getpage", result);
+            result.Add($"public Task<IEnumerable<Model>> GetPageListAsync(int index, int size)");
+            result.Add("{");
+            result.Add("return GetPageModelsAsync(index, size);");
+            result.Add("}");
+
             result.Add($"[HttpGet(\"{routeBase}/Create\")]");
             CreateActionAttributes(type, "getcreate", result);
             result.Add($"public Task<Model> GetCreateAsync(int id)");
