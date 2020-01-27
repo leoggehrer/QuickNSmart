@@ -8,10 +8,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
     {
         partial void CanCreateTransfer(Type type, ref bool create)
         {
-            if (type.Name.Equals("ITravelExpense"))
-            {
-                create = false;
-            }
         }
     }
 }
