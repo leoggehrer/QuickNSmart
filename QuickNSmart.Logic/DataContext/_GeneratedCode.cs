@@ -1,7 +1,7 @@
 namespace QuickNSmart.Logic.DataContext.Db
 {
 	using Microsoft.EntityFrameworkCore;
-	partial class DbQuickNSmartContext : GenericDbContext
+	partial class QuickNSmartDbContext : GenericDbContext
 	{
 		public override DbSet<E> Set<I, E>()
 		{

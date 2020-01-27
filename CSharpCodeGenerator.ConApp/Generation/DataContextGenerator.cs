@@ -41,7 +41,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result.Add("{");
             }
             result.Add("using Microsoft.EntityFrameworkCore;");
-            result.Add($"partial class Db{SolutionProperties.SolutionName}Context : GenericDbContext");
+            result.Add($"partial class {SolutionProperties.SolutionName}DbContext : GenericDbContext");
             result.Add("{");
 
             foreach (var type in contractsProject.PersistenceTypes)

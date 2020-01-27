@@ -20,7 +20,7 @@ namespace QuickNSmart.Logic
 
             if (Persistence == PersistenceType.Db)
             {
-                result = new DataContext.Db.DbQuickNSmartContext();
+                result = new DataContext.Db.QuickNSmartDbContext();
             }
             return result;
         }
