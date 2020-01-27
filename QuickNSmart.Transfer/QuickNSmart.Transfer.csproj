@@ -11,6 +11,8 @@
 
   <ItemGroup>
     <Folder Include="Business\" />
+    <Folder Include="Persistence\" />
+    <Folder Include="Modules\" />
   </ItemGroup>
 
 </Project>

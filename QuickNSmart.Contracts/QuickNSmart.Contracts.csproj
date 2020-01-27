@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <Folder Include="Business\" />
+    <Folder Include="Modules\" />
     <Folder Include="Persistence\" />
   </ItemGroup>
 
