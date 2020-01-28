@@ -1,4 +1,3 @@
-//@QnSBaseCode
 //MdStart
 
 namespace QuickNSmart.Logic.DataContext
