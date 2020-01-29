@@ -57,6 +57,13 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add($"public partial class {entityName}Controller : GenericController<Contract, Model>");
             result.Add("{");
 
+            result.Add($"[HttpGet(\"{routeBase}/MaxPage\")]");
+            CreateActionAttributes(type, "getmaxpage", result);
+            result.Add("public Task<int> GetMaxPageAsync()");
+            result.Add("{");
+            result.Add("return GetMaxPageAsync();");
+            result.Add("}");
+
             result.Add($"[HttpGet(\"{routeBase}/Count\")]");
             CreateActionAttributes(type, "getcount", result);
             result.Add("public Task<int> GetCountAsync()");

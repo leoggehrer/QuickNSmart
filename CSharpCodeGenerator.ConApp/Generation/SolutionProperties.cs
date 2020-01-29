@@ -17,6 +17,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string LogicPostfix => ".Logic";
         public static string TransferPostfix => ".Transfer";
         public static string WebApiPostfix => ".WebApi";
+        public static string AdaptersPostfix => ".Adapters";
         public static string ModulesFolder => "Modules";
         public static string BusinessFolder => "Business";
         public static string PersistenceFolder => "Persistence";
@@ -27,6 +28,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string LogicProjectName => $"{SolutionName}{LogicPostfix}";
         public string TransferProjectName => $"{SolutionName}{TransferPostfix}";
         public string WebApiProjectName => $"{SolutionName}{WebApiPostfix}";
+        public string AdaptersProjectName => $"{SolutionName}{AdaptersPostfix}";
         #endregion ProjectNames
 
         #region Entities
@@ -57,10 +59,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string ControllersBusinessFilePath => Path.Combine(ControllersBusinessPath, GeneratedCodeFileName);
         #endregion Controllers
 
-        #region Factory
-        public string FactoryPath => Path.Combine(LogicPath);
-        public string FactoryFilePath => Path.Combine(FactoryPath, GeneratedCodeFileName);
-        #endregion Factory
+        #region Logic-Factory
+        public string LogicFactoryPath => Path.Combine(LogicPath);
+        public string LogicFactoryFilePath => Path.Combine(LogicFactoryPath, GeneratedCodeFileName);
+        #endregion Logic-Factory
 
         #region Transfer
         public string TransferModulesPath => Path.Combine(TransferPath, ModulesFolder);
@@ -77,6 +79,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string WebApiControllersFilePath => Path.Combine(WebApiControllersPath, GeneratedCodeFileName);
         #endregion WebApi
 
+        #region Adapters-Factory
+        public string AdaptersFactoryPath => Path.Combine(AdaptersPath);
+        public string AdaptersFactoryFilePath => Path.Combine(AdaptersFactoryPath, GeneratedCodeFileName);
+        #endregion Adapters-Factory
+
         public static string[] BuildSubDirectories => new string[]
         {
             "//bin//", "//obj//", "\\bin\\", "\\obj\\", "//wwwroot//lib//", "\\wwwroot\\lib\\"
@@ -90,6 +97,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public virtual string LogicPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(LogicPostfix));
         public virtual string TransferPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(TransferPostfix));
         public virtual string WebApiPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(WebApiPostfix));
+        public virtual string AdaptersPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AdaptersPostfix));
 
         protected SolutionProperties(string solutionPath)
         {

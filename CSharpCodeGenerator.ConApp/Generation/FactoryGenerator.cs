@@ -25,7 +25,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             return $"{FactoryNameSpace}.{Generator.GetSubNamespaceFromInterface(type)}";
         }
-        partial void CreateFactoryAttributes(Type type, List<string> codeLines);
+        private bool CanCreate(Type type)
+        {
+            bool create = true;
+
+            CanCreateController(type, ref create);
+            return create;
+        }
+        partial void CanCreateController(Type type, ref bool create);
         public IEnumerable<string> CreateFactory()
         {
             List<string> result = new List<string>();
@@ -38,7 +45,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("public static Contracts.Client.IControllerAccess<I> Create<I>() where I : Contracts.IIdentifiable");
             result.Add("{");
             result.Add("Contracts.Client.IControllerAccess<I> result = null;");
-            foreach (var type in types)
+            foreach (var type in types.Where(t => CanCreate(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = $"Controllers.{GetSubNamespaceFromInterface(type)}";
@@ -63,7 +70,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.Add("Contracts.Client.IControllerAccess<I> result = null;");
             first = true;
-            foreach (var type in types)
+            foreach (var type in types.Where(t => CanCreate(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = $"Controllers.{GetSubNamespaceFromInterface(type)}";

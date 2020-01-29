@@ -1,3 +1,4 @@
+//@CustomizeCode
 //MdStart
 
 namespace QuickNSmart.Logic.DataContext

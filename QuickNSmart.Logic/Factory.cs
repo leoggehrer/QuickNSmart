@@ -1,12 +1,17 @@
-//@DomainCode
+//@QnSBaseCode
 //MdStart
-using System;
-using QuickNSmart.Contracts.Client;
 
 namespace QuickNSmart.Logic
 {
     public static partial class Factory
     {
+        static Factory()
+        {
+            ClassConstructing();
+            ClassConstructed();
+        }
+        static partial void ClassConstructing();
+        static partial void ClassConstructed();
         public enum PersistenceType
         {
             Db,
