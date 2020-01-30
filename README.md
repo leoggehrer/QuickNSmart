@@ -1,7 +1,7 @@
 
 # QuickNSmart (Teil A)
 
-Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Die Struktur des Frameworks besteht asu folgende Komponeneten:
+Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Die Struktur des Frameworks besteht aus folgende Komponeneten:
 
 |Projekt|Beschreibung|Typ|Abhängigkeit
 |---|---|---|---|
@@ -10,6 +10,7 @@ Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von date
 |**QuickNSmart.Logic**|Dieser Projekt beinhaltet den vollständigen Datenzugriff, die gesamte Geschäftslogik und stellt somit den zentralen Baustein des Systems dar. |Library|CommonBase, QuickNSmart.Contracts
 |**QuickNSmart.Transfer**|Dieser Projekt beinhaltet die Transferobjekte und dienen als Transportobjekte von Daten zwischen den einzelnen Schichten. |Library|CommonBase, QuickNSmart.Contracts
 |**QuickNSmart.WebApi**|In diesem Projekt ist die REST-Schnittstelle implementiert. Diese Modul stellt eine API (Aplication Programming Interface) für den Zugriff auf das System über das Netzwerk zur verfügung.|Host|CommonBase, QuickNSmart.Contracts, QuickNSmart.Logic
+|**QuickNSmart.Adapters**|In diesem Projekt ist der Zugriff auf die Logik abstrahiert. Das bedeutet, dass der Zugriff auf die Geschäftslogik direkt oder über die REST-Schnittstelle erfolgen kann. Für dieses Modul ist die Schnittstelle 'IAdapterAccess\<T\>' im Schnittstellen-Projekt implementiert.|Host|CommonBase, QuickNSmart.Contracts, QuickNSmart.Logic, QuickNSmart.Transfer
 |**QuickNSmart.ConApp**|Dieses Projekt ist eine einfache Test-Anwendung zum Kopieren und Ausgeben der Daten. |Console|QuickNSmart.Contracts, QuickNSmart.Logic
 |**CSharpCodeGenerator.ConApp**|In diesem Projekt ist die Code-Generierung implementiert. Für alle System-Komponenten werden Standard-Komponenten generieriert. Diese Standard-Komponenten werden als 'partial'-Klasse generiert und können somit durch überschreiben von Eigenschaften und/oder Methoden bzw. durch das Schreiben von 'partial'-Methoden angepasst werden. Als Eingabe für den Generator dient das Schnittstellen-Projekt. Aus den Schnittstellen werden alle Informationen für die Generierung ermittelt. Der Generator wird automatisch bei einer Änderung der Schnittstellen ausgeführt.|Console|CommonBase
 
