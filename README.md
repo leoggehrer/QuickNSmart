@@ -44,11 +44,14 @@ Nach dem Ausführen vom SolutionCopier (*sc.Copy(sourcePath, targetPath)*) befin
 - QnSTravelCount.Logic
 - QnSTravelCount.Transfer
 - QnSTravelCount.WebApi
+- QnSTravelCount.Adapters
 - QnSTravelCount.ConApp
 
 Im Projekt 'QuickNSmart' sind alle Code-Teile, welche als Basis-Code in andere Projekte verwendet werden können, mit einem Label '//@QnSBaseCode' markiert. Dieser Label wird im Zielprojekt mit dem Label '//@QnSCodeCopy' ersetzt. Das hat den Vorteil, dass Änderungen im Framework auf die bereits bestehenden Projekte übertragen werden können (nähere Informationen dazu gibt es später).  
 
+### Anpassen des Projektes  
 
+Nach dem Erzeugen des 'Projektes' werden die Schnittstellen definiert und das Projekt Erstellt. Beim Erstellen wird zuerst das Schnittstellen-Projekt Kompiliert und nach deren Übersetzung wird der CSharpCodeGenerator.ConApp ausgeführt. Diese Ausführung wird mit dem Build-Event im Schnittstellen Projekt ausgeführt. 
 
 
 **Viel Spaß beim Testen!**
