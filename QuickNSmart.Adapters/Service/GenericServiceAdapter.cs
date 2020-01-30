@@ -44,6 +44,7 @@ namespace QuickNSmart.Adapters.Service
         partial void Constructing();
         partial void Constructed();
 
+        private JsonSerializerOptions DeserializerOptions => new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         public int MaxPageSize
         {
             get
@@ -102,7 +103,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData) as IEnumerable<TContract>;
+                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
                 }
                 else
                 {
@@ -124,7 +125,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData) as IEnumerable<TContract>;
+                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
                 }
                 else
                 {
@@ -147,7 +148,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData);
+                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData, DeserializerOptions);
                 }
                 else
                 {
@@ -170,7 +171,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData);
+                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData, DeserializerOptions);
                 }
                 else
                 {
@@ -195,9 +196,9 @@ namespace QuickNSmart.Adapters.Service
 
                 if (response.IsSuccessStatusCode)
                 {
-                    string content = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                    var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                    Int32.TryParse(content, out result);
+                    return await JsonSerializer.DeserializeAsync<TEntity>(resultData, DeserializerOptions).ConfigureAwait(false);
                 }
                 else
                 {
