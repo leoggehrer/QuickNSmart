@@ -4,9 +4,11 @@ using CommonBase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
+using QuickNSmart.Adapters.Exceptions;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -34,7 +36,6 @@ namespace QuickNSmart.Logic.Controllers
         {
         }
 
-
         #region Async-Methods
         public Task<int> CountAsync()
         {
@@ -42,46 +43,42 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual Task<I> GetByIdAsync(int id)
         {
-            return Task.Run<I>(() =>
-            {
-                var result = default(E);
-                var item = Set().SingleOrDefault(i => i.Id == id);
-
-                if (item != null)
-                {
-                    result = new E();
-                    result.CopyProperties(item);
-                }
-                return result;
-            });
+            return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
         }
-        internal virtual Task<IEnumerable<E>> QueryAsync(Func<E, bool> predicate)
+        public async virtual Task<IEnumerable<I>> GetAllAsync()
         {
-            return Task.Run(() => Set().Where(predicate));
-        }
+            int idx = 0;
+            int qryCount = 0;
+            List<I> result = new List<I>();
 
+            do
+            {
+                var qry = await GetPageListAsync(idx++, MaxPageSize).ConfigureAwait(false);
+                
+                qryCount = qry.Count();
+                result.AddRange(qry);
+            } while (qryCount == MaxPageSize);
+            return result;
+        }
         public virtual Task<IEnumerable<I>> GetPageListAsync(int pageIndex, int pageSize)
         {
-            pageSize = pageSize > MaxPageSize ? MaxPageSize : pageSize;
-            return Task.Run<IEnumerable<I>>(() =>
-                Set().Skip(pageIndex * pageSize).Take(pageSize).Select(e =>
-                {
-                    var result = new E();
+            if (pageSize < 1 && pageSize > MaxPageSize)
+                throw new LogicException(1, "Invalid PageSize");
 
-                    result.CopyProperties(e);
-                    return result;
-                }));
+            return Task.Run<IEnumerable<I>>(() =>
+                Set().Skip(pageIndex * pageSize)
+                     .Take(pageSize));
         }
-        public virtual Task<IEnumerable<I>> GetAllAsync()
+        public virtual Task<IEnumerable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
-            return Task.Run<IEnumerable<I>>(() =>
-                Set().Select(e =>
-                {
-                    var result = new E();
+            if (pageSize < 1 && pageSize > MaxPageSize)
+                throw new LogicException(1, "Invalid PageSize");
 
-                    result.CopyProperties(e);
-                    return result;
-                }));
+            return Task.Run<IEnumerable<I>>(() =>
+                Set().AsQueryable()
+                     .Where(predicate)
+                     .Skip(pageIndex * pageSize)
+                     .Take(pageSize));
         }
         public virtual Task<I> CreateAsync()
         {
@@ -174,6 +171,24 @@ namespace QuickNSmart.Logic.Controllers
             return Context.SaveAsync();
         }
         #endregion Async-Methods
+
+        #region Internal-Methods
+        internal virtual Task<IEnumerable<E>> QueryAsync(Func<E, bool> predicate)
+        {
+            return Task.Run(() => Set().Where(predicate));
+        }
+        internal virtual Task<IEnumerable<E>> QueryAsync(string predicate, int pageIndex, int pageSize)
+        {
+            if (pageSize < 1 && pageSize > MaxPageSize)
+                throw new LogicException(1, "Invalid PageSize");
+
+            return Task.Run<IEnumerable<E>>(() =>
+                Set().AsQueryable()
+                     .Where(predicate)
+                     .Skip(pageIndex * pageSize)
+                     .Take(pageSize));
+        }
+        #endregion Internal-Methods
     }
 }
 //MdEnd
