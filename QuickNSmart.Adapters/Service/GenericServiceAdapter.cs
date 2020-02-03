@@ -93,6 +93,28 @@ namespace QuickNSmart.Adapters.Service
             }
         }
 
+        public async Task<IEnumerable<TContract>> GetAllAsync()
+        {
+            using (var client = GetClient(BaseUri))
+            {
+                HttpResponseMessage response = await client.GetAsync(ExtUri + "/Get");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentData = await response.Content.ReadAsStreamAsync();
+
+                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
+                }
+                else
+                {
+                    string stringData = await response.Content.ReadAsStringAsync();
+                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
         public async Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
         {
             using (var client = GetClient(BaseUri))
@@ -115,11 +137,11 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
-        public async Task<IEnumerable<TContract>> GetAllAsync()
+        public async Task<IEnumerable<TContract>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync(ExtUri + "/Get");
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get/{predicate}/{pageIndex}/{pageSize}");
 
                 if (response.IsSuccessStatusCode)
                 {

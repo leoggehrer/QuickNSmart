@@ -161,18 +161,25 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return GetModelsAsync();");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{id}\")]");
-            CreateWebApiActionAttributes(type, "getbyid", result);
-            result.Add($"public Task<Model> GetAsync(int id)");
-            result.Add("{");
-            result.Add("return GetModelByIdAsync(id);");
-            result.Add("}");
-
             result.Add($"[HttpGet(\"{routeBase}/Get" + "/{index}/{size}\")]");
             CreateWebApiActionAttributes(type, "getpage", result);
             result.Add($"public Task<IEnumerable<Model>> GetPageListAsync(int index, int size)");
             result.Add("{");
             result.Add("return GetPageModelsAsync(index, size);");
+            result.Add("}");
+
+            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{index}/{size}\")]");
+            CreateWebApiActionAttributes(type, "querypage", result);
+            result.Add($"public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)");
+            result.Add("{");
+            result.Add("return QueryPageModelsAsync(predicate, index, size);");
+            result.Add("}");
+
+            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{id}\")]");
+            CreateWebApiActionAttributes(type, "getbyid", result);
+            result.Add($"public Task<Model> GetAsync(int id)");
+            result.Add("{");
+            result.Add("return GetModelByIdAsync(id);");
             result.Add("}");
 
             result.Add($"[HttpGet(\"{routeBase}/Create\")]");

@@ -37,14 +37,19 @@ namespace QuickNSmart.Adapters.Controller
             return controller.CountAsync();
         }
 
-        public Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
-        {
-            return controller.GetPageListAsync(pageIndex, pageSize);
-        }
-
         public Task<IEnumerable<TContract>> GetAllAsync()
         {
             return controller.GetAllAsync();
+        }
+
+        public Task<IEnumerable<TContract>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        {
+            return controller.QueryPageListAsync(predicate, pageIndex, pageSize);
+        }
+
+        public Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
+        {
+            return controller.GetPageListAsync(pageIndex, pageSize);
         }
 
         public Task<TContract> GetByIdAsync(int id)
