@@ -21,62 +21,62 @@ namespace CSharpCodeGenerator.ConApp
 
             List<string> lines = new List<string>();
 
-            Console.WriteLine("Create Modules-Entities:");
+            Console.WriteLine("Create Modules-Entities...");
             lines.Clear();
             lines.AddRange(entityGenerator.CreateModulesEntities());
             WriteAllLines(solutionProperties.EntitiesModulesFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Business-Entities:");
+            Console.WriteLine("Create Business-Entities...");
             lines.Clear();
             lines.AddRange(entityGenerator.CreateBusinesssEntities());
             WriteAllLines(solutionProperties.EntitiesBusinessFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Persistence-Entities:");
+            Console.WriteLine("Create Persistence-Entities...");
             lines.Clear();
             lines.AddRange(entityGenerator.CreatePersistenceEntities());
             WriteAllLines(solutionProperties.EntitiesPersistenceFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create DataContext-DbContext:");
+            Console.WriteLine("Create DataContext-DbContext...");
             lines.Clear();
             lines.AddRange(dataContextGenerator.CreateDbContext());
             WriteAllLines(solutionProperties.DataContextPersistenceFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Persistence-Controllers:");
+            Console.WriteLine("Create Persistence-Controllers...");
             lines.Clear();
             lines.AddRange(controllerGenerator.CreatePersistenceControllers());
             WriteAllLines(solutionProperties.ControllersPersistenceFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Business-Controllers:");
+            Console.WriteLine("Create Business-Controllers...");
             lines.Clear();
             lines.AddRange(controllerGenerator.CreateBusinessControllers());
             WriteAllLines(solutionProperties.ControllersBusinessFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Factory:");
+            Console.WriteLine("Create Factory...");
             lines.Clear();
             lines.AddRange(factoryGenerator.CreateLogicFactory());
             WriteAllLines(solutionProperties.LogicFactoryFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Modules-Transfer:");
+            Console.WriteLine("Create Modules-Transfer...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreateModulesTransfers());
             WriteAllLines(solutionProperties.TransferModulesFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Business-Transfer:");
+            Console.WriteLine("Create Business-Transfer...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreateBusinessTransfers());
             WriteAllLines(solutionProperties.TransferBusinessFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Persistence-Transfer:");
+            Console.WriteLine("Create Persistence-Transfer...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreatePersistenceTransfers());
             WriteAllLines(solutionProperties.TransferPersistenceFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Controllers-WebApi:");
+            Console.WriteLine("Create Controllers-WebApi...");
             lines.Clear();
             lines.AddRange(controllerGenerator.CreateWebApiControllers());
             WriteAllLines(solutionProperties.WebApiControllersFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Adapters:");
+            Console.WriteLine("Create Adapters...");
             lines.Clear();
             lines.AddRange(factoryGenerator.CreateAdapterFactory());
             WriteAllLines(solutionProperties.AdaptersFactoryFilePath, FormatCSharp(lines));

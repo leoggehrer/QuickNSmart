@@ -126,7 +126,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         #region Helpers
         private static void Logger(string message)
         {
-            Console.WriteLine(message);
+            System.Diagnostics.Debug.WriteLine(message);
         }
         private static void ErrorLogger(string message)
         {
