@@ -49,7 +49,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in GetPublicProperties(type).Where(p => p.Name.Equals("Id") == false))
+            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
             {
                 result.AddRange(CreatePartialProperty(item));
             }
