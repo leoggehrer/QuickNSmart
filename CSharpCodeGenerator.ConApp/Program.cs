@@ -18,8 +18,6 @@ namespace CSharpCodeGenerator.ConApp
             ControllerGenerator controllerGenerator = ControllerGenerator.Create(solutionProperties);
             FactoryGenerator factoryGenerator = FactoryGenerator.Create(solutionProperties);
             TransferGenerator transferGenerator = TransferGenerator.Create(solutionProperties);
-            WebApiGenerator webApiGenerator = WebApiGenerator.Create(solutionProperties);
-            AdapterGenerator adapterGenerator = AdapterGenerator.Create(solutionProperties);
 
             List<string> lines = new List<string>();
 
@@ -55,7 +53,7 @@ namespace CSharpCodeGenerator.ConApp
 
             Console.WriteLine("Create Factory:");
             lines.Clear();
-            lines.AddRange(factoryGenerator.CreateFactory());
+            lines.AddRange(factoryGenerator.CreateLogicFactory());
             WriteAllLines(solutionProperties.LogicFactoryFilePath, FormatCSharp(lines));
 
             Console.WriteLine("Create Modules-Transfer:");
@@ -75,12 +73,12 @@ namespace CSharpCodeGenerator.ConApp
 
             Console.WriteLine("Create Controllers-WebApi:");
             lines.Clear();
-            lines.AddRange(webApiGenerator.CreateControllers());
+            lines.AddRange(controllerGenerator.CreateWebApiControllers());
             WriteAllLines(solutionProperties.WebApiControllersFilePath, FormatCSharp(lines));
 
             Console.WriteLine("Create Adapters:");
             lines.Clear();
-            lines.AddRange(adapterGenerator.CreateFactory());
+            lines.AddRange(factoryGenerator.CreateAdapterFactory());
             WriteAllLines(solutionProperties.AdaptersFactoryFilePath, FormatCSharp(lines));
         }
 

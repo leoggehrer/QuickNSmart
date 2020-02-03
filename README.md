@@ -51,7 +51,7 @@ Im Projekt 'QuickNSmart' sind alle Code-Teile, welche als Basis-Code in andere P
 
 ### Anpassen des Projektes  
 
-Nach dem Erzeugen des 'Projektes' werden die Schnittstellen definiert und das Projekt Erstellt. Beim Erstellen wird zuerst das Schnittstellen-Projekt Kompiliert und nach deren Übersetzung wird der CSharpCodeGenerator.ConApp ausgeführt. Diese Ausführung wird mit dem Build-Event im Schnittstellen Projekt ausgeführt. 
+Nach dem Erzeugen des 'Projektes' werden die Schnittstellen definiert und das Projekt Erstellt. Beim Erstellen wird zuerst das Schnittstellen-Projekt Kompiliert und nach deren Übersetzung wird der CSharpCodeGenerator.ConApp ausgeführt. Diese Ausführung wird mit dem Build-Event im Schnittstellen Projekt ausgeführt. Das Ausführen des Code-Generator hat 
 
 
 **Viel Spaß beim Testen!**
