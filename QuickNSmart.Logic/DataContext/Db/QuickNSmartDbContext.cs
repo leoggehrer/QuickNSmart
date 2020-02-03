@@ -1,6 +1,7 @@
 ﻿//@CustomizeCode
 //MdStart
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
 
 namespace QuickNSmart.Logic.DataContext.Db
