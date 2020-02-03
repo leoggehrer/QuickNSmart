@@ -39,9 +39,11 @@ namespace QuickNSmart.Logic.DataContext.Db
         {
             base.OnModelCreating(modelBuilder);
             BeforeModelCreating(modelBuilder);
+            DoModelCreating(modelBuilder);
             AfterModelCreating(modelBuilder);
         }
         partial void BeforeModelCreating(ModelBuilder modelBuilder);
+        partial void DoModelCreating(ModelBuilder modelBuilder);
         partial void AfterModelCreating(ModelBuilder modelBuilder);
         #endregion Configuration
     }

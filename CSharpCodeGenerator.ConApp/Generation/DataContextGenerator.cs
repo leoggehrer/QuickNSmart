@@ -19,12 +19,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
         }
 
         public string DataContextNameSpace => $"{SolutionProperties.LogicProjectName}.{SolutionProperties.DataContextFolder}";
+
+        private bool CanModelCreating()
+        {
+            bool create = true;
+
+            CanModelCreating(ref create);
+            return create;
+        }
+        partial void CanModelCreating(ref bool canCreating);
         public string CreateDbNameSpace()
         {
             return $"{DataContextNameSpace}.Db";
         }
-        partial void CreateDataContextAttributes(Type type, List<string> codeLines);
-
         public IEnumerable<string> CreateDbContext()
         {
             return CreateDbContext(CreateDbNameSpace());
@@ -41,6 +48,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result.Add("{");
             }
             result.Add("using Microsoft.EntityFrameworkCore;");
+            result.Add("using Microsoft.EntityFrameworkCore.Metadata.Builders;");
             result.Add($"partial class {SolutionProperties.SolutionName}DbContext : GenericDbContext");
             result.Add("{");
 
@@ -77,6 +85,35 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             result.Add("return result;");
             result.Add("}");
+
+            if (CanModelCreating())
+            {
+                result.Add("partial void DoModelCreating(ModelBuilder modelBuilder)");
+                result.Add("{");
+                foreach (var type in contractsProject.PersistenceTypes)
+                {
+                    string entityName = CreateEntityNameFromInterface(type);
+                    string subNameSpace = GetSubNamespaceFromInterface(type);
+                    string entityNameSpace = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}";
+                    string entityType = $"{entityNameSpace}.{entityName}";
+
+                    result.Add($"modelBuilder.Entity<{entityType}>()");
+                    result.Add($".ToTable(nameof({entityType}), nameof({entityNameSpace}))");
+                    result.Add($".HasKey(nameof({entityType}.Id));");
+                    result.Add($"modelBuilder.Entity<{entityType}>().Property(p => p.Timestamp).IsRowVersion();");
+                    result.Add($"ConfigureEntityType(modelBuilder.Entity<{entityType}>());");
+                }
+                result.Add("}");
+                foreach (var type in contractsProject.PersistenceTypes)
+                {
+                    string entityName = CreateEntityNameFromInterface(type);
+                    string subNameSpace = GetSubNamespaceFromInterface(type);
+                    string entityNameSpace = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}";
+                    string entityType = $"{entityNameSpace}.{entityName}";
+
+                    result.Add($"partial void ConfigureEntityType(EntityTypeBuilder<{entityType}> entityTypeBuilder);");
+                }
+            }
 
             result.Add("}");
             if (nameSpace.HasContent())
