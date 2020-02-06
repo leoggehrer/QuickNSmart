@@ -24,7 +24,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string BusinessLabel => "Business";
         public static string PersistenceLabel => "Persistence";
 
-        internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace)
+        internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {
             List<string> result = new List<string>();
 
@@ -32,6 +32,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 result.Add($"namespace {nameSpace}");
                 result.Add("{");
+                result.AddRange(usings);
             }
             result.AddRange(source);
             if (nameSpace.HasContent())

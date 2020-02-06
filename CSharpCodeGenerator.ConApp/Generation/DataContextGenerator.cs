@@ -46,9 +46,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 result.Add($"namespace {nameSpace}");
                 result.Add("{");
+                result.Add("using Microsoft.EntityFrameworkCore;");
+                result.Add("using Microsoft.EntityFrameworkCore.Metadata.Builders;");
             }
-            result.Add("using Microsoft.EntityFrameworkCore;");
-            result.Add("using Microsoft.EntityFrameworkCore.Metadata.Builders;");
             result.Add($"partial class {SolutionProperties.SolutionName}DbContext : GenericDbContext");
             result.Add("{");
 

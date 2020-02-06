@@ -1,6 +1,9 @@
 //@QnSBaseCode
 //MdStart
 using System;
+using System.Reflection;
+using CommonBase.Security;
+using CommonBase.Extensions;
 using QuickNSmart.Logic.DataContext;
 
 namespace QuickNSmart.Logic.Controllers
@@ -26,6 +29,47 @@ namespace QuickNSmart.Logic.Controllers
             Context = controller.Context;
             contextDispose = false;
         }
+
+        protected virtual void CheckAuthorization(Type instanceType, MethodBase methodeBase)
+        {
+            instanceType.CheckArgument(nameof(instanceType));
+            methodeBase.CheckArgument(nameof(methodeBase));
+
+            bool handled = false;
+
+            BeforeCheckAuthorization(instanceType, methodeBase, ref handled);
+            if (handled == false)
+            {
+                var authorizeAttribute = methodeBase.GetCustomAttribute<AuthorizeAttribute>();
+
+                authorizeAttribute = authorizeAttribute ?? instanceType.GetCustomAttribute<AuthorizeAttribute>();
+
+                if (authorizeAttribute != null)
+                {
+                    CheckAuthorizeAttribute(authorizeAttribute);
+                }
+            }
+            AfterCheckAuthorization(instanceType, methodeBase);
+        }
+
+        partial void BeforeCheckAuthorization(Type instanceType, MethodBase methodeBase, ref bool handled);
+        partial void AfterCheckAuthorization(Type instanceType, MethodBase methodeBase);
+
+        public virtual void CheckAuthorizeAttribute(AuthorizeAttribute authorizeAttribute)
+        {
+            authorizeAttribute.CheckArgument(nameof(authorizeAttribute));
+
+            bool handled = false;
+
+            BeforeAuthorizeAttribute(authorizeAttribute, ref handled);
+            if (handled == false)
+            {
+
+            }
+            AfterAuthorizeAttribute(authorizeAttribute);
+        }
+        partial void BeforeAuthorizeAttribute(AuthorizeAttribute authorizeAttribute, ref bool handled);
+        partial void AfterAuthorizeAttribute(AuthorizeAttribute authorizeAttribute);
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

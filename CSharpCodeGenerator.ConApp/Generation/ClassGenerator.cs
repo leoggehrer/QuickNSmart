@@ -216,6 +216,122 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
         #endregion CreateCopyProperties
+        /// <summary>
+        /// Diese Methode erstellt den Programmcode fuer das Vergleichen der Eigenschaften.
+        /// </summary>
+        /// <param name="type">Die Schnittstellen-Typ Information.</param>
+        /// <returns>Die Equals-Methode als Text.</returns>
+        internal static string[] CreateEquals(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>
+            {
+                $"public override bool Equals(object obj)",
+                "{",
+                $"if (!(obj is {type.FullName} instance))".SetIndent(1),
+                "{".SetIndent(1),
+                "return false;".SetIndent(2),
+                "}".SetIndent(1),
+                "return base.Equals(instance) && Equals(instance);".SetIndent(1),
+                "}",
+                string.Empty,
+                $"protected bool Equals({type.FullName} other)",
+                "{",
+                "if (other == null)".SetIndent(1),
+                "{".SetIndent(1),
+                "return false;".SetIndent(2),
+                "}".SetIndent(1)
+            };
+
+            var counter = 0;
+
+            foreach (var pi in GetPublicProperties(type))
+            {
+                if (pi.CanRead)
+                {
+                    var codeLine = counter == 0 ? "return ".SetIndent(1) : "       && ".SetIndent(1);
+
+                    if (pi.PropertyType.GetTypeInfo().IsValueType)
+                    {
+                        codeLine += $"{pi.Name} == other.{pi.Name}";
+                    }
+                    else
+                    {
+                        codeLine += $"IsEqualsWith({pi.Name}, other.{pi.Name})";
+                    }
+                    result.Add(codeLine);
+                    counter++;
+                }
+            }
+            if (counter > 0)
+            {
+                result[result.Count - 1] = $"{result[result.Count - 1]};";
+            }
+            else
+            {
+                result.Add("return true;".SetIndent(1));
+            }
+            result.Add("}");
+            return result.ToArray();
+        }
+        /// <summary>
+        /// Diese Methode erstellt den Programmcode fuer die Berechnung des Hash-Codes.
+        /// </summary>
+        /// <param name="type">Die Schnittstellen-Typ Information.</param>
+        /// <returns>Die GetHashCode-Methode als Text.</returns>
+        internal static string[] CreateGetHashCode(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>
+            {
+                $"public override int GetHashCode()",
+                "{"
+            };
+
+            var braces = 0;
+            var counter = 0;
+            var codeLine = string.Empty;
+
+            foreach (var pi in GetPublicProperties(type))
+            {
+                if (pi.CanRead)
+                {
+                    if (counter == 0)
+                    {
+                        braces++;
+                        codeLine = "HashCode.Combine(";
+                    }
+                    else if (counter % 6 == 0)
+                    {
+                        braces++;
+                        codeLine += ", HashCode.Combine(";
+                    }
+                    else
+                    {
+                        codeLine += ", ";
+                    }
+                    codeLine += pi.Name;
+                    counter++;
+                }
+            }
+            for (int i = 0; i < braces; i++)
+            {
+                codeLine += ")";
+            }
+
+            if (counter > 0)
+            {
+                result.Add($"return {codeLine};".SetIndent(1));
+            }
+            else
+            {
+                result.Add($"return base.GetHashCode();".SetIndent(1));
+            }
+            result.Add("}");
+            return result.ToArray();
+        }
     }
 }
 //MdEnd

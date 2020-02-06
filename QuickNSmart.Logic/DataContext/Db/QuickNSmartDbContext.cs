@@ -8,6 +8,14 @@ namespace QuickNSmart.Logic.DataContext.Db
 {
     partial class QuickNSmartDbContext
     {
+        static QuickNSmartDbContext()
+        {
+            if (Configuration.Configurator.Contains(CommonBase.StaticLiterals.ConnectionStringKey))
+            {
+                ConnectionString = Configuration.Configurator.Get(CommonBase.StaticLiterals.ConnectionStringKey);
+            }
+        }
+
 #if DEBUG
         //static LoggerFactory object
         public static readonly ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>

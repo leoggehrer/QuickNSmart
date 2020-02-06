@@ -1,5 +1,6 @@
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
+	using System;
 	partial class Application : QuickNSmart.Contracts.Persistence.Account.IApplication
 	{
 		static Application()
@@ -98,6 +99,26 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		}
 		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other);
 		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IApplication instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IApplication other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Token, other.Token) && State == other.State;
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, Name, Token, State);
+		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
@@ -114,6 +135,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
+	using System;
 	partial class User : QuickNSmart.Contracts.Persistence.Account.IUser
 	{
 		static User()
@@ -373,6 +395,26 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		}
 		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
 		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IUser instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(UserName, other.UserName) && IsEqualsWith(Password, other.Password) && IsEqualsWith(Email, other.Email) && IsEqualsWith(FirstName, other.FirstName) && IsEqualsWith(LastName, other.LastName) && IsEqualsWith(FullName, other.FullName) && IsEqualsWith(PhoneNumber, other.PhoneNumber) && IsEqualsWith(Avatar, other.Avatar) && IsEqualsWith(AvatarMimeType, other.AvatarMimeType) && State == other.State;
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, UserName, Password, Email, FirstName, HashCode.Combine(LastName, FullName, PhoneNumber, Avatar, AvatarMimeType, State));
+		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account

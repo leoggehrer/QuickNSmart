@@ -54,6 +54,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result.AddRange(CreatePartialProperty(item));
             }
             result.AddRange(CreateCopyProperties(type));
+            result.AddRange(CreateEquals(type));
+            result.AddRange(CreateGetHashCode(type));
             result.Add("}");
             return result;
         }
@@ -66,7 +68,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 if (CanCreate(type))
                 {
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type)));
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
                 }
             }
             return result;
@@ -80,7 +82,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 if (CanCreate(type))
                 {
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type)));
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreateBusinessEntity(type), CreateNameSpace(type)));
                 }
             }
@@ -98,7 +100,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 {
                     string nameSpace = CreateNameSpace(type);
 
-                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), nameSpace));
+                    result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), nameSpace, "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreatePersistenceEntity(type), nameSpace));
                     result.AddRange(EnvelopeWithANamespace(CreateEntityToEntityFromContracts(type, persistenceTypes, null), nameSpace));
                 }

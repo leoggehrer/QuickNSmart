@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
 using QuickNSmart.Adapters.Exceptions;
+using System.Reflection;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -39,14 +40,20 @@ namespace QuickNSmart.Logic.Controllers
         #region Async-Methods
         public Task<int> CountAsync()
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             return Context.CountAsync<I, E>();
         }
         public virtual Task<I> GetByIdAsync(int id)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
         }
         public async virtual Task<IEnumerable<I>> GetAllAsync()
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             int idx = 0;
             int qryCount = 0;
             List<I> result = new List<I>();
@@ -62,8 +69,10 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual Task<IEnumerable<I>> GetPageListAsync(int pageIndex, int pageSize)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(1, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
 
             return Task.Run<IEnumerable<I>>(() =>
                 Set().Skip(pageIndex * pageSize)
@@ -71,8 +80,10 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual Task<IEnumerable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(1, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
 
             return Task.Run<IEnumerable<I>>(() =>
                 Set().AsQueryable()
@@ -82,15 +93,21 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual Task<I> CreateAsync()
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             return Task.Run<I>(() => new E());
         }
 
         protected virtual Task BeforeInsertingAsync(E entity)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             return Task.FromResult(0);
         }
         public virtual Task<I> InsertAsync(I entity)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             entity.CheckArgument(nameof(entity));
 
             var entityModel = new E();
@@ -100,6 +117,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual async Task<I> InsertAsync(E entity)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             entity.CheckArgument(nameof(entity));
 
             await BeforeInsertingAsync(entity);
@@ -118,6 +137,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual async Task<I> UpdateAsync(I entity)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             entity.CheckArgument(nameof(entity));
 
             var entityModel = Set().SingleOrDefault(i => i.Id == entity.Id);
@@ -135,6 +156,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         public virtual async Task<I> UpdateAsync(E entity)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             entity.CheckArgument(nameof(entity));
 
             await BeforeUpdatingAsync(entity);
@@ -153,6 +176,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         public async Task DeleteAsync(int id)
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             await BeforeDeletingAsync(id);
             var item = await Context.DeleteAsync<I, E>(id);
 
@@ -168,6 +193,8 @@ namespace QuickNSmart.Logic.Controllers
 
         public Task SaveChangesAsync()
         {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
             return Context.SaveAsync();
         }
         #endregion Async-Methods
@@ -180,7 +207,7 @@ namespace QuickNSmart.Logic.Controllers
         internal virtual Task<IEnumerable<E>> QueryAsync(string predicate, int pageIndex, int pageSize)
         {
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(1, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
 
             return Task.Run<IEnumerable<E>>(() =>
                 Set().AsQueryable()
