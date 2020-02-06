@@ -229,7 +229,6 @@ namespace QuickNSmart.Adapters.Service
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
                     throw new AdapterException((int)response.StatusCode, errorMessage);
                 }
-                return await GetByIdAsync(result);
             }
         }
 

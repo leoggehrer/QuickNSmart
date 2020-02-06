@@ -16,28 +16,6 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		private System.Byte[] _timestamp;
-		public System.Byte[] Timestamp
-		{
-			get
-			{
-				OnTimestampReading();
-				return _timestamp;
-			}
-			set
-			{
-				bool handled = false;
-				OnTimestampChanging(ref handled, ref _timestamp);
-				if (handled == false)
-				{
-					this._timestamp = value;
-				}
-				OnTimestampChanged();
-			}
-		}
-		partial void OnTimestampReading();
-		partial void OnTimestampChanging(ref bool handled, ref System.Byte[] _timestamp);
-		partial void OnTimestampChanged();
 		private System.String _name;
 		public System.String Name
 		{
@@ -146,28 +124,6 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		private System.Byte[] _timestamp;
-		public System.Byte[] Timestamp
-		{
-			get
-			{
-				OnTimestampReading();
-				return _timestamp;
-			}
-			set
-			{
-				bool handled = false;
-				OnTimestampChanging(ref handled, ref _timestamp);
-				if (handled == false)
-				{
-					this._timestamp = value;
-				}
-				OnTimestampChanged();
-			}
-		}
-		partial void OnTimestampReading();
-		partial void OnTimestampChanging(ref bool handled, ref System.Byte[] _timestamp);
-		partial void OnTimestampChanged();
 		private System.String _userName;
 		public System.String UserName
 		{
