@@ -198,7 +198,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 "throw new System.ArgumentNullException(nameof(other));",
                 "}",
                 string.Empty,
-                $"BeforeCopyProperties(other);"
+                "bool handled = false;",
+                $"BeforeCopyProperties(other, ref handled);",
+                "if (handled == false)",
+                "{",
             };
             foreach (var item in GetPublicProperties(type))
             {
@@ -207,10 +210,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"{item.Name} = other.{item.Name};".SetIndent(2));
                 }
             }
+            result.Add("}");
             result.Add("AfterCopyProperties(other);");
             result.Add("}");
 
-            result.Add($"partial void BeforeCopyProperties({type.FullName} other);");
+            result.Add($"partial void BeforeCopyProperties({type.FullName} other, ref bool handled);");
             result.Add($"partial void AfterCopyProperties({type.FullName} other);");
 
             return result;

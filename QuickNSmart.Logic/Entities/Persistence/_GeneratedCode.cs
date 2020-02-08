@@ -89,15 +89,19 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				throw new System.ArgumentNullException(nameof(other));
 			}
-			BeforeCopyProperties(other);
-			Id = other.Id;
-			Timestamp = other.Timestamp;
-			Name = other.Name;
-			Token = other.Token;
-			State = other.State;
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Name = other.Name;
+				Token = other.Token;
+				State = other.State;
+			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other, ref bool handled);
 		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other);
 		public override bool Equals(object obj)
 		{
@@ -378,22 +382,26 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				throw new System.ArgumentNullException(nameof(other));
 			}
-			BeforeCopyProperties(other);
-			Id = other.Id;
-			Timestamp = other.Timestamp;
-			UserName = other.UserName;
-			Password = other.Password;
-			Email = other.Email;
-			FirstName = other.FirstName;
-			LastName = other.LastName;
-			FullName = other.FullName;
-			PhoneNumber = other.PhoneNumber;
-			Avatar = other.Avatar;
-			AvatarMimeType = other.AvatarMimeType;
-			State = other.State;
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				UserName = other.UserName;
+				Password = other.Password;
+				Email = other.Email;
+				FirstName = other.FirstName;
+				LastName = other.LastName;
+				FullName = other.FullName;
+				PhoneNumber = other.PhoneNumber;
+				Avatar = other.Avatar;
+				AvatarMimeType = other.AvatarMimeType;
+				State = other.State;
+			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other, ref bool handled);
 		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
 		public override bool Equals(object obj)
 		{

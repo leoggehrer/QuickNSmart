@@ -24,7 +24,6 @@
     <Folder Include="Controllers\Business\" />
     <Folder Include="Entities\Business\" />
     <Folder Include="Entities\Persistence\" />
-    <Folder Include="Entities\Modules\" />
   </ItemGroup>
 
 </Project>

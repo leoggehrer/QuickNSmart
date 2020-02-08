@@ -59,6 +59,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("}");
             return result;
         }
+
         public IEnumerable<string> CreateModulesEntities()
         {
             List<string> result = new List<string>();
@@ -69,10 +70,23 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 if (CanCreate(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
+                    result.AddRange(EnvelopeWithANamespace(CreateModuleEntity(type), CreateNameSpace(type)));
                 }
             }
             return result;
         }
+        private IEnumerable<string> CreateModuleEntity(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : ModuleObject");
+            result.Add("{");
+            result.Add("}");
+            return result;
+        }
+
         public IEnumerable<string> CreateBusinesssEntities()
         {
             List<string> result = new List<string>();
@@ -88,6 +102,18 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             return result;
         }
+        private IEnumerable<string> CreateBusinessEntity(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityObject");
+            result.Add("{");
+            result.Add("}");
+            return result;
+        }
+
         public IEnumerable<string> CreatePersistenceEntities()
         {
             List<string> result = new List<string>();
@@ -105,17 +131,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.AddRange(EnvelopeWithANamespace(CreateEntityToEntityFromContracts(type, persistenceTypes, null), nameSpace));
                 }
             }
-            return result;
-        }
-        private IEnumerable<string> CreateBusinessEntity(Type type)
-        {
-            type.CheckArgument(nameof(type));
-
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityObject");
-            result.Add("{");
-            result.Add("}");
             return result;
         }
         private IEnumerable<string> CreatePersistenceEntity(Type type)
