@@ -256,7 +256,7 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.DeleteAsync(ExtUri);
+                HttpResponseMessage response = await client.DeleteAsync($"{ExtUri}/{id}");
                 if (response.IsSuccessStatusCode == false)
                 {
                     string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync()}";

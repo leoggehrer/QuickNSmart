@@ -203,7 +203,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return UpdateModelAsync(model);");
             result.Add("}");
 
-            result.Add($"[HttpDelete(\"{routeBase}" + "/{ id}\")]");
+            result.Add($"[HttpDelete(\"{routeBase}" + "/{id}\")]");
             CreateWebApiActionAttributes(type, "delete", result);
             result.Add($"public Task DeleteAsync(int id)");
             result.Add("{");
