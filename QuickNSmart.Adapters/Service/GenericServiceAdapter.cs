@@ -211,7 +211,6 @@ namespace QuickNSmart.Adapters.Service
 
             using (var client = GetClient(BaseUri))
             {
-                int result = 0;
                 string jsonData = JsonSerializer.Serialize<TContract>(entity);
                 StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
                 HttpResponseMessage response = await client.PostAsync(ExtUri, contentData);
