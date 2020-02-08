@@ -17,7 +17,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		private System.String _name;
 		public System.String Name
 		{
 			get
@@ -36,10 +35,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnNameChanged();
 			}
 		}
+		private System.String _name;
 		partial void OnNameReading();
 		partial void OnNameChanging(ref bool handled, ref System.String _name);
 		partial void OnNameChanged();
-		private System.String _token;
 		public System.String Token
 		{
 			get
@@ -58,10 +57,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnTokenChanged();
 			}
 		}
+		private System.String _token;
 		partial void OnTokenReading();
 		partial void OnTokenChanging(ref bool handled, ref System.String _token);
 		partial void OnTokenChanged();
-		private QuickNSmart.Contracts.State _state;
 		public QuickNSmart.Contracts.State State
 		{
 			get
@@ -80,6 +79,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnStateChanged();
 			}
 		}
+		private QuickNSmart.Contracts.State _state;
 		partial void OnStateReading();
 		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
 		partial void OnStateChanged();
@@ -156,7 +156,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		private System.String _userName;
 		public System.String UserName
 		{
 			get
@@ -175,10 +174,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnUserNameChanged();
 			}
 		}
+		private System.String _userName;
 		partial void OnUserNameReading();
 		partial void OnUserNameChanging(ref bool handled, ref System.String _userName);
 		partial void OnUserNameChanged();
-		private System.String _password;
 		public System.String Password
 		{
 			get
@@ -197,10 +196,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnPasswordChanged();
 			}
 		}
+		private System.String _password;
 		partial void OnPasswordReading();
 		partial void OnPasswordChanging(ref bool handled, ref System.String _password);
 		partial void OnPasswordChanged();
-		private System.String _email;
 		public System.String Email
 		{
 			get
@@ -219,10 +218,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnEmailChanged();
 			}
 		}
+		private System.String _email;
 		partial void OnEmailReading();
 		partial void OnEmailChanging(ref bool handled, ref System.String _email);
 		partial void OnEmailChanged();
-		private System.String _firstName;
 		public System.String FirstName
 		{
 			get
@@ -241,10 +240,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnFirstNameChanged();
 			}
 		}
+		private System.String _firstName;
 		partial void OnFirstNameReading();
 		partial void OnFirstNameChanging(ref bool handled, ref System.String _firstName);
 		partial void OnFirstNameChanged();
-		private System.String _lastName;
 		public System.String LastName
 		{
 			get
@@ -263,10 +262,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnLastNameChanged();
 			}
 		}
+		private System.String _lastName;
 		partial void OnLastNameReading();
 		partial void OnLastNameChanging(ref bool handled, ref System.String _lastName);
 		partial void OnLastNameChanged();
-		private System.String _fullName;
 		public System.String FullName
 		{
 			get
@@ -285,10 +284,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnFullNameChanged();
 			}
 		}
+		private System.String _fullName;
 		partial void OnFullNameReading();
 		partial void OnFullNameChanging(ref bool handled, ref System.String _fullName);
 		partial void OnFullNameChanged();
-		private System.String _phoneNumber;
 		public System.String PhoneNumber
 		{
 			get
@@ -307,10 +306,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnPhoneNumberChanged();
 			}
 		}
+		private System.String _phoneNumber;
 		partial void OnPhoneNumberReading();
 		partial void OnPhoneNumberChanging(ref bool handled, ref System.String _phoneNumber);
 		partial void OnPhoneNumberChanged();
-		private System.Byte[] _avatar;
 		public System.Byte[] Avatar
 		{
 			get
@@ -329,10 +328,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnAvatarChanged();
 			}
 		}
+		private System.Byte[] _avatar;
 		partial void OnAvatarReading();
 		partial void OnAvatarChanging(ref bool handled, ref System.Byte[] _avatar);
 		partial void OnAvatarChanged();
-		private System.String _avatarMimeType;
 		public System.String AvatarMimeType
 		{
 			get
@@ -351,10 +350,10 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnAvatarMimeTypeChanged();
 			}
 		}
+		private System.String _avatarMimeType;
 		partial void OnAvatarMimeTypeReading();
 		partial void OnAvatarMimeTypeChanging(ref bool handled, ref System.String _avatarMimeType);
 		partial void OnAvatarMimeTypeChanged();
-		private QuickNSmart.Contracts.State _state;
 		public QuickNSmart.Contracts.State State
 		{
 			get
@@ -373,6 +372,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				OnStateChanged();
 			}
 		}
+		private QuickNSmart.Contracts.State _state;
 		partial void OnStateReading();
 		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
 		partial void OnStateChanged();

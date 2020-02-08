@@ -116,11 +116,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             var fieldName = CreateFieldName(propertyInfo, "_");
             var paramName = CreateFieldName(propertyInfo, "_");
 
-            GetPropertyDefaultValue(propertyInfo.DeclaringType, propertyInfo, ref defaultValue);
-            result.Add(string.IsNullOrEmpty(defaultValue)
-                ? $"private {fieldType} {fieldName};"
-                : $"private {fieldType} {fieldName} = {defaultValue};");
-
             result.Add(string.Empty);
             SetPropertyAttributes(propertyInfo.DeclaringType, propertyInfo, result);
             result.Add($"public {fieldType} {propertyInfo.Name}");
@@ -128,6 +123,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialGetProperty(propertyInfo));
             result.AddRange(CreatePartialSetProperty(propertyInfo));
             result.Add("}");
+
+            GetPropertyDefaultValue(propertyInfo.DeclaringType, propertyInfo, ref defaultValue);
+            result.Add(string.IsNullOrEmpty(defaultValue)
+                ? $"private {fieldType} {fieldName};"
+                : $"private {fieldType} {fieldName} = {defaultValue};");
 
             result.Add($"partial void On{propertyInfo.Name}Reading();");
             result.Add($"partial void On{propertyInfo.Name}Changing(ref bool handled, ref {fieldType} {paramName});");
