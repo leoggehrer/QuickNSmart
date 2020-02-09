@@ -11,8 +11,6 @@ namespace QuickNSmart.Logic.Configuration
         static Configurator()
         {
             Dictionary = new Dictionary<string, string>();
-
-            Dictionary.Add(StaticLiterals.ConnectionStringKey, "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;");
         }
         private static Dictionary<string, string> Dictionary { get; }
 
