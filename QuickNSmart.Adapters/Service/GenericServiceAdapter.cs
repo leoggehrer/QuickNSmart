@@ -103,7 +103,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
+                    return await JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
                 }
                 else
                 {
@@ -125,7 +125,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
+                    return await JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
                 }
                 else
                 {
@@ -147,7 +147,7 @@ namespace QuickNSmart.Adapters.Service
                 {
                     var contentData = await response.Content.ReadAsStreamAsync();
 
-                    return JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
+                    return await JsonSerializer.DeserializeAsync<TEntity[]>(contentData, DeserializerOptions) as IEnumerable<TContract>;
                 }
                 else
                 {
