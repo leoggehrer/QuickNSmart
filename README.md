@@ -22,22 +22,22 @@ Zur Umsetzung des Projektes wird DotNetCore (3.1) als Framework, die Programmier
 
 ### Übersicht  
 
-![Erstellungsprozess](QuickNSmart.png)
+![Erstellungsprozess](QuickNSmart_Create.png)
 
 Als Ausgangsbasis wird der Framework 'QuickNSmart' verwendet. Diese Projekt wird mit Hilfe dem Hilfsprogramm 'SolutionCopier' in ein Verzeichnis nach eigener Wahl kopiert. In diesem Verzeichnis werden alle Projektteile vom Framework kopiert und die Namen der Projekte werden entsprechend angepasst. Alle Projekte mit einem domainspezifischen Namen werden durch den Namen des Verzeichnisses ersetzt.  
 
-Zum Beispiel soll ein Projekt mit dem Namen 'QnSTravelCount' erstellt werden:
+Zum Beispiel soll ein Projekt mit dem Namen 'QnSTravelCount' erstellt werden. Im 'SolutionCopier' werden folgende Parameter eingestellt:  
 
 ````csharp
-string sourcePath = @"...\QuickNSmart";
-string targetPath = @"...\QnSTravelCount";
+string sourcePath = @"...\QuickNSmart";     // Verzeichnis - Framework-QuickNSmart
+string targetPath = @"...\QnSTravelCount";  // Verzeichnis - Domain-Project
 
 var sc = new SolutionCopier();
 
 sc.Copy(sourcePath, targetPath);
 ````
 
-Nach dem Ausführen vom SolutionCopier (*sc.Copy(sourcePath, targetPath)*) befindet sich folgende Verzeichnisstruktur in **QnSTravelCount**:  
+Nach dem Ausführen vom SolutionCopier (*sc.Copy(sourcePath, targetPath)*) befindet sich folgende Verzeichnisstruktur in **...\QnSTravelCount**:  
 
 - CommonBase
 - CSharpCodeGenerator.ConApp
@@ -64,6 +64,29 @@ Beim Ausführen des Generators werden die Komponenten der Reihe nach generiert:
 - Generierung der Kontroller-Klassen im WebApi-Projekt
 - Generierung der Fabrik-Klasse im Adapter-Projekt
 
-Die generierten Komponenten werden in den Dateien mit dem Namen '_GeneratedCode.cs' in den jeweiligen Modulen abgelegt. Diese Dateien werden nach jeder Änderung neu erzeugt und dürfen auf keinem Fall vom Entwickler angepassten Code enthalten.  
+Die generierten Komponenten werden in den Dateien mit dem Namen '_GeneratedCode.cs' in den jeweiligen Modulen abgelegt. Diese Dateien werden nach jeder Änderung neu erzeugt und dürfen auf keinem Fall vom Entwickler angepassten Code enthalten. Detailes zum Anpassen des Domain-Projektes finden sich im Beispiel [QnSTravelCount](https://github.com/leoggehrer/QnSTravelCount).  
+
+### Synchronisieren vom Framework (QuickNSmart) mit den Domain-Projekten  
+
+In der Software-Entwicklung gibt es immer wieder Verbesserungen und Erweiterungen. Das betrifft den Framework 'QuickNSmart' genauso wie alle anderen Projekte. Nun stellt sich die Frage: Wie können Verbesserungen und/oder Erweiterungen vom Framework auf die Domain-Projekte übertragen werden? Im Framework sind die Quellcode-Dateien mit Labels (@QnSBaseCode) gekennzeichnet. Beim Kopieren werden diese Labels durch den Label (@CodeCopy) ersetzt. Mit dem Hilfsprogramm BaseCodeCopier werden die Dateien mit dem Label '@QnSBaseCode' und '@CodeCopy' abgeglichen. In der folgenden Skizze ist dieser Prozess dargestellt:
+
+![Synchron-Prozess](QuickNSmart_Sync.png)
+
+Die Einstellungen für den Abgleichprozess müssen wie folgt definiert werden:
+
+```csharp
+// Quell-Project: QuickNSmart-Projects
+var sourcePath = Path.Combine(HomePath, "Google Drive", "Schule", "CSharp", "QuickNSmart", "Solution", "QuickNSmart");
+var targetPaths = new string[]
+{
+    // Ziel-Projekt:
+    Path.Combine(HomePath, "Google Drive", "Schule", "CSharp", "QnSTravelCount", "Solution", "QnSTravelCount"),
+};
+Paths.Add(sourcePath, targetPaths);
+SourceLabels.Add(sourcePath, new string[] { QnSBaseCodeLabel });
+
+```
+
+Der Prozess muss manuell aktiviert werden.  
 
 **Viel Spaß beim Testen!**
