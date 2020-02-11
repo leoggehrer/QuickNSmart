@@ -75,18 +75,19 @@ In der Software-Entwicklung gibt es immer wieder Verbesserungen und Erweiterunge
 Die Einstellungen für den Abgleichprozess müssen wie folgt definiert werden:
 
 ```csharp
-// Quell-Project: QuickNSmart-Projects
+// Quell-Project: QuickNSmart
 var sourcePath = Path.Combine(HomePath, "Google Drive", "Schule", "CSharp", "QuickNSmart", "Solution", "QuickNSmart");
 var targetPaths = new string[]
 {
-    // Ziel-Projekt:
+    // Ziel-Projekt: QnSTravelCount
     Path.Combine(HomePath, "Google Drive", "Schule", "CSharp", "QnSTravelCount", "Solution", "QnSTravelCount"),
 };
 Paths.Add(sourcePath, targetPaths);
-SourceLabels.Add(sourcePath, new string[] { QnSBaseCodeLabel });
+// Abgleich aller Dateien mit dem Label QnSBaseCodeLabel
+SourceLabels.Add(sourcePath, new string[] { QnSBaseCodeLabel });  
 
 ```
 
-Der Prozess muss manuell aktiviert werden.  
+Des Programm 'BaseCodeCopier.ConApp' muss manuell gestartet werden damit der Abgleich-Prozess aktiviert wird. Sollen Dateien vom Abgleich-Prozess ausgenommen werden, dann können die Labels (@CodeCopy) in den einzelnen Dateien im Ziel-Projekt entfernt werden.  
 
 **Viel Spaß beim Testen!**
