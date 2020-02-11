@@ -90,4 +90,133 @@ SourceLabels.Add(sourcePath, new string[] { QnSBaseCodeLabel });
 
 Des Programm 'BaseCodeCopier.ConApp' muss manuell gestartet werden damit der Abgleich-Prozess aktiviert wird. Sollen Dateien vom Abgleich-Prozess ausgenommen werden, dann können die Labels (@CodeCopy) in den einzelnen Dateien im Ziel-Projekt entfernt werden.  
 
+## Code-Generierungs-Prozess  
+
+In der obigen Abbildung ist der Code-Generierungs-Prozess schemenhaft dargestellt. Der Code-Generator bekommt als Eingabe-Information die 'Domain-Projekt.Contracts.dll' und der Generator generiert aufgrund dieser Informationen die einzelnen Komponenten und letgt diese in den enstprechenden Teil-Projekten ab. Dieser Prozess wird automatisch ausgeführt, wenn eine Änderung im Schnittstellen-Projekt durchgeführt wurde oder der Prozess kann manuell akiviert werden. In beiden Fällen wird der gesamte generierte Code wieder vollständig erzeugt.  
+
+Wie bereits erwähnt, werden bei der Code-Generierung viele Komponenten vom System erzeugt. Diese Komponenten werden in den Dateien '_GeneratedCode.cs' abgelegt und können vom Programmierer abgeändert werden. Allerdings dürfen keine Änderungen in der '_GeneratedCode.cs' direkt durchgeführt werden - der Grund ist - diese Dateien werden nach jeder Schnittstellen-Änderung automatisch erzeugt und die darin enthaltenen Änderungen gehen verloren. Im Nachfolgenden Abschnitt werden die einzelenen Komponenten detailiert erläutert.
+
+### Entities  
+
+Die Entities werden vom Generator vollständig erzeugt und Ergänzungen vom Programmierer sind nicht erforderlich. Der Generator erzeugt die Entities in folgenden Schritten:
+
+1. Erzeugen der Definition - Entität
+```csharp
+partial class Travel : QnSTravelCount.Contracts.Persistence.App.ITravel
+{
+```
+2. Erzeugen des **Klassen-Konstruktors** und die 'partial'-Methoden
+```csharp
+	static Travel()
+	{
+		ClassConstructing();
+		ClassConstructed();
+	}
+	static partial void ClassConstructing();
+	static partial void ClassConstructed();
+```
+3. Erzeugen des **Konstruktors** und die 'partial'-Methoden
+```csharp
+	public Travel()
+	{
+		Constructing();
+		Constructed();
+	}
+	partial void Constructing();
+	partial void Constructed();
+```
+4. Erzeugen der **Eigenschaften**
+```csharp
+	public System.String Designation
+	{
+		get
+		{
+			OnDesignationReading();
+			return _designation;
+		}
+		set
+		{
+			bool handled = false;
+			OnDesignationChanging(ref handled, ref _designation);
+			if (handled == false)
+			{
+				this._designation = value;
+			}
+			OnDesignationChanged();
+		}
+	}
+	private System.String _designation;
+	partial void OnDesignationReading();
+	partial void OnDesignationChanging(ref bool handled, ref System.String _designation);
+	partial void OnDesignationChanged();
+```
+5. Erzeugen der **CopyProperties**-Methode
+```csharp
+	public void CopyProperties(QnSTravelCount.Contracts.Persistence.App.ITravel other)
+	{
+		if (other == null)
+		{
+			throw new System.ArgumentNullException(nameof(other));
+		}
+		bool handled = false;
+		BeforeCopyProperties(other, ref handled);
+		if (handled == false)
+		{
+			Id = other.Id;
+			Timestamp = other.Timestamp;
+			Designation = other.Designation;
+		}
+		AfterCopyProperties(other);
+	}
+	partial void BeforeCopyProperties(QnSTravelCount.Contracts.Persistence.App.ITravel other, ref bool handled);
+	partial void AfterCopyProperties(QnSTravelCount.Contracts.Persistence.App.ITravel other);
+```
+6. Erzeugen der **Equals**-Methode
+```csharp
+	public override bool Equals(object obj)
+	{
+		if (!(obj is QnSTravelCount.Contracts.Persistence.App.ITravel instance))
+		{
+			return false;
+		}
+		return base.Equals(instance) && Equals(instance);
+	}
+	protected bool Equals(QnSTravelCount.Contracts.Persistence.App.ITravel other)
+	{
+		if (other == null)
+		{
+			return false;
+		}
+		return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Designation, other.Designation);
+	}
+```
+7. Erzeugen der **GetHashCode()**-Methode
+```csharp
+	public override int GetHashCode()
+	{
+		return HashCode.Combine(Id, Timestamp, Designation);
+	}
+}
+```
+8. Erzeugen der Ableitung
+```csharp
+	partial class Travel : IdentityObject
+	{
+	}
+}
+```
+9. Erzeugen der Navigation-Eigenschaften
+```csharp
+	partial class Travel
+	{
+		public System.Collections.Generic.ICollection<QnSTravelCount.Logic.Entities.Persistence.App.Expense> Expenses
+		{
+			get;
+			set;
+		}
+	}
+}
+```
+
+
 **Viel Spaß beim Testen!**
