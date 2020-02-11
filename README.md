@@ -92,7 +92,7 @@ Des Programm 'BaseCodeCopier.ConApp' muss manuell gestartet werden damit der Abg
 
 ## Code-Generierungs-Prozess  
 
-In der obigen Abbildung ist der Code-Generierungs-Prozess schemenhaft dargestellt. Der Code-Generator bekommt als Eingabe-Information die 'Domain-Projekt.Contracts.dll' und der Generator generiert aufgrund dieser Informationen die einzelnen Komponenten und letgt diese in den enstprechenden Teil-Projekten ab. Dieser Prozess wird automatisch ausgeführt, wenn eine Änderung im Schnittstellen-Projekt durchgeführt wurde oder der Prozess kann manuell akiviert werden. In beiden Fällen wird der gesamte generierte Code wieder vollständig erzeugt.  
+In der obigen Abbildung ist der Code-Generierungs-Prozess schemenhaft dargestellt. Der Code-Generator bekommt als Eingabe-Information die 'Domain-Projekt.Contracts.dll' und der Generator generiert aufgrund dieser Informationen die einzelnen Komponenten und letgt diese in den enstprechenden Teil-Projekten ab. Dieser Prozess wird automatisch ausgeführt, wenn eine Änderung im Schnittstellen-Projekt durchgeführt wurde. Der Prozess kann natürlich auch manuell akiviert werden. In beiden Fällen wird der gesamte generierte Code wieder vollständig erzeugt.  
 
 Wie bereits erwähnt, werden bei der Code-Generierung viele Komponenten vom System erzeugt. Diese Komponenten werden in den Dateien '_GeneratedCode.cs' abgelegt und können vom Programmierer abgeändert werden. Allerdings dürfen keine Änderungen in der '_GeneratedCode.cs' direkt durchgeführt werden - der Grund ist - diese Dateien werden nach jeder Schnittstellen-Änderung automatisch erzeugt und die darin enthaltenen Änderungen gehen verloren. Im Nachfolgenden Abschnitt werden die einzelenen Komponenten detailiert erläutert.
 
@@ -200,20 +200,18 @@ partial class Travel : QnSTravelCount.Contracts.Persistence.App.ITravel
 ```
 8. Erzeugen der Ableitung
 ```csharp
-	partial class Travel : IdentityObject
-	{
-	}
+partial class Travel : IdentityObject
+{
 }
 ```
 9. Erzeugen der Navigation-Eigenschaften
 ```csharp
-	partial class Travel
+partial class Travel
+{
+	public System.Collections.Generic.ICollection<QnSTravelCount.Logic.Entities.Persistence.App.Expense> Expenses
 	{
-		public System.Collections.Generic.ICollection<QnSTravelCount.Logic.Entities.Persistence.App.Expense> Expenses
-		{
-			get;
-			set;
-		}
+		get;
+		set;
 	}
 }
 ```
