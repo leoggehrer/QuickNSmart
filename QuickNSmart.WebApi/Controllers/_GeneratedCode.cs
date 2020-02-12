@@ -54,7 +54,7 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return UpdateModelAsync(model);
 		}
-		[HttpDelete("/api/[controller]/{ id}")]
+		[HttpDelete("/api/[controller]/{id}")]
 		public Task DeleteAsync(int id)
 		{
 			return DeleteModelAsync(id);
@@ -66,11 +66,11 @@ namespace QuickNSmart.WebApi.Controllers
 	using Microsoft.AspNetCore.Mvc;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Contract = QuickNSmart.Contracts.Persistence.Account.IUser;
-	using Model = Transfer.Persistence.Account.User;
+	using Contract = QuickNSmart.Contracts.Persistence.Account.ILoginUser;
+	using Model = Transfer.Persistence.Account.LoginUser;
 	[ApiController]
 	[Route("Controller")]
-	public partial class UserController : GenericController<Contract, Model>
+	public partial class LoginUserController : GenericController<Contract, Model>
 	{
 		[HttpGet("/api/[controller]/MaxPage")]
 		public Task<int> GetMaxPageAsync()
@@ -117,7 +117,7 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return UpdateModelAsync(model);
 		}
-		[HttpDelete("/api/[controller]/{ id}")]
+		[HttpDelete("/api/[controller]/{id}")]
 		public Task DeleteAsync(int id)
 		{
 			return DeleteModelAsync(id);

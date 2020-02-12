@@ -114,16 +114,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 namespace QuickNSmart.Transfer.Persistence.Account
 {
 	using System.Text.Json.Serialization;
-	public partial class User : QuickNSmart.Contracts.Persistence.Account.IUser
+	public partial class LoginUser : QuickNSmart.Contracts.Persistence.Account.ILoginUser
 	{
-		static User()
+		static LoginUser()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public User()
+		public LoginUser()
 		{
 			Constructing();
 			Constructed();
@@ -240,28 +240,6 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnLastNameReading();
 		partial void OnLastNameChanging(ref bool handled, ref System.String _lastName);
 		partial void OnLastNameChanged();
-		public System.String FullName
-		{
-			get
-			{
-				OnFullNameReading();
-				return _fullName;
-			}
-			set
-			{
-				bool handled = false;
-				OnFullNameChanging(ref handled, ref _fullName);
-				if (handled == false)
-				{
-					this._fullName = value;
-				}
-				OnFullNameChanged();
-			}
-		}
-		private System.String _fullName;
-		partial void OnFullNameReading();
-		partial void OnFullNameChanging(ref bool handled, ref System.String _fullName);
-		partial void OnFullNameChanged();
 		public System.String PhoneNumber
 		{
 			get
@@ -350,7 +328,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnStateReading();
 		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
 		partial void OnStateChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other)
 		{
 			if (other == null)
 			{
@@ -367,7 +345,6 @@ namespace QuickNSmart.Transfer.Persistence.Account
 				Email = other.Email;
 				FirstName = other.FirstName;
 				LastName = other.LastName;
-				FullName = other.FullName;
 				PhoneNumber = other.PhoneNumber;
 				Avatar = other.Avatar;
 				AvatarMimeType = other.AvatarMimeType;
@@ -375,13 +352,13 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other);
 	}
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class User : TransferObject
+	partial class LoginUser : TransferObject
 	{
 	}
 }

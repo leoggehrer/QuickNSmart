@@ -11,9 +11,9 @@ namespace QuickNSmart.Adapters
 				{
 					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IApplication>() as Contracts.Client.IAdapterAccess<I>;
 				}
-				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginUser))
 				{
-					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IUser>() as Contracts.Client.IAdapterAccess<I>;
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.ILoginUser>() as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			else if (Adapter == AdapterType.Service)
@@ -22,9 +22,9 @@ namespace QuickNSmart.Adapters
 				{
 					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IApplication, Transfer.Persistence.Account.Application>(BaseUri, "Application") as Contracts.Client.IAdapterAccess<I>;
 				}
-				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginUser))
 				{
-					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IUser, Transfer.Persistence.Account.User>(BaseUri, "User") as Contracts.Client.IAdapterAccess<I>;
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.ILoginUser, Transfer.Persistence.Account.LoginUser>(BaseUri, "LoginUser") as Contracts.Client.IAdapterAccess<I>;
 				}
 			}
 			return result;

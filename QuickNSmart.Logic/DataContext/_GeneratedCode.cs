@@ -9,7 +9,7 @@ namespace QuickNSmart.Logic.DataContext.Db
 			get;
 			set;
 		}
-		protected DbSet<Entities.Persistence.Account.User> UserSet
+		protected DbSet<Entities.Persistence.Account.LoginUser> LoginUserSet
 		{
 			get;
 			set;
@@ -21,9 +21,9 @@ namespace QuickNSmart.Logic.DataContext.Db
 			{
 				result = ApplicationSet as DbSet<E>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginUser))
 			{
-				result = UserSet as DbSet<E>;
+				result = LoginUserSet as DbSet<E>;
 			}
 			return result;
 		}
@@ -32,11 +32,11 @@ namespace QuickNSmart.Logic.DataContext.Db
 			modelBuilder.Entity<Entities.Persistence.Account.Application>().ToTable(nameof(Entities.Persistence.Account.Application), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Application.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.Application>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Application>());
-			modelBuilder.Entity<Entities.Persistence.Account.User>().ToTable(nameof(Entities.Persistence.Account.User), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.User.Id));
-			modelBuilder.Entity<Entities.Persistence.Account.User>().Property(p => p.Timestamp).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.User>());
+			modelBuilder.Entity<Entities.Persistence.Account.LoginUser>().ToTable(nameof(Entities.Persistence.Account.LoginUser), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.LoginUser.Id));
+			modelBuilder.Entity<Entities.Persistence.Account.LoginUser>().Property(p => p.Timestamp).IsRowVersion();
+			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.LoginUser>());
 		}
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Application> entityTypeBuilder);
-		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.User> entityTypeBuilder);
+		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.LoginUser> entityTypeBuilder);
 	}
 }

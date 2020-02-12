@@ -140,16 +140,16 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
 	using System;
-	partial class User : QuickNSmart.Contracts.Persistence.Account.IUser
+	partial class LoginUser : QuickNSmart.Contracts.Persistence.Account.ILoginUser
 	{
-		static User()
+		static LoginUser()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public User()
+		public LoginUser()
 		{
 			Constructing();
 			Constructed();
@@ -266,28 +266,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnLastNameReading();
 		partial void OnLastNameChanging(ref bool handled, ref System.String _lastName);
 		partial void OnLastNameChanged();
-		public System.String FullName
-		{
-			get
-			{
-				OnFullNameReading();
-				return _fullName;
-			}
-			set
-			{
-				bool handled = false;
-				OnFullNameChanging(ref handled, ref _fullName);
-				if (handled == false)
-				{
-					this._fullName = value;
-				}
-				OnFullNameChanged();
-			}
-		}
-		private System.String _fullName;
-		partial void OnFullNameReading();
-		partial void OnFullNameChanging(ref bool handled, ref System.String _fullName);
-		partial void OnFullNameChanged();
 		public System.String PhoneNumber
 		{
 			get
@@ -376,7 +354,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnStateReading();
 		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
 		partial void OnStateChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other)
 		{
 			if (other == null)
 			{
@@ -393,7 +371,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				Email = other.Email;
 				FirstName = other.FirstName;
 				LastName = other.LastName;
-				FullName = other.FullName;
 				PhoneNumber = other.PhoneNumber;
 				Avatar = other.Avatar;
 				AvatarMimeType = other.AvatarMimeType;
@@ -401,39 +378,39 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IUser instance))
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.ILoginUser instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.ILoginUser other)
 		{
 			if (other == null)
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(UserName, other.UserName) && IsEqualsWith(Password, other.Password) && IsEqualsWith(Email, other.Email) && IsEqualsWith(FirstName, other.FirstName) && IsEqualsWith(LastName, other.LastName) && IsEqualsWith(FullName, other.FullName) && IsEqualsWith(PhoneNumber, other.PhoneNumber) && IsEqualsWith(Avatar, other.Avatar) && IsEqualsWith(AvatarMimeType, other.AvatarMimeType) && State == other.State;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(UserName, other.UserName) && IsEqualsWith(Password, other.Password) && IsEqualsWith(Email, other.Email) && IsEqualsWith(FirstName, other.FirstName) && IsEqualsWith(LastName, other.LastName) && IsEqualsWith(PhoneNumber, other.PhoneNumber) && IsEqualsWith(Avatar, other.Avatar) && IsEqualsWith(AvatarMimeType, other.AvatarMimeType) && State == other.State;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, UserName, Password, Email, FirstName, HashCode.Combine(LastName, FullName, PhoneNumber, Avatar, AvatarMimeType, State));
+			return HashCode.Combine(Id, Timestamp, UserName, Password, Email, FirstName, HashCode.Combine(LastName, PhoneNumber, Avatar, AvatarMimeType, State));
 		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class User : IdentityObject
+	partial class LoginUser : IdentityObject
 	{
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class User
+	partial class LoginUser
 	{
 	}
 }

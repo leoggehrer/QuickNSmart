@@ -27,7 +27,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return $"{EntityNameSpace}.{Generator.GetSubNamespaceFromInterface(type)}";
         }
 
-        private bool CanCreate(Type type)
+        private bool CanCreateEntity(Type type)
         {
             bool create = true;
 
@@ -35,6 +35,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return create;
         }
         partial void CanCreateEntity(Type type, ref bool create);
+        private bool CanCreateProperty(Type type, string propertyName)
+        {
+            bool create = true;
+
+            CanCreateProperty(type, propertyName, ref create);
+            return create;
+        }
+        partial void CanCreateProperty(Type type, string propertyName, ref bool create);
         partial void CreateEntityAttributes(Type type, List<string> codeLines);
 
         private IEnumerable<string> CreateEntityFromInterface(Type type)
@@ -49,7 +57,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false
+                                                                   && CanCreateProperty(type, p.Name)))
             {
                 result.AddRange(CreatePartialProperty(item));
             }
@@ -67,7 +76,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             foreach (var type in contractsProject.ModuleTypes)
             {
-                if (CanCreate(type))
+                if (CanCreateEntity(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreateModuleEntity(type), CreateNameSpace(type)));
@@ -94,7 +103,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             foreach (var type in contractsProject.BusinessTypes)
             {
-                if (CanCreate(type))
+                if (CanCreateEntity(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), CreateNameSpace(type), "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreateBusinessEntity(type), CreateNameSpace(type)));
@@ -122,7 +131,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             foreach (var type in persistenceTypes)
             {
-                if (CanCreate(type))
+                if (CanCreateEntity(type))
                 {
                     string nameSpace = CreateNameSpace(type);
 

@@ -25,23 +25,23 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
-	sealed partial class UserController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUser, Entities.Persistence.Account.User>
+	sealed partial class LoginUserController : GenericController<QuickNSmart.Contracts.Persistence.Account.ILoginUser, Entities.Persistence.Account.LoginUser>
 	{
-		static UserController()
+		static LoginUserController()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public UserController(DataContext.IContext context):base(context)
+		public LoginUserController(DataContext.IContext context):base(context)
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public UserController(ControllerObject controller):base(controller)
+		public LoginUserController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();
