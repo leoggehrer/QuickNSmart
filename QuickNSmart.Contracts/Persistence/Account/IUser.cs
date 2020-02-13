@@ -1,6 +1,8 @@
-﻿namespace QuickNSmart.Contracts.Persistence.Account
+﻿//@QnSBaseCode
+//MdStart
+namespace QuickNSmart.Contracts.Persistence.Account
 {
-    public partial interface ILoginUser : IIdentifiable, ICopyable<ILoginUser>
+    public partial interface IUser : IIdentifiable, ICopyable<IUser>
     {
         string UserName { get; set; }
         string Password { get; set; }
@@ -13,3 +15,4 @@
         State State { get; set; }
     }
 }
+//MdEnd

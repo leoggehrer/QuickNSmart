@@ -1,89 +1,133 @@
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
 	using System;
-	partial class Application : QuickNSmart.Contracts.Persistence.Account.IApplication
+	partial class LoginSession : QuickNSmart.Contracts.Persistence.Account.ILoginSession
 	{
-		static Application()
+		static LoginSession()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public Application()
+		public LoginSession()
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public System.String Name
+		public System.Int32 UserId
 		{
 			get
 			{
-				OnNameReading();
-				return _name;
+				OnUserIdReading();
+				return _userId;
 			}
 			set
 			{
 				bool handled = false;
-				OnNameChanging(ref handled, ref _name);
+				OnUserIdChanging(ref handled, ref _userId);
 				if (handled == false)
 				{
-					this._name = value;
+					this._userId = value;
 				}
-				OnNameChanged();
+				OnUserIdChanged();
 			}
 		}
-		private System.String _name;
-		partial void OnNameReading();
-		partial void OnNameChanging(ref bool handled, ref System.String _name);
-		partial void OnNameChanged();
-		public System.String Token
+		private System.Int32 _userId;
+		partial void OnUserIdReading();
+		partial void OnUserIdChanging(ref bool handled, ref System.Int32 _userId);
+		partial void OnUserIdChanged();
+		public System.String SessionToken
 		{
 			get
 			{
-				OnTokenReading();
-				return _token;
+				OnSessionTokenReading();
+				return _sessionToken;
 			}
 			set
 			{
 				bool handled = false;
-				OnTokenChanging(ref handled, ref _token);
+				OnSessionTokenChanging(ref handled, ref _sessionToken);
 				if (handled == false)
 				{
-					this._token = value;
+					this._sessionToken = value;
 				}
-				OnTokenChanged();
+				OnSessionTokenChanged();
 			}
 		}
-		private System.String _token;
-		partial void OnTokenReading();
-		partial void OnTokenChanging(ref bool handled, ref System.String _token);
-		partial void OnTokenChanged();
-		public QuickNSmart.Contracts.State State
+		private System.String _sessionToken;
+		partial void OnSessionTokenReading();
+		partial void OnSessionTokenChanging(ref bool handled, ref System.String _sessionToken);
+		partial void OnSessionTokenChanged();
+		public System.DateTime LoginTime
 		{
 			get
 			{
-				OnStateReading();
-				return _state;
+				OnLoginTimeReading();
+				return _loginTime;
 			}
 			set
 			{
 				bool handled = false;
-				OnStateChanging(ref handled, ref _state);
+				OnLoginTimeChanging(ref handled, ref _loginTime);
 				if (handled == false)
 				{
-					this._state = value;
+					this._loginTime = value;
 				}
-				OnStateChanged();
+				OnLoginTimeChanged();
 			}
 		}
-		private QuickNSmart.Contracts.State _state;
-		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
-		partial void OnStateChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other)
+		private System.DateTime _loginTime;
+		partial void OnLoginTimeReading();
+		partial void OnLoginTimeChanging(ref bool handled, ref System.DateTime _loginTime);
+		partial void OnLoginTimeChanged();
+		public System.DateTime LastAccess
+		{
+			get
+			{
+				OnLastAccessReading();
+				return _lastAccess;
+			}
+			set
+			{
+				bool handled = false;
+				OnLastAccessChanging(ref handled, ref _lastAccess);
+				if (handled == false)
+				{
+					this._lastAccess = value;
+				}
+				OnLastAccessChanged();
+			}
+		}
+		private System.DateTime _lastAccess;
+		partial void OnLastAccessReading();
+		partial void OnLastAccessChanging(ref bool handled, ref System.DateTime _lastAccess);
+		partial void OnLastAccessChanged();
+		public System.DateTime? LogoutTime
+		{
+			get
+			{
+				OnLogoutTimeReading();
+				return _logoutTime;
+			}
+			set
+			{
+				bool handled = false;
+				OnLogoutTimeChanging(ref handled, ref _logoutTime);
+				if (handled == false)
+				{
+					this._logoutTime = value;
+				}
+				OnLogoutTimeChanged();
+			}
+		}
+		private System.DateTime? _logoutTime;
+		partial void OnLogoutTimeReading();
+		partial void OnLogoutTimeChanging(ref bool handled, ref System.DateTime? _logoutTime);
+		partial void OnLogoutTimeChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginSession other)
 		{
 			if (other == null)
 			{
@@ -95,61 +139,189 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
-				Name = other.Name;
-				Token = other.Token;
-				State = other.State;
+				UserId = other.UserId;
+				SessionToken = other.SessionToken;
+				LoginTime = other.LoginTime;
+				LastAccess = other.LastAccess;
+				LogoutTime = other.LogoutTime;
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IApplication other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginSession other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginSession other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IApplication instance))
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.ILoginSession instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IApplication other)
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.ILoginSession other)
 		{
 			if (other == null)
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Token, other.Token) && State == other.State;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && UserId == other.UserId && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Name, Token, State);
+			return HashCode.Combine(Id, Timestamp, UserId, SessionToken, LoginTime, LastAccess, HashCode.Combine(LogoutTime));
 		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class Application : IdentityObject
+	partial class LoginSession : IdentityObject
 	{
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class Application
+	partial class LoginSession
 	{
+		public QuickNSmart.Logic.Entities.Persistence.Account.User User
+		{
+			get;
+			set;
+		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
 	using System;
-	partial class LoginUser : QuickNSmart.Contracts.Persistence.Account.ILoginUser
+	partial class Role : QuickNSmart.Contracts.Persistence.Account.IRole
 	{
-		static LoginUser()
+		static Role()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public LoginUser()
+		public Role()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.String Designation
+		{
+			get
+			{
+				OnDesignationReading();
+				return _designation;
+			}
+			set
+			{
+				bool handled = false;
+				OnDesignationChanging(ref handled, ref _designation);
+				if (handled == false)
+				{
+					this._designation = value;
+				}
+				OnDesignationChanged();
+			}
+		}
+		private System.String _designation;
+		partial void OnDesignationReading();
+		partial void OnDesignationChanging(ref bool handled, ref System.String _designation);
+		partial void OnDesignationChanged();
+		public System.String Description
+		{
+			get
+			{
+				OnDescriptionReading();
+				return _description;
+			}
+			set
+			{
+				bool handled = false;
+				OnDescriptionChanging(ref handled, ref _description);
+				if (handled == false)
+				{
+					this._description = value;
+				}
+				OnDescriptionChanged();
+			}
+		}
+		private System.String _description;
+		partial void OnDescriptionReading();
+		partial void OnDescriptionChanging(ref bool handled, ref System.String _description);
+		partial void OnDescriptionChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IRole other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Designation = other.Designation;
+				Description = other.Description;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IRole other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IRole other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IRole instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IRole other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Designation, other.Designation) && IsEqualsWith(Description, other.Description);
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, Designation, Description);
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class Role : IdentityObject
+	{
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class Role
+	{
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.UserXRole> UserXRoles
+		{
+			get;
+			set;
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	using System;
+	partial class User : QuickNSmart.Contracts.Persistence.Account.IUser
+	{
+		static User()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public User()
 		{
 			Constructing();
 			Constructed();
@@ -354,7 +526,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnStateReading();
 		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
 		partial void OnStateChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other)
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other)
 		{
 			if (other == null)
 			{
@@ -378,17 +550,17 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginUser other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Persistence.Account.ILoginUser instance))
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IUser instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.ILoginUser other)
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IUser other)
 		{
 			if (other == null)
 			{
@@ -404,13 +576,149 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class LoginUser : IdentityObject
+	partial class User : IdentityObject
 	{
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
-	partial class LoginUser
+	partial class User
 	{
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.LoginSession> LoginSessions
+		{
+			get;
+			set;
+		}
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.UserXRole> UserXRoles
+		{
+			get;
+			set;
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	using System;
+	partial class UserXRole : QuickNSmart.Contracts.Persistence.Account.IUserXRole
+	{
+		static UserXRole()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public UserXRole()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.Int32 UserId
+		{
+			get
+			{
+				OnUserIdReading();
+				return _userId;
+			}
+			set
+			{
+				bool handled = false;
+				OnUserIdChanging(ref handled, ref _userId);
+				if (handled == false)
+				{
+					this._userId = value;
+				}
+				OnUserIdChanged();
+			}
+		}
+		private System.Int32 _userId;
+		partial void OnUserIdReading();
+		partial void OnUserIdChanging(ref bool handled, ref System.Int32 _userId);
+		partial void OnUserIdChanged();
+		public System.Int32 RoleId
+		{
+			get
+			{
+				OnRoleIdReading();
+				return _roleId;
+			}
+			set
+			{
+				bool handled = false;
+				OnRoleIdChanging(ref handled, ref _roleId);
+				if (handled == false)
+				{
+					this._roleId = value;
+				}
+				OnRoleIdChanged();
+			}
+		}
+		private System.Int32 _roleId;
+		partial void OnRoleIdReading();
+		partial void OnRoleIdChanging(ref bool handled, ref System.Int32 _roleId);
+		partial void OnRoleIdChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUserXRole other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				UserId = other.UserId;
+				RoleId = other.RoleId;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUserXRole other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUserXRole other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IUserXRole instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IUserXRole other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && UserId == other.UserId && RoleId == other.RoleId;
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, UserId, RoleId);
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class UserXRole : IdentityObject
+	{
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class UserXRole
+	{
+		public QuickNSmart.Logic.Entities.Persistence.Account.User User
+		{
+			get;
+			set;
+		}
+		public QuickNSmart.Logic.Entities.Persistence.Account.Role Role
+		{
+			get;
+			set;
+		}
 	}
 }

@@ -1,22 +1,22 @@
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
-	sealed partial class ApplicationController : GenericController<QuickNSmart.Contracts.Persistence.Account.IApplication, Entities.Persistence.Account.Application>
+	sealed partial class LoginSessionController : GenericController<QuickNSmart.Contracts.Persistence.Account.ILoginSession, Entities.Persistence.Account.LoginSession>
 	{
-		static ApplicationController()
+		static LoginSessionController()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public ApplicationController(DataContext.IContext context):base(context)
+		public LoginSessionController(DataContext.IContext context):base(context)
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public ApplicationController(ControllerObject controller):base(controller)
+		public LoginSessionController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();
@@ -25,23 +25,73 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
-	sealed partial class LoginUserController : GenericController<QuickNSmart.Contracts.Persistence.Account.ILoginUser, Entities.Persistence.Account.LoginUser>
+	sealed partial class RoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IRole, Entities.Persistence.Account.Role>
 	{
-		static LoginUserController()
+		static RoleController()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public LoginUserController(DataContext.IContext context):base(context)
+		public RoleController(DataContext.IContext context):base(context)
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public LoginUserController(ControllerObject controller):base(controller)
+		public RoleController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
+	sealed partial class UserController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUser, Entities.Persistence.Account.User>
+	{
+		static UserController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public UserController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public UserController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
+	sealed partial class UserXRoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUserXRole, Entities.Persistence.Account.UserXRole>
+	{
+		static UserXRoleController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public UserXRoleController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public UserXRoleController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();
