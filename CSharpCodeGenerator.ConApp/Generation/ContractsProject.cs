@@ -42,7 +42,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         var fileName = $"{ProjectName}.dll";
                         var fileInfos = new DirectoryInfo(binPath).GetFiles(fileName, SearchOption.AllDirectories)
                                                                   .Where(f => f.FullName.EndsWith(fileName))
-                                                                  .OrderByDescending(f => f.CreationTime);
+                                                                  .OrderByDescending(f => f.LastWriteTime);
 
                         var fileInfo = fileInfos.FirstOrDefault();
 
