@@ -27,6 +27,24 @@ namespace QuickNSmart.ConApp
             loginUser.AddRole(role);
 
             await loginUserCtrl.InsertAsync(loginUser);
+
+            loginUser = await loginUserCtrl.CreateAsync();
+
+            loginUser.User.UserName = "tgehrer";
+            loginUser.User.Email = "t.gehrer@htl-leonding.ac.at";
+            loginUser.User.Password = "passme";
+            loginUser.User.FirstName = "Tobias";
+            loginUser.User.LastName = "Gehrer";
+            role = loginUser.CreateRole();
+
+            role.Designation = "Admin";
+            loginUser.AddRole(role);
+            role.Designation = "Manager";
+            loginUser.AddRole(role);
+            role.Designation = "controller";
+            loginUser.AddRole(role);
+
+            await loginUserCtrl.InsertAsync(loginUser);
         }
     }
 }

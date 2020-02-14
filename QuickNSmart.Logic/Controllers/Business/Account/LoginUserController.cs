@@ -125,13 +125,26 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             foreach (var item in entity.Roles)
             {
                 var role = new Role();
+                var joinRole = new UserXRole();
 
+                joinRole.User = result.UserEntity;
                 if (item.Id == 0)
                 {
                     item.Designation = ClearRoleDesigantion(item.Designation);
 
-                    role.CopyProperties(item);
-                    await roleController.InsertAsync(role);
+                    var qryItem = (await roleController.QueryAsync(e => e.Designation.Equals(item.Designation))).FirstOrDefault();
+
+                    if (qryItem != null)
+                    {
+                        role.CopyProperties(qryItem);
+                        joinRole.RoleId = role.Id;
+                    }
+                    else
+                    {
+                        role.CopyProperties(item);
+                        await roleController.InsertAsync(role);
+                        joinRole.Role = role;
+                    }
                 }
                 else
                 {
@@ -142,11 +155,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                         role.CopyProperties(qryItem);
                     }
                 }
-
-                var joinRole = new UserXRole();
-
-                joinRole.User = result.UserEntity;
-                joinRole.Role = role;
                 await userXroleController.InsertAsync(joinRole);
                 result.RoleEntities.Add(role);
             }
