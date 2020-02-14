@@ -48,6 +48,7 @@ namespace QuickNSmart.Logic.DataContext.Db
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+
             BeforeModelCreating(modelBuilder);
             DoModelCreating(modelBuilder);
             AfterModelCreating(modelBuilder);

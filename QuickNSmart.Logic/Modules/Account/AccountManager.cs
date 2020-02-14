@@ -22,6 +22,16 @@ namespace QuickNSmart.Logic.Modules.Account
         private static List<LoginSession> LoginSessions { get; } = new List<LoginSession>();
         internal static string SystemAuthorizationToken { get; set; }
 
+        internal static byte[] CalculateHash(string plainText)
+        {
+            if (String.IsNullOrEmpty(plainText))
+                throw new ArgumentNullException(nameof(plainText));
+
+            System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1.Create();
+            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
+            byte[] hashedBytes = sha1.ComputeHash(plainTextBytes);
+            return hashedBytes;
+        }
     }
 }
 //MdEnd

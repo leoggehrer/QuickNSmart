@@ -10,7 +10,7 @@ using QuickNSmart.Logic.DataContext.Db;
 namespace QuickNSmart.Logic.Migrations
 {
     [DbContext(typeof(QuickNSmartDbContext))]
-    [Migration("20200213125401_InitDb")]
+    [Migration("20200214175432_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -115,9 +115,8 @@ namespace QuickNSmart.Logic.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
-                    b.Property<string>("Password")
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
+                    b.Property<byte[]>("PasswordHash")
+                        .HasColumnType("varbinary(max)");
 
                     b.Property<string>("PhoneNumber")
                         .HasColumnType("nvarchar(max)");

@@ -25,7 +25,7 @@ namespace QuickNSmart.Logic.Controllers
     {
         public int MaxPageSize => 500;
 
-        protected IEnumerable<E> Set() => Context.Set<I, E>();
+        internal IEnumerable<E> Set() => Context.Set<I, E>();
 
         protected GenericController(IContext context)
             : base(context)

@@ -17,6 +17,7 @@ namespace QuickNSmart.Transfer.Business.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
+		[JsonIgnore]
 		public QuickNSmart.Contracts.Persistence.Account.IUser User
 		{
 			get
@@ -39,6 +40,7 @@ namespace QuickNSmart.Transfer.Business.Account
 		partial void OnUserReading();
 		partial void OnUserChanging(ref bool handled, ref QuickNSmart.Contracts.Persistence.Account.IUser _user);
 		partial void OnUserChanged();
+		[JsonIgnore]
 		public System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> Roles
 		{
 			get

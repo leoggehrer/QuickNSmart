@@ -34,8 +34,8 @@ namespace QuickNSmart.Logic.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    PasswordHash = table.Column<byte[]>(nullable: true),
                     UserName = table.Column<string>(maxLength: 128, nullable: false),
-                    Password = table.Column<string>(maxLength: 128, nullable: true),
                     Email = table.Column<string>(maxLength: 128, nullable: false),
                     FirstName = table.Column<string>(maxLength: 128, nullable: false),
                     LastName = table.Column<string>(maxLength: 128, nullable: false),
