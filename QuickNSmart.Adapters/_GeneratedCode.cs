@@ -7,7 +7,15 @@ namespace QuickNSmart.Adapters
 			Contracts.Client.IAdapterAccess<I> result = null;
 			if (Adapter == AdapterType.Controller)
 			{
-				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
+				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+				{
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentity>() as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
+				{
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentityXRole>() as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
 				{
 					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.ILoginSession>() as Contracts.Client.IAdapterAccess<I>;
 				}
@@ -23,6 +31,10 @@ namespace QuickNSmart.Adapters
 				{
 					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IUserXRole>() as Contracts.Client.IAdapterAccess<I>;
 				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
+				{
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Business.Account.IAuthentication>() as Contracts.Client.IAdapterAccess<I>;
+				}
 				else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
 				{
 					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Business.Account.ILoginUser>() as Contracts.Client.IAdapterAccess<I>;
@@ -30,7 +42,15 @@ namespace QuickNSmart.Adapters
 			}
 			else if (Adapter == AdapterType.Service)
 			{
-				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
+				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+				{
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentity, Transfer.Persistence.Account.Identity>(BaseUri, "Identity") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
+				{
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentityXRole, Transfer.Persistence.Account.IdentityXRole>(BaseUri, "IdentityXRole") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
 				{
 					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.ILoginSession, Transfer.Persistence.Account.LoginSession>(BaseUri, "LoginSession") as Contracts.Client.IAdapterAccess<I>;
 				}
@@ -45,6 +65,10 @@ namespace QuickNSmart.Adapters
 				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUserXRole))
 				{
 					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IUserXRole, Transfer.Persistence.Account.UserXRole>(BaseUri, "UserXRole") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
+				{
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Business.Account.IAuthentication, Transfer.Business.Account.Authentication>(BaseUri, "Authentication") as Contracts.Client.IAdapterAccess<I>;
 				}
 				else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
 				{

@@ -1,5 +1,55 @@
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	sealed partial class IdentityController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentity, Entities.Persistence.Account.Identity>
+	{
+		static IdentityController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public IdentityController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
+	sealed partial class IdentityXRoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentityXRole, Entities.Persistence.Account.IdentityXRole>
+	{
+		static IdentityXRoleController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityXRoleController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public IdentityXRoleController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
 	sealed partial class LoginSessionController : GenericController<QuickNSmart.Contracts.Persistence.Account.ILoginSession, Entities.Persistence.Account.LoginSession>
 	{
 		static LoginSessionController()

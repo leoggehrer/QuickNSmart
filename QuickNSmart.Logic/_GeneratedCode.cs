@@ -5,7 +5,15 @@ namespace QuickNSmart.Logic
 		public static Contracts.Client.IControllerAccess<I> Create<I>() where I : Contracts.IIdentifiable
 		{
 			Contracts.Client.IControllerAccess<I> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+			{
+				result = new Controllers.Persistence.Account.IdentityController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
+			{
+				result = new Controllers.Persistence.Account.IdentityXRoleController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
 			{
 				result = new Controllers.Persistence.Account.LoginSessionController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
@@ -21,6 +29,10 @@ namespace QuickNSmart.Logic
 			{
 				result = new Controllers.Persistence.Account.UserXRoleController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
+			{
+				result = new Controllers.Business.Account.AuthenticationController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
 			{
 				result = new Controllers.Business.Account.LoginUserController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
@@ -30,7 +42,15 @@ namespace QuickNSmart.Logic
 		public static Contracts.Client.IControllerAccess<I> Create<I>(object sharedController) where I : Contracts.IIdentifiable
 		{
 			Contracts.Client.IControllerAccess<I> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+			{
+				result = new Controllers.Persistence.Account.IdentityController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
+			{
+				result = new Controllers.Persistence.Account.IdentityXRoleController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
 			{
 				result = new Controllers.Persistence.Account.LoginSessionController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
@@ -45,6 +65,10 @@ namespace QuickNSmart.Logic
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUserXRole))
 			{
 				result = new Controllers.Persistence.Account.UserXRoleController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
+			{
+				result = new Controllers.Business.Account.AuthenticationController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
 			{

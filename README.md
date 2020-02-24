@@ -29,13 +29,15 @@ Als Ausgangsbasis wird der Framework 'QuickNSmart' verwendet. Diese Projekt wird
 Zum Beispiel soll ein Projekt mit dem Namen 'QnSTravelCount' erstellt werden. Im 'SolutionCopier' werden folgende Parameter eingestellt:  
 
 ````csharp
-string sourcePath = @"...\QuickNSmart";     // Verzeichnis - Framework-QuickNSmart
-string targetPath = @"...\QnSTravelCount";  // Verzeichnis - Domain-Project
+string sourcePath = @"BasePath\QuickNSmart";     // Verzeichnis - Framework-QuickNSmart
+string targetPath = @"BasePath\QnSTravelCount";  // Verzeichnis - Domain-Project
 
 var sc = new SolutionCopier();
 
 sc.Copy(sourcePath, targetPath);
 ````
+
+**Hinweis:** Beide Projekte müssen im gleichen Verzeichnis gespeichert (*BasePath*) sein.  
 
 Nach dem Ausführen vom SolutionCopier (*sc.Copy(sourcePath, targetPath)*) befindet sich folgende Verzeichnisstruktur in **...\QnSTravelCount**:  
 

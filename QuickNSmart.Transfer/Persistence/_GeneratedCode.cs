@@ -1,6 +1,255 @@
 namespace QuickNSmart.Transfer.Persistence.Account
 {
 	using System.Text.Json.Serialization;
+	public partial class Identity : QuickNSmart.Contracts.Persistence.Account.IIdentity
+	{
+		static Identity()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public Identity()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.String Guid
+		{
+			get
+			{
+				OnGuidReading();
+				return _guid;
+			}
+			set
+			{
+				bool handled = false;
+				OnGuidChanging(ref handled, ref _guid);
+				if (handled == false)
+				{
+					this._guid = value;
+				}
+				OnGuidChanged();
+			}
+		}
+		private System.String _guid;
+		partial void OnGuidReading();
+		partial void OnGuidChanging(ref bool handled, ref System.String _guid);
+		partial void OnGuidChanged();
+		public System.String UserName
+		{
+			get
+			{
+				OnUserNameReading();
+				return _userName;
+			}
+			set
+			{
+				bool handled = false;
+				OnUserNameChanging(ref handled, ref _userName);
+				if (handled == false)
+				{
+					this._userName = value;
+				}
+				OnUserNameChanged();
+			}
+		}
+		private System.String _userName;
+		partial void OnUserNameReading();
+		partial void OnUserNameChanging(ref bool handled, ref System.String _userName);
+		partial void OnUserNameChanged();
+		public System.String Email
+		{
+			get
+			{
+				OnEmailReading();
+				return _email;
+			}
+			set
+			{
+				bool handled = false;
+				OnEmailChanging(ref handled, ref _email);
+				if (handled == false)
+				{
+					this._email = value;
+				}
+				OnEmailChanged();
+			}
+		}
+		private System.String _email;
+		partial void OnEmailReading();
+		partial void OnEmailChanging(ref bool handled, ref System.String _email);
+		partial void OnEmailChanged();
+		public System.String Password
+		{
+			get
+			{
+				OnPasswordReading();
+				return _password;
+			}
+			set
+			{
+				bool handled = false;
+				OnPasswordChanging(ref handled, ref _password);
+				if (handled == false)
+				{
+					this._password = value;
+				}
+				OnPasswordChanged();
+			}
+		}
+		private System.String _password;
+		partial void OnPasswordReading();
+		partial void OnPasswordChanging(ref bool handled, ref System.String _password);
+		partial void OnPasswordChanged();
+		public QuickNSmart.Contracts.State State
+		{
+			get
+			{
+				OnStateReading();
+				return _state;
+			}
+			set
+			{
+				bool handled = false;
+				OnStateChanging(ref handled, ref _state);
+				if (handled == false)
+				{
+					this._state = value;
+				}
+				OnStateChanged();
+			}
+		}
+		private QuickNSmart.Contracts.State _state;
+		partial void OnStateReading();
+		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
+		partial void OnStateChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentity other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Guid = other.Guid;
+				UserName = other.UserName;
+				Email = other.Email;
+				Password = other.Password;
+				State = other.State;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentity other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentity other);
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.Account
+{
+	partial class Identity : TransferObject
+	{
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.Account
+{
+	using System.Text.Json.Serialization;
+	public partial class IdentityXRole : QuickNSmart.Contracts.Persistence.Account.IIdentityXRole
+	{
+		static IdentityXRole()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityXRole()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.Int32 IdentityId
+		{
+			get
+			{
+				OnIdentityIdReading();
+				return _identityId;
+			}
+			set
+			{
+				bool handled = false;
+				OnIdentityIdChanging(ref handled, ref _identityId);
+				if (handled == false)
+				{
+					this._identityId = value;
+				}
+				OnIdentityIdChanged();
+			}
+		}
+		private System.Int32 _identityId;
+		partial void OnIdentityIdReading();
+		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
+		partial void OnIdentityIdChanged();
+		public System.Int32 RoleId
+		{
+			get
+			{
+				OnRoleIdReading();
+				return _roleId;
+			}
+			set
+			{
+				bool handled = false;
+				OnRoleIdChanging(ref handled, ref _roleId);
+				if (handled == false)
+				{
+					this._roleId = value;
+				}
+				OnRoleIdChanged();
+			}
+		}
+		private System.Int32 _roleId;
+		partial void OnRoleIdReading();
+		partial void OnRoleIdChanging(ref bool handled, ref System.Int32 _roleId);
+		partial void OnRoleIdChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				IdentityId = other.IdentityId;
+				RoleId = other.RoleId;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole other);
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.Account
+{
+	partial class IdentityXRole : TransferObject
+	{
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.Account
+{
+	using System.Text.Json.Serialization;
 	public partial class LoginSession : QuickNSmart.Contracts.Persistence.Account.ILoginSession
 	{
 		static LoginSession()

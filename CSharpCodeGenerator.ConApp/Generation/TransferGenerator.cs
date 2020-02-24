@@ -51,6 +51,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialConstrutor("public", entityName));
             foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
             {
+                if (item.PropertyType.IsInterface)
+                {
+                    result.Add("[JsonIgnore]");
+                }
+                else if (item.PropertyType.IsGenericType && item.PropertyType.GetGenericArguments()[0].IsInterface)
+                {
+                    result.Add("[JsonIgnore]");
+                }
                 CreateTransferPropertyAttributes(type, item.Name, result);
                 result.AddRange(CreatePartialProperty(item));
             }
