@@ -121,9 +121,9 @@ namespace QuickNSmart.Logic.Controllers
 
             entity.CheckArgument(nameof(entity));
 
-            await BeforeInsertingAsync(entity);
-            var result = await Context.InsertAsync<I, E>(entity);
-            await AfterInsertedAsync(result);
+            await BeforeInsertingAsync(entity).ConfigureAwait(false);
+            var result = await Context.InsertAsync<I, E>(entity).ConfigureAwait(false);
+            await AfterInsertedAsync(result).ConfigureAwait(false);
             return result;
         }
         protected virtual Task AfterInsertedAsync(E entity)
@@ -146,7 +146,7 @@ namespace QuickNSmart.Logic.Controllers
             if (entityModel != null)
             {
                 entityModel.CopyProperties(entity);
-                var result = await UpdateAsync(entityModel);
+                var result = await UpdateAsync(entityModel).ConfigureAwait(false);
                 return result;
             }
             else
@@ -160,9 +160,9 @@ namespace QuickNSmart.Logic.Controllers
 
             entity.CheckArgument(nameof(entity));
 
-            await BeforeUpdatingAsync(entity);
-            var result = await Context.UpdateAsync<I, E>(entity);
-            await AfterUpdatedAsync(entity);
+            await BeforeUpdatingAsync(entity).ConfigureAwait(false);
+            var result = await Context.UpdateAsync<I, E>(entity).ConfigureAwait(false);
+            await AfterUpdatedAsync(entity).ConfigureAwait(false);
             return result;
         }
         protected virtual Task AfterUpdatedAsync(E entity)
@@ -178,12 +178,12 @@ namespace QuickNSmart.Logic.Controllers
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
-            await BeforeDeletingAsync(id);
-            var item = await Context.DeleteAsync<I, E>(id);
+            await BeforeDeletingAsync(id).ConfigureAwait(false);
+            var item = await Context.DeleteAsync<I, E>(id).ConfigureAwait(false);
 
             if (item != null)
             {
-                await AfterDeletedAsync(item);
+                await AfterDeletedAsync(item).ConfigureAwait(false);
             }
         }
         protected virtual Task AfterDeletedAsync(E entity)

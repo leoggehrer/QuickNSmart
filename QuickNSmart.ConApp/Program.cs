@@ -11,40 +11,36 @@ namespace QuickNSmart.ConApp
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
             Adapters.Factory.Adapter = Adapters.Factory.AdapterType.Controller;
-            var loginUserCtrl = Adapters.Factory.Create<Contracts.Business.Account.ILoginUser>();
-            var loginUser = await loginUserCtrl.CreateAsync();
+            var authCtrl = Adapters.Factory.Create<Contracts.Business.Account.IAuthentication>();
+            var auth = await authCtrl.CreateAsync();
 
-            loginUser.User.UserName = "ggehrer";
-            loginUser.User.Email = "g.gehrer@htl-leonding.ac.at";
-            loginUser.User.Password = "passme";
-            loginUser.User.FirstName = "Gerhard";
-            loginUser.User.LastName = "Gehrer";
-            var role = loginUser.CreateRole();
+            auth.Identity.Name = "ggehrer";
+            auth.Identity.Email = "g.gehrer@htl-leonding.ac.at";
+            auth.Identity.Password = "passme";
+            var role = auth.CreateRole();
 
             role.Designation = "Admin";
-            loginUser.AddRole(role);
+            auth.AddRole(role);
             role.Designation = "Manager";
-            loginUser.AddRole(role);
+            auth.AddRole(role);
 
-            await loginUserCtrl.InsertAsync(loginUser);
+            await authCtrl.InsertAsync(auth);
 
-            loginUser = await loginUserCtrl.CreateAsync();
+            auth = await authCtrl.CreateAsync();
 
-            loginUser.User.UserName = "tgehrer";
-            loginUser.User.Email = "t.gehrer@htl-leonding.ac.at";
-            loginUser.User.Password = "passme";
-            loginUser.User.FirstName = "Tobias";
-            loginUser.User.LastName = "Gehrer";
-            role = loginUser.CreateRole();
+            auth.Identity.Name = "tgehrer";
+            auth.Identity.Email = "t.gehrer@htl-leonding.ac.at";
+            auth.Identity.Password = "passme";
+            role = auth.CreateRole();
 
             role.Designation = "Admin";
-            loginUser.AddRole(role);
+            auth.AddRole(role);
             role.Designation = "Manager";
-            loginUser.AddRole(role);
+            auth.AddRole(role);
             role.Designation = "controller";
-            loginUser.AddRole(role);
+            auth.AddRole(role);
 
-            await loginUserCtrl.InsertAsync(loginUser);
+            await authCtrl.InsertAsync(auth);
         }
     }
 }

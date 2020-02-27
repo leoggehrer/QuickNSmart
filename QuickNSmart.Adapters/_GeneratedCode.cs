@@ -7,9 +7,17 @@ namespace QuickNSmart.Adapters
 			Contracts.Client.IAdapterAccess<I> result = null;
 			if (Adapter == AdapterType.Controller)
 			{
-				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
+				{
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IClient>() as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 				{
 					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentity>() as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
+				{
+					result = new Controller.GenericControllerAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication>() as Contracts.Client.IAdapterAccess<I>;
 				}
 				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 				{
@@ -42,9 +50,17 @@ namespace QuickNSmart.Adapters
 			}
 			else if (Adapter == AdapterType.Service)
 			{
-				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+				if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
+				{
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IClient, Transfer.Persistence.Account.Client>(BaseUri, "Client") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 				{
 					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentity, Transfer.Persistence.Account.Identity>(BaseUri, "Identity") as Contracts.Client.IAdapterAccess<I>;
+				}
+				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
+				{
+					result = new Service.GenericServiceAdapter<QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication, Transfer.Persistence.Account.IdentityXApplication>(BaseUri, "IdentityXApplication") as Contracts.Client.IAdapterAccess<I>;
 				}
 				else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 				{

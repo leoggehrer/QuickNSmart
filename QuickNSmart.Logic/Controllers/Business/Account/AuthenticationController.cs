@@ -28,30 +28,30 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             identityXroleController = new IdentityXRoleController(this);
         }
 
-        public int MaxPageSize => identityController.MaxPageSize;
+        public override int MaxPageSize => identityController.MaxPageSize;
 
-        public Task<int> CountAsync()
+        public override Task<int> CountAsync()
         {
             return identityController.CountAsync();
         }
 
-        public Task<IAuthentication> CreateAsync()
+        public override Task<IAuthentication> CreateAsync()
         {
             return Task.Run<IAuthentication>(() => new Authentication());
         }
 
-        public async Task<IAuthentication> GetByIdAsync(int id)
+        public override async Task<IAuthentication> GetByIdAsync(int id)
         {
             var result = default(Authentication);
-            var identity = await identityController.GetByIdAsync(id);
+            var identity = await identityController.GetByIdAsync(id).ConfigureAwait(false);
 
             if (identity != null)
             {
                 result = new Authentication();
                 result.Identity.CopyProperties(identity);
-                foreach (var item in await identityXroleController.QueryAsync(p => p.IdentityId == identity.Id))
+                foreach (var item in await identityXroleController.QueryAsync(p => p.IdentityId == identity.Id).ConfigureAwait(false))
                 {
-                    var role = await roleController.GetByIdAsync(item.RoleId);
+                    var role = await roleController.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
                     if (role != null)
                     {
@@ -69,7 +69,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             return result;
         }
 
-        public Task<IEnumerable<IAuthentication>> GetAllAsync()
+        public override Task<IEnumerable<IAuthentication>> GetAllAsync()
         {
             return Task.Run<IEnumerable<IAuthentication>>(async () =>
             {
@@ -83,7 +83,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public Task<IEnumerable<IAuthentication>> GetPageListAsync(int pageIndex, int pageSize)
+        public override Task<IEnumerable<IAuthentication>> GetPageListAsync(int pageIndex, int pageSize)
         {
             return Task.Run<IEnumerable<IAuthentication>>(async () =>
             {
@@ -97,7 +97,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public Task<IEnumerable<IAuthentication>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        public override Task<IEnumerable<IAuthentication>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             return Task.Run<IEnumerable<IAuthentication>>(async () =>
             {
@@ -111,7 +111,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public async Task<IAuthentication> InsertAsync(IAuthentication entity)
+        public override async Task<IAuthentication> InsertAsync(IAuthentication entity)
         {
             entity.CheckArgument(nameof(entity));
             entity.Identity.CheckArgument(nameof(entity.Identity));
@@ -161,19 +161,9 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             return result;
         }
 
-        public Task SaveChangesAsync()
+        public override Task SaveChangesAsync()
         {
             return Context.SaveAsync();
-        }
-
-        public Task<IAuthentication> UpdateAsync(IAuthentication entity)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(int id)
-        {
-            throw new NotImplementedException();
         }
 
         protected override void Dispose(bool disposing)

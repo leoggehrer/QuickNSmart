@@ -1,5 +1,30 @@
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	sealed partial class ClientController : GenericController<QuickNSmart.Contracts.Persistence.Account.IClient, Entities.Persistence.Account.Client>
+	{
+		static ClientController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public ClientController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public ClientController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
 	sealed partial class IdentityController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentity, Entities.Persistence.Account.Identity>
 	{
 		static IdentityController()
@@ -17,6 +42,31 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 		partial void Constructing();
 		partial void Constructed();
 		public IdentityController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
+	sealed partial class IdentityXApplicationController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication, Entities.Persistence.Account.IdentityXApplication>
+	{
+		static IdentityXApplicationController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityXApplicationController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public IdentityXApplicationController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();

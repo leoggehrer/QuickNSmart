@@ -57,6 +57,29 @@ namespace QuickNSmart.Logic.DataContext.Db
         partial void DoModelCreating(ModelBuilder modelBuilder);
         partial void AfterModelCreating(ModelBuilder modelBuilder);
 
+        partial void ConfigureEntityType(EntityTypeBuilder<Client> entityTypeBuilder)
+        {
+            entityTypeBuilder
+                .HasIndex(p => p.Guid)
+                .IsUnique();
+            entityTypeBuilder
+                .Property(p => p.Guid)
+                .IsRequired()
+                .HasMaxLength(36);
+            entityTypeBuilder
+                .HasIndex(p => p.Name)
+                .IsUnique();
+            entityTypeBuilder
+                .Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(128);
+            entityTypeBuilder
+                .HasIndex(p => p.Key)
+                .IsUnique();
+            entityTypeBuilder
+                .Property(p => p.Key)
+                .HasMaxLength(256);
+        }
         partial void ConfigureEntityType(EntityTypeBuilder<User> entityTypeBuilder)
         {
             entityTypeBuilder
@@ -110,6 +133,34 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .Property(p => p.SessionToken)
                 .IsRequired()
                 .HasMaxLength(256);
+        }
+
+        partial void ConfigureEntityType(EntityTypeBuilder<Identity> entityTypeBuilder)
+        {
+            entityTypeBuilder
+                .Ignore(p => p.Password);
+
+            entityTypeBuilder
+                .HasIndex(p => p.Guid)
+                .IsUnique();
+            entityTypeBuilder
+                .Property(p => p.Guid)
+                .IsRequired()
+                .HasMaxLength(36);
+            entityTypeBuilder
+                .HasIndex(p => p.Email)
+                .IsUnique();
+            entityTypeBuilder
+                .Property(p => p.Email)
+                .IsRequired()
+                .HasMaxLength(128);
+            entityTypeBuilder
+                .Property(p => p.Name)
+                .IsRequired()
+                .HasMaxLength(128);
+            entityTypeBuilder
+                .Property(p => p.PasswordHash)
+                .IsRequired();
         }
         #endregion Configuration
     }

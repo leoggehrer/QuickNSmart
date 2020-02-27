@@ -5,9 +5,17 @@ namespace QuickNSmart.Logic
 		public static Contracts.Client.IControllerAccess<I> Create<I>() where I : Contracts.IIdentifiable
 		{
 			Contracts.Client.IControllerAccess<I> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
+			{
+				result = new Controllers.Persistence.Account.ClientController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 			{
 				result = new Controllers.Persistence.Account.IdentityController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
+			{
+				result = new Controllers.Persistence.Account.IdentityXApplicationController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{
@@ -42,9 +50,17 @@ namespace QuickNSmart.Logic
 		public static Contracts.Client.IControllerAccess<I> Create<I>(object sharedController) where I : Contracts.IIdentifiable
 		{
 			Contracts.Client.IControllerAccess<I> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
+			{
+				result = new Controllers.Persistence.Account.ClientController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 			{
 				result = new Controllers.Persistence.Account.IdentityController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
+			{
+				result = new Controllers.Persistence.Account.IdentityXApplicationController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{

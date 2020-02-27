@@ -1,6 +1,6 @@
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
-	sealed partial class AuthenticationController : ControllerObject, Contracts.Client.IControllerAccess<QuickNSmart.Contracts.Business.Account.IAuthentication>
+	sealed partial class AuthenticationController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.IAuthentication>
 	{
 		static AuthenticationController()
 		{
@@ -25,7 +25,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 }
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
-	sealed partial class LoginUserController : ControllerObject, Contracts.Client.IControllerAccess<QuickNSmart.Contracts.Business.Account.ILoginUser>
+	sealed partial class LoginUserController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.ILoginUser>
 	{
 		static LoginUserController()
 		{
