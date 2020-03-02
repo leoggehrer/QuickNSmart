@@ -5,9 +5,9 @@ using QuickNSmart.Contracts.Persistence.Account;
 
 namespace QuickNSmart.Contracts.Business.Account
 {
-    public partial interface ILoginUser : IIdentifiable, ICopyable<ILoginUser>
+    public partial interface IAppAccess : IIdentifiable, ICopyable<IAppAccess>
     {
-        IUser User { get; }
+        IIdentity Identity { get; }
         IEnumerable<IRole> Roles { get; }
 
         IRole CreateRole();

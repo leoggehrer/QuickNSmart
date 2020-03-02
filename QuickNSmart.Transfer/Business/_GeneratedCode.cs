@@ -1,16 +1,16 @@
 namespace QuickNSmart.Transfer.Business.Account
 {
 	using System.Text.Json.Serialization;
-	public partial class Authentication : QuickNSmart.Contracts.Business.Account.IAuthentication
+	public partial class AppAccess : QuickNSmart.Contracts.Business.Account.IAppAccess
 	{
-		static Authentication()
+		static AppAccess()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public Authentication()
+		public AppAccess()
 		{
 			Constructing();
 			Constructed();
@@ -63,7 +63,7 @@ namespace QuickNSmart.Transfer.Business.Account
 		partial void OnRolesReading();
 		partial void OnRolesChanging(ref bool handled, ref System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> _roles);
 		partial void OnRolesChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IAuthentication other)
+		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IAppAccess other)
 		{
 			if (other == null)
 			{
@@ -80,105 +80,13 @@ namespace QuickNSmart.Transfer.Business.Account
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.Account.IAuthentication other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.Account.IAuthentication other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.Account.IAppAccess other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.Account.IAppAccess other);
 	}
 }
 namespace QuickNSmart.Transfer.Business.Account
 {
-	partial class Authentication : TransferObject
-	{
-	}
-}
-namespace QuickNSmart.Transfer.Business.Account
-{
-	using System.Text.Json.Serialization;
-	public partial class LoginUser : QuickNSmart.Contracts.Business.Account.ILoginUser
-	{
-		static LoginUser()
-		{
-			ClassConstructing();
-			ClassConstructed();
-		}
-		static partial void ClassConstructing();
-		static partial void ClassConstructed();
-		public LoginUser()
-		{
-			Constructing();
-			Constructed();
-		}
-		partial void Constructing();
-		partial void Constructed();
-		[JsonIgnore]
-		public QuickNSmart.Contracts.Persistence.Account.IUser User
-		{
-			get
-			{
-				OnUserReading();
-				return _user;
-			}
-			set
-			{
-				bool handled = false;
-				OnUserChanging(ref handled, ref _user);
-				if (handled == false)
-				{
-					this._user = value;
-				}
-				OnUserChanged();
-			}
-		}
-		private QuickNSmart.Contracts.Persistence.Account.IUser _user;
-		partial void OnUserReading();
-		partial void OnUserChanging(ref bool handled, ref QuickNSmart.Contracts.Persistence.Account.IUser _user);
-		partial void OnUserChanged();
-		[JsonIgnore]
-		public System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> Roles
-		{
-			get
-			{
-				OnRolesReading();
-				return _roles;
-			}
-			set
-			{
-				bool handled = false;
-				OnRolesChanging(ref handled, ref _roles);
-				if (handled == false)
-				{
-					this._roles = value;
-				}
-				OnRolesChanged();
-			}
-		}
-		private System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> _roles;
-		partial void OnRolesReading();
-		partial void OnRolesChanging(ref bool handled, ref System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> _roles);
-		partial void OnRolesChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Business.Account.ILoginUser other)
-		{
-			if (other == null)
-			{
-				throw new System.ArgumentNullException(nameof(other));
-			}
-			bool handled = false;
-			BeforeCopyProperties(other, ref handled);
-			if (handled == false)
-			{
-				Id = other.Id;
-				Timestamp = other.Timestamp;
-				User = other.User;
-				Roles = other.Roles;
-			}
-			AfterCopyProperties(other);
-		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.Account.ILoginUser other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.Account.ILoginUser other);
-	}
-}
-namespace QuickNSmart.Transfer.Business.Account
-{
-	partial class LoginUser : TransferObject
+	partial class AppAccess : TransferObject
 	{
 	}
 }

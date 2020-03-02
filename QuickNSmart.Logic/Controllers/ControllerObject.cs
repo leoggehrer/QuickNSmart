@@ -5,6 +5,7 @@ using System.Reflection;
 using CommonBase.Security;
 using CommonBase.Extensions;
 using QuickNSmart.Logic.DataContext;
+using System.Threading.Tasks;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -13,21 +14,39 @@ namespace QuickNSmart.Logic.Controllers
         private bool contextDispose;
         protected IContext Context { get; private set; }
 
+        protected event EventHandler ChangedAuthenticationToken;
+
+        private string authenticationToken;
+
+        /// <summary>
+        /// Sets the authorization token.
+        /// </summary>
+        public string AuthenticationToken
+        {
+            internal get => authenticationToken;
+            set
+            {
+                authenticationToken = value;
+                ChangedAuthenticationToken?.Invoke(this, EventArgs.Empty);
+            }
+        }
+
         protected ControllerObject(IContext context)
         {
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
-            Context = context;
             contextDispose = true;
+            Context = context;
         }
         protected ControllerObject(ControllerObject controller)
         {
             if (controller == null)
                 throw new ArgumentNullException(nameof(controller));
 
-            Context = controller.Context;
             contextDispose = false;
+            Context = controller.Context;
+            AuthenticationToken = controller.AuthenticationToken;
         }
 
         protected virtual void CheckAuthorization(Type instanceType, MethodBase methodeBase)
@@ -40,14 +59,10 @@ namespace QuickNSmart.Logic.Controllers
             BeforeCheckAuthorization(instanceType, methodeBase, ref handled);
             if (handled == false)
             {
-                var authorizeAttribute = methodeBase.GetCustomAttribute<AuthorizeAttribute>();
-
-                authorizeAttribute = authorizeAttribute ?? instanceType.GetCustomAttribute<AuthorizeAttribute>();
-
-                if (authorizeAttribute != null)
+                Task.Run(async () =>
                 {
-                    CheckAuthorizeAttribute(authorizeAttribute);
-                }
+                    await Modules.Account.AccountManager.CheckAuthorizationAsync(AuthenticationToken, instanceType, methodeBase).ConfigureAwait(false);
+                });
             }
             AfterCheckAuthorization(instanceType, methodeBase);
         }

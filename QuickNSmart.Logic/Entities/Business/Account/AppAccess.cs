@@ -1,27 +1,29 @@
 ﻿//@QnSBaseCode
 //MdStart
 using System.Collections.Generic;
-using System.Text.Json.Serialization;
 using CommonBase.Extensions;
+using QuickNSmart.Contracts.Business.Account;
 using QuickNSmart.Contracts.Persistence.Account;
-using QuickNSmart.Transfer.Persistence.Account;
+using QuickNSmart.Logic.Entities.Persistence.Account;
 
-namespace QuickNSmart.Transfer.Business.Account
+namespace QuickNSmart.Logic.Entities.Business.Account
 {
-    partial class Authentication
+    partial class AppAccess
     {
-        [JsonPropertyName(nameof(Identity))]
-        public Identity IdentityEntity { get; } = new Identity();
+        internal Identity IdentityEntity { get; } = new Identity();
         partial void OnIdentityReading()
         {
             _identity = IdentityEntity;
         }
-        [JsonPropertyName(nameof(Roles))]
-        public List<Role> RoleEntities { get; } = new List<Role>();
+        internal List<Role> RoleEntities { get; } = new List<Role>();
         partial void OnRolesReading()
         {
             _roles = RoleEntities;
         }
+
+        public override int Id { get => IdentityEntity.Id; set => IdentityEntity.Id = value; }
+        public override byte[] Timestamp { get => IdentityEntity.Timestamp; set => IdentityEntity.Timestamp = value; }
+
         public IRole CreateRole()
         {
             return new Role();
@@ -48,6 +50,23 @@ namespace QuickNSmart.Transfer.Business.Account
                 {
                     RoleEntities.Remove(item);
                 }
+            }
+        }
+        partial void BeforeCopyProperties(IAppAccess other, ref bool handled)
+        {
+            other.CheckArgument(nameof(other));
+            other.Identity.CheckArgument(nameof(other.Identity));
+            other.Roles.CheckArgument(nameof(other.Roles));
+
+            handled = true;
+            IdentityEntity.CopyProperties(other.Identity);
+            RoleEntities.Clear();
+            foreach (var item in other.Roles)
+            {
+                var newItem = new Role();
+
+                newItem.CopyProperties(item);
+                RoleEntities.Add(newItem);
             }
         }
     }

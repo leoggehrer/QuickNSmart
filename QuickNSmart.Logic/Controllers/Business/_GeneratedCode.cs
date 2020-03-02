@@ -1,47 +1,22 @@
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
-	sealed partial class AuthenticationController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.IAuthentication>
+	sealed partial class AppAccessController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.IAppAccess>
 	{
-		static AuthenticationController()
+		static AppAccessController()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public AuthenticationController(DataContext.IContext context):base(context)
+		public AppAccessController(DataContext.IContext context):base(context)
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public AuthenticationController(ControllerObject controller):base(controller)
-		{
-			Constructing();
-			Constructed();
-		}
-	}
-}
-namespace QuickNSmart.Logic.Controllers.Business.Account
-{
-	sealed partial class LoginUserController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.ILoginUser>
-	{
-		static LoginUserController()
-		{
-			ClassConstructing();
-			ClassConstructed();
-		}
-		static partial void ClassConstructing();
-		static partial void ClassConstructed();
-		public LoginUserController(DataContext.IContext context):base(context)
-		{
-			Constructing();
-			Constructed();
-		}
-		partial void Constructing();
-		partial void Constructed();
-		public LoginUserController(ControllerObject controller):base(controller)
+		public AppAccessController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();

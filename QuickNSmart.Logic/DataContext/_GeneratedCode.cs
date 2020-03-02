@@ -14,11 +14,6 @@ namespace QuickNSmart.Logic.DataContext.Db
 			get;
 			set;
 		}
-		protected DbSet<Entities.Persistence.Account.IdentityXApplication> IdentityXApplicationSet
-		{
-			get;
-			set;
-		}
 		protected DbSet<Entities.Persistence.Account.IdentityXRole> IdentityXRoleSet
 		{
 			get;
@@ -34,16 +29,6 @@ namespace QuickNSmart.Logic.DataContext.Db
 			get;
 			set;
 		}
-		protected DbSet<Entities.Persistence.Account.User> UserSet
-		{
-			get;
-			set;
-		}
-		protected DbSet<Entities.Persistence.Account.UserXRole> UserXRoleSet
-		{
-			get;
-			set;
-		}
 		public override DbSet<E> Set<I, E>()
 		{
 			DbSet<E> result = null;
@@ -54,10 +39,6 @@ namespace QuickNSmart.Logic.DataContext.Db
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 			{
 				result = IdentitySet as DbSet<E>;
-			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
-			{
-				result = IdentityXApplicationSet as DbSet<E>;
 			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{
@@ -71,14 +52,6 @@ namespace QuickNSmart.Logic.DataContext.Db
 			{
 				result = RoleSet as DbSet<E>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
-			{
-				result = UserSet as DbSet<E>;
-			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUserXRole))
-			{
-				result = UserXRoleSet as DbSet<E>;
-			}
 			return result;
 		}
 		partial void DoModelCreating(ModelBuilder modelBuilder)
@@ -89,9 +62,6 @@ namespace QuickNSmart.Logic.DataContext.Db
 			modelBuilder.Entity<Entities.Persistence.Account.Identity>().ToTable(nameof(Entities.Persistence.Account.Identity), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Identity.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.Identity>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Identity>());
-			modelBuilder.Entity<Entities.Persistence.Account.IdentityXApplication>().ToTable(nameof(Entities.Persistence.Account.IdentityXApplication), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.IdentityXApplication.Id));
-			modelBuilder.Entity<Entities.Persistence.Account.IdentityXApplication>().Property(p => p.Timestamp).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.IdentityXApplication>());
 			modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>().ToTable(nameof(Entities.Persistence.Account.IdentityXRole), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.IdentityXRole.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.IdentityXRole>());
@@ -101,20 +71,11 @@ namespace QuickNSmart.Logic.DataContext.Db
 			modelBuilder.Entity<Entities.Persistence.Account.Role>().ToTable(nameof(Entities.Persistence.Account.Role), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Role.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.Role>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Role>());
-			modelBuilder.Entity<Entities.Persistence.Account.User>().ToTable(nameof(Entities.Persistence.Account.User), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.User.Id));
-			modelBuilder.Entity<Entities.Persistence.Account.User>().Property(p => p.Timestamp).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.User>());
-			modelBuilder.Entity<Entities.Persistence.Account.UserXRole>().ToTable(nameof(Entities.Persistence.Account.UserXRole), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.UserXRole.Id));
-			modelBuilder.Entity<Entities.Persistence.Account.UserXRole>().Property(p => p.Timestamp).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.UserXRole>());
 		}
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Client> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Identity> entityTypeBuilder);
-		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.IdentityXApplication> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.IdentityXRole> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.LoginSession> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Role> entityTypeBuilder);
-		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.User> entityTypeBuilder);
-		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.UserXRole> entityTypeBuilder);
 	}
 }

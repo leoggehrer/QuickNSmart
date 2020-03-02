@@ -15,7 +15,7 @@ using QuickNSmart.Logic.Modules.Account;
 
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
-    partial class AuthenticationController
+    partial class AppAccessController
     {
         private IdentityController identityController;
         private RoleController roleController;
@@ -35,21 +35,21 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             return identityController.CountAsync();
         }
 
-        public override Task<IAuthentication> CreateAsync()
+        public override Task<IAppAccess> CreateAsync()
         {
-            return Task.Run<IAuthentication>(() => new Authentication());
+            return Task.Run<IAppAccess>(() => new AppAccess());
         }
 
-        public override async Task<IAuthentication> GetByIdAsync(int id)
+        public override async Task<IAppAccess> GetByIdAsync(int id)
         {
-            var result = default(Authentication);
+            var result = default(AppAccess);
             var identity = await identityController.GetByIdAsync(id).ConfigureAwait(false);
 
             if (identity != null)
             {
-                result = new Authentication();
+                result = new AppAccess();
                 result.Identity.CopyProperties(identity);
-                foreach (var item in await identityXroleController.QueryAsync(p => p.IdentityId == identity.Id).ConfigureAwait(false))
+                foreach (var item in (await identityXroleController.QueryAsync(p => p.IdentityId == identity.Id).ConfigureAwait(false)).ToList())
                 {
                     var role = await roleController.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
@@ -69,13 +69,13 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             return result;
         }
 
-        public override Task<IEnumerable<IAuthentication>> GetAllAsync()
+        public override Task<IEnumerable<IAppAccess>> GetAllAsync()
         {
-            return Task.Run<IEnumerable<IAuthentication>>(async () =>
+            return Task.Run<IEnumerable<IAppAccess>>(async () =>
             {
-                List<IAuthentication> result = new List<IAuthentication>();
+                List<IAppAccess> result = new List<IAppAccess>();
 
-                foreach (var item in (await identityController.GetAllAsync()).ToList())
+                foreach (var item in (await identityController.GetAllAsync().ConfigureAwait(false)).ToList())
                 {
                     result.Add(await GetByIdAsync(item.Id));
                 }
@@ -83,13 +83,13 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public override Task<IEnumerable<IAuthentication>> GetPageListAsync(int pageIndex, int pageSize)
+        public override Task<IEnumerable<IAppAccess>> GetPageListAsync(int pageIndex, int pageSize)
         {
-            return Task.Run<IEnumerable<IAuthentication>>(async () =>
+            return Task.Run<IEnumerable<IAppAccess>>(async () =>
             {
-                List<IAuthentication> result = new List<IAuthentication>();
+                List<IAppAccess> result = new List<IAppAccess>();
 
-                foreach (var item in (await identityController.GetPageListAsync(pageIndex, pageSize)).ToList())
+                foreach (var item in (await identityController.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
                     result.Add(await GetByIdAsync(item.Id));
                 }
@@ -97,13 +97,13 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public override Task<IEnumerable<IAuthentication>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        public override Task<IEnumerable<IAppAccess>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
-            return Task.Run<IEnumerable<IAuthentication>>(async () =>
+            return Task.Run<IEnumerable<IAppAccess>>(async () =>
             {
-                List<IAuthentication> result = new List<IAuthentication>();
+                List<IAppAccess> result = new List<IAppAccess>();
 
-                foreach (var item in (await identityController.QueryPageListAsync(predicate, pageIndex, pageSize)).ToList())
+                foreach (var item in (await identityController.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
                     result.Add(await GetByIdAsync(item.Id));
                 }
@@ -111,13 +111,13 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             });
         }
 
-        public override async Task<IAuthentication> InsertAsync(IAuthentication entity)
+        public override async Task<IAppAccess> InsertAsync(IAppAccess entity)
         {
             entity.CheckArgument(nameof(entity));
             entity.Identity.CheckArgument(nameof(entity.Identity));
             entity.Roles.CheckArgument(nameof(entity.Roles));
 
-            var result = new Authentication();
+            var result = new AppAccess();
 
             result.IdentityEntity.CopyProperties(entity.Identity);
             result.IdentityEntity.PasswordHash = AccountManager.CalculateHash(result.IdentityEntity.Password);
@@ -132,7 +132,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 {
                     item.Designation = ClearRoleDesigantion(item.Designation);
 
-                    var qryItem = (await roleController.QueryAsync(e => e.Designation.Equals(item.Designation))).FirstOrDefault();
+                    var qryItem = (await roleController.QueryAsync(e => e.Designation.Equals(item.Designation)).ConfigureAwait(false)).FirstOrDefault();
 
                     if (qryItem != null)
                     {

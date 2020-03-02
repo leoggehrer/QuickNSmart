@@ -26,9 +26,16 @@ namespace QuickNSmart.Adapters.Controller
             controller = Logic.Factory.Create<TContract>();
             Constructed();
         }
+        public GenericControllerAdapter(string authenticationToken)
+        {
+            Constructing();
+            controller = Logic.Factory.Create<TContract>(authenticationToken);
+            Constructed();
+        }
         partial void Constructing();
         partial void Constructed();
 
+        public string AuthenticationToken { set => controller.AuthenticationToken = value; }
         public int MaxPageSize => controller.MaxPageSize;
 
         #region Async-Methods

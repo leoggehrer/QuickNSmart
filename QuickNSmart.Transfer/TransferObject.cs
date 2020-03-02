@@ -6,7 +6,7 @@ namespace QuickNSmart.Transfer
     {
         public virtual int Id { get; set; }
 
-        public byte[] Timestamp { get; set; }
+        public virtual byte[] Timestamp { get; set; }
     }
 }
 //MdEnd

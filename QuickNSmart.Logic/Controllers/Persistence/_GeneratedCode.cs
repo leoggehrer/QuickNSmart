@@ -50,31 +50,6 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
-	sealed partial class IdentityXApplicationController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication, Entities.Persistence.Account.IdentityXApplication>
-	{
-		static IdentityXApplicationController()
-		{
-			ClassConstructing();
-			ClassConstructed();
-		}
-		static partial void ClassConstructing();
-		static partial void ClassConstructed();
-		public IdentityXApplicationController(DataContext.IContext context):base(context)
-		{
-			Constructing();
-			Constructed();
-		}
-		partial void Constructing();
-		partial void Constructed();
-		public IdentityXApplicationController(ControllerObject controller):base(controller)
-		{
-			Constructing();
-			Constructed();
-		}
-	}
-}
-namespace QuickNSmart.Logic.Controllers.Persistence.Account
-{
 	sealed partial class IdentityXRoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentityXRole, Entities.Persistence.Account.IdentityXRole>
 	{
 		static IdentityXRoleController()
@@ -142,56 +117,6 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 		partial void Constructing();
 		partial void Constructed();
 		public RoleController(ControllerObject controller):base(controller)
-		{
-			Constructing();
-			Constructed();
-		}
-	}
-}
-namespace QuickNSmart.Logic.Controllers.Persistence.Account
-{
-	sealed partial class UserController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUser, Entities.Persistence.Account.User>
-	{
-		static UserController()
-		{
-			ClassConstructing();
-			ClassConstructed();
-		}
-		static partial void ClassConstructing();
-		static partial void ClassConstructed();
-		public UserController(DataContext.IContext context):base(context)
-		{
-			Constructing();
-			Constructed();
-		}
-		partial void Constructing();
-		partial void Constructed();
-		public UserController(ControllerObject controller):base(controller)
-		{
-			Constructing();
-			Constructed();
-		}
-	}
-}
-namespace QuickNSmart.Logic.Controllers.Persistence.Account
-{
-	sealed partial class UserXRoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUserXRole, Entities.Persistence.Account.UserXRole>
-	{
-		static UserXRoleController()
-		{
-			ClassConstructing();
-			ClassConstructed();
-		}
-		static partial void ClassConstructing();
-		static partial void ClassConstructed();
-		public UserXRoleController(DataContext.IContext context):base(context)
-		{
-			Constructing();
-			Constructed();
-		}
-		partial void Constructing();
-		partial void Constructed();
-		public UserXRoleController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();

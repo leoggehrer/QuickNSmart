@@ -13,10 +13,6 @@ namespace QuickNSmart.Logic
 			{
 				result = new Controllers.Persistence.Account.IdentityController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
-			{
-				result = new Controllers.Persistence.Account.IdentityXApplicationController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
-			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{
 				result = new Controllers.Persistence.Account.IdentityXRoleController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
@@ -29,21 +25,9 @@ namespace QuickNSmart.Logic
 			{
 				result = new Controllers.Persistence.Account.RoleController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAppAccess))
 			{
-				result = new Controllers.Persistence.Account.UserController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
-			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUserXRole))
-			{
-				result = new Controllers.Persistence.Account.UserXRoleController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
-			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
-			{
-				result = new Controllers.Business.Account.AuthenticationController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
-			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
-			{
-				result = new Controllers.Business.Account.LoginUserController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
+				result = new Controllers.Business.Account.AppAccessController(CreateContext()) as Contracts.Client.IControllerAccess<I>;
 			}
 			return result;
 		}
@@ -58,10 +42,6 @@ namespace QuickNSmart.Logic
 			{
 				result = new Controllers.Persistence.Account.IdentityController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXApplication))
-			{
-				result = new Controllers.Persistence.Account.IdentityXApplicationController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
-			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{
 				result = new Controllers.Persistence.Account.IdentityXRoleController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
@@ -74,21 +54,62 @@ namespace QuickNSmart.Logic
 			{
 				result = new Controllers.Persistence.Account.RoleController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUser))
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAppAccess))
 			{
-				result = new Controllers.Persistence.Account.UserController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+				result = new Controllers.Business.Account.AppAccessController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IUserXRole))
+			return result;
+		}
+		public static Contracts.Client.IControllerAccess<I> Create<I>(string authenticationToken) where I : Contracts.IIdentifiable
+		{
+			Contracts.Client.IControllerAccess<I> result = null;
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
 			{
-				result = new Controllers.Persistence.Account.UserXRoleController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+				result = new Controllers.Persistence.Account.ClientController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAuthentication))
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 			{
-				result = new Controllers.Business.Account.AuthenticationController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+				result = new Controllers.Persistence.Account.IdentityController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
 			}
-			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.ILoginUser))
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole))
 			{
-				result = new Controllers.Business.Account.LoginUserController(sharedController as Controllers.ControllerObject) as Contracts.Client.IControllerAccess<I>;
+				result = new Controllers.Persistence.Account.IdentityXRoleController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.ILoginSession))
+			{
+				result = new Controllers.Persistence.Account.LoginSessionController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IRole))
+			{
+				result = new Controllers.Persistence.Account.RoleController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Business.Account.IAppAccess))
+			{
+				result = new Controllers.Business.Account.AppAccessController(CreateContext())
+				{
+					AuthenticationToken = authenticationToken
+				}
+				as Contracts.Client.IControllerAccess<I>;
 			}
 			return result;
 		}

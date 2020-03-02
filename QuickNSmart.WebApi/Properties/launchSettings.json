@@ -27,7 +27,7 @@
     "QuickNSmart.WebApi": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "api/travel/get",
+      "launchUrl": "api/",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

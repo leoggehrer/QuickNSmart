@@ -17,6 +17,10 @@ namespace QuickNSmart.Contracts.Client
         /// Gets the max page size.
         /// </summary>
         int MaxPageSize { get; }
+        /// <summary>
+        /// Sets the authorization token.
+        /// </summary>
+        string AuthenticationToken { set; }
 
         #region Async-Methods
         /// <summary>

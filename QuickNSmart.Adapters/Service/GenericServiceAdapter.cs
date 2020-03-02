@@ -25,18 +25,17 @@ namespace QuickNSmart.Adapters.Service
         static partial void ClassConstructed();
         private static string Separator => ";";
 
-        public string BaseUri
-        {
-            get;
-        }
-        public virtual string ExtUri
-        {
-            get;
-        }
-
         public GenericServiceAdapter(string baseUri, string extUri)
         {
             Constructing();
+            BaseUri = baseUri;
+            ExtUri = extUri;
+            Constructed();
+        }
+        public GenericServiceAdapter(string authenticationToken, string baseUri, string extUri)
+        {
+            Constructing();
+            AuthenticationToken = authenticationToken;
             BaseUri = baseUri;
             ExtUri = extUri;
             Constructed();
@@ -71,6 +70,18 @@ namespace QuickNSmart.Adapters.Service
                 }).Result;
             }
         }
+        /// <summary>
+        /// The base url like https://localhost:5001/api
+        /// </summary>
+        public string BaseUri
+        {
+            get;
+        }
+        public string ExtUri
+        {
+            get;
+        }
+        public string AuthenticationToken { private get; set; }
 
         public async Task<int> CountAsync()
         {
