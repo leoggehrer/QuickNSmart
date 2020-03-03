@@ -2,15 +2,18 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.IdentityModel.Tokens;
 using CommonBase.Extensions;
 using CommonBase.Security;
 using QuickNSmart.Adapters.Exceptions;
-using QuickNSmart.Contracts.Business.Account;
 using QuickNSmart.Contracts.Persistence.Account;
 using QuickNSmart.Logic.Entities.Persistence.Account;
 
@@ -47,10 +50,12 @@ namespace QuickNSmart.Logic.Modules.Account
 
         private static List<LoginSession> LoginSessions { get; } = new List<LoginSession>();
         internal static string SystemAuthorizationToken { get; set; }
-        private static string Secret { get; set; }
-        private static string Key { get; set; }
+        internal static string Secret { get; set; }
+        internal static string Key { get; set; }
+        internal static string Issuer { get; set; } = nameof(QuickNSmart);
+        internal static string Audience { get; set; } = nameof(QuickNSmart.Logic);
 
-        public static async Task InitAppAccess(IAppAccess appAccess)
+        public static async Task InitAppAccess(string name, string email, string password)
         {
             using var appAccessCtrl = new Controllers.Business.Account.AppAccessController(Factory.CreateContext())
             {
@@ -58,6 +63,15 @@ namespace QuickNSmart.Logic.Modules.Account
             };
             if (await appAccessCtrl.CountAsync().ConfigureAwait(false) == 0)
             {
+                var appAccess = await appAccessCtrl.CreateAsync().ConfigureAwait(false);
+
+                appAccess.Identity.Name = name;
+                appAccess.Identity.Email = email;
+                appAccess.Identity.Password = password;
+                var role = appAccess.CreateRole();
+
+                role.Designation = "SysAdmin";
+                appAccess.AddRole(role);
                 await appAccessCtrl.InsertAsync(appAccess).ConfigureAwait(false);
                 await appAccessCtrl.SaveChangesAsync().ConfigureAwait(false);
             }
@@ -172,8 +186,10 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     AuthenticationToken = SystemAuthorizationToken,
                 };
-                var identity = (await identityCtrl.QueryAsync(e => e.Email.Equals(email, StringComparison.CurrentCulture)
-                                                                   && ComparePasswords(e.PasswordHash, calculatedPassword))
+                var identity = (await identityCtrl.QueryAsync(e => e.State == Contracts.State.Active
+                                                                && e.AccessFailedCount < 4
+                                                                && e.Email.Equals(email, StringComparison.CurrentCulture)
+                                                                && ComparePasswords(e.PasswordHash, calculatedPassword))
                                                   .ConfigureAwait(false)).FirstOrDefault();
 
                 if (identity != null)
@@ -182,17 +198,22 @@ namespace QuickNSmart.Logic.Modules.Account
                     var session = new LoginSession();
 
                     session.IdentityId = identity.Id;
+                    session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
                     var entity = await sessionCtrl.InsertAsync(session).ConfigureAwait(false);
 
+                    if (identity.AccessFailedCount > 0)
+                    {
+                        identity.AccessFailedCount = 0;
+                        await identityCtrl.UpdateAsync(identity).ConfigureAwait(false);
+                    }
                     await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
 
                     result = new LoginSession();
-
-                    result.IdentityId = identity.Id;
-                    result.Email = identity.Email;
-                    result.LoginTime = entity.LoginTime;
-                    result.LastAccess = entity.LastAccess;
-                    result.SessionToken = entity.SessionToken;
+                    result.CopyProperties(entity);
+                    result.Identity = new Identity();
+                    result.Identity.CopyProperties(identity);
+                    result.Roles.AddRange(session.Roles);
+                    LoginSessions.Add(result);
                 }
             }
             return result;
@@ -221,13 +242,10 @@ namespace QuickNSmart.Logic.Modules.Account
                     if (identity != null)
                     {
                         result = new LoginSession();
-
-                        result.Email = identity.Email;
-                        result.PasswordHash = identity.PasswordHash;
-                        foreach (var item in await QueryIdentityRolesAsync(identityCtrl, identity.Id).ConfigureAwait(false))
-                        {
-                            result.Roles.Add(item);
-                        }
+                        result.CopyProperties(session);
+                        result.Identity = new Identity();
+                        result.Identity.CopyProperties(identity);
+                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
                         LoginSessions.Add(result);
                     }
                 }
@@ -264,14 +282,10 @@ namespace QuickNSmart.Logic.Modules.Account
                     if (session != null)
                     {
                         result = new LoginSession();
-
-                        result.IdentityId = identity.Id;
-                        result.Email = identity.Email;
-                        result.PasswordHash = identity.PasswordHash;
-                        foreach (var item in await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false))
-                        {
-                            result.Roles.Add(item);
-                        }
+                        result.CopyProperties(session);
+                        result.Identity = new Identity();
+                        result.Identity.CopyProperties(identity);
+                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
                         LoginSessions.Add(result);
                     }
                 }
@@ -286,7 +300,7 @@ namespace QuickNSmart.Logic.Modules.Account
             using var identityXRoleCtrl = new Controllers.Persistence.Account.IdentityXRoleController(controllerObject);
             using var roleCtrl = new Controllers.Persistence.Account.RoleController(controllerObject);
 
-            foreach (var item in await identityXRoleCtrl.QueryAsync(e => e.IdentityId == identityId).ConfigureAwait(false))
+            foreach (var item in (await identityXRoleCtrl.QueryAsync(e => e.IdentityId == identityId).ConfigureAwait(false)).ToList())
             {
                 var entity = await roleCtrl.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
@@ -303,6 +317,60 @@ namespace QuickNSmart.Logic.Modules.Account
         #endregion Logon
 
         #region Helpers
+        internal static string GenerateJsonWebToken(IEnumerable<Claim> claimsParam)
+        {
+            claimsParam.CheckArgument(nameof(claimsParam));
+
+            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
+            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
+
+            var secToken = new JwtSecurityToken(
+                signingCredentials: credentials,
+                issuer: Issuer,
+                audience: Audience,
+                claims: claimsParam,
+                notBefore: DateTime.UtcNow,
+                expires: DateTime.UtcNow.AddMinutes(30));
+
+            var handler = new JwtSecurityTokenHandler();
+            return handler.WriteToken(secToken);
+        }
+        public static bool CheckJsonWebToken(string token)
+        {
+            SecurityToken validatedToken;
+
+            return CheckJsonWebToken(token, out validatedToken);
+        }
+        internal static bool CheckJsonWebToken(string token, out SecurityToken validatedToken)
+        {
+            var result = false;
+            var tokenHandler = new JwtSecurityTokenHandler();
+            var validationParameters = GetValidationParameters();
+
+            validatedToken = null;
+            try
+            {
+                tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
+                result = true;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+            }
+            return result;
+        }
+        internal static TokenValidationParameters GetValidationParameters()
+        {
+            return new TokenValidationParameters()
+            {
+                ValidateLifetime = false, // Because there is no expiration in the generated token
+                ValidateAudience = false, // Because there is no audiance in the generated token
+                ValidateIssuer = false,   // Because there is no issuer in the generated token
+                ValidIssuer = Issuer,
+                ValidAudience = Audience,
+                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key)) // The same key as the one that generate the token
+            };
+        }
         internal static async Task CheckAuthorizationAsync(string token, Type type, MethodBase methodBase)
         {
             static AuthorizeAttribute GetClassAuthorization(Type classType)
@@ -398,6 +466,73 @@ namespace QuickNSmart.Logic.Modules.Account
                 }
             }
             return true;
+        }
+        /// <summary>
+        /// Das Kennwort wenn es den Einstellungen im CommonBase/Modules/PasswordRules entspricht.
+        /// </summary>
+        /// <param name="password">Zu pruefendes Passwort</param>
+        /// <returns>true wenn das Passwort mit PasswordRules entspricht, false sonst</returns>
+        public static bool CheckPasswordSyntax(string password)
+        {
+            password.CheckArgument(nameof(password));
+
+            int digitCount = 0;
+            int letterCount = 0;
+            int lowerLetterCount = 0;
+            int upperLetterCount = 0;
+            int specialLetterCount = 0;
+
+            foreach (char ch in password)
+            {
+                if (char.IsDigit(ch))
+                {
+                    digitCount++;
+                }
+                else
+                {
+                    if (char.IsLetter(ch))
+                    {
+                        letterCount++;
+                        if (char.IsLower(ch))
+                        {
+                            lowerLetterCount++;
+                        }
+                        else
+                        {
+                            upperLetterCount++;
+                        }
+                    }
+                    else
+                    {
+                        specialLetterCount++;
+                    }
+                }
+            }
+            return password.Length >= PasswordRules.MinimumLength
+                   && password.Length <= PasswordRules.MaximumLength
+                   && letterCount >= PasswordRules.MinLetterCount
+                   && upperLetterCount >= PasswordRules.MinUpperLetterCount
+                   && lowerLetterCount >= PasswordRules.MinLowerLetterCount
+                   && specialLetterCount >= PasswordRules.MinSpecialLetterCount
+                   && digitCount >= PasswordRules.MinDigitCount;
+        }
+
+        /// <summary>
+        /// Eine gueltige Mailadresse besteht aus einem mindestens zwei Zeichen vor dem @, 
+        /// einem Hostname, der genau einen oder mehrere Punkte enthaelt (Domainname mindestens dreistellig)
+        /// und als Topleveldomaene (letzter Teil) mindestens zweistellig ist
+        /// </summary>
+        /// <param name="mailAddress"></param>
+        /// <returns>Mailadresse ist gültig</returns>
+        public static bool CheckMailAddressSyntax(string mailAddress)
+        {
+            mailAddress.CheckArgument(nameof(mailAddress));
+
+            //return Regex.IsMatch(mailAddress, @"^([\w-\.]+){2,}@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.)|(([\w-]+\.)+))([a-zA-Z]{2,4}|[0-9]{1,3})(\]?)$");
+            ////@"^(?("")("".+?""@)|(([0-9a-zA-Z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-zA-Z])@))" +
+            ////@"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-zA-Z][-\w]*[0-9a-zA-Z]\.)+[a-zA-Z]{2,6}))$"); 
+            return Regex.IsMatch(mailAddress, @"\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*");
+            //return Regex.IsMatch(mailAddress, @"^\w{2,}@[a-zA-Z]{3,}\.[a-zA-Z]{2,}$");
         }
         #endregion Helpers
     }

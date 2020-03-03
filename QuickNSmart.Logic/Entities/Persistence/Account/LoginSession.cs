@@ -6,6 +6,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
     partial class LoginSession
     {
+        partial void OnLastAccessChanged()
+        {
+            HasChanged = true;
+        }
+
         #region Ignore properties
         internal bool IsActive => IsTimeout == false;
         internal bool IsTimeout
@@ -19,13 +24,8 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
         }
         internal bool HasChanged { get; private set; }
 
-        partial void OnLastAccessChanged()
-        {
-            HasChanged = true;
-        }
-
-        internal string Email { get; set; }
-        internal byte[] PasswordHash { get; set; }
+        internal string Email => Identity?.Email;
+        internal byte[] PasswordHash => Identity?.PasswordHash;
 
         internal List<Role> Roles { get; } = new List<Role>();
         #endregion Ignore properties

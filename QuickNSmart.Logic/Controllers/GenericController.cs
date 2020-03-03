@@ -1,15 +1,15 @@
 //@QnSBaseCode
 //MdStart
-using CommonBase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
+using System.Reflection;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
 using QuickNSmart.Adapters.Exceptions;
-using System.Reflection;
+using CommonBase.Extensions;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -19,6 +19,7 @@ namespace QuickNSmart.Logic.Controllers
     /// </summary>
     /// <typeparam name="E">The entity type of element in the controller.</typeparam>
     /// <typeparam name="I">The interface type which implements the entity.</typeparam>
+    [CommonBase.Security.Authorize]
     internal abstract partial class GenericController<I, E> : ControllerObject, IControllerAccess<I>
         where I : Contracts.IIdentifiable
         where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()

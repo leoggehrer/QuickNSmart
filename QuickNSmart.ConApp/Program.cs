@@ -1,7 +1,6 @@
 using CommonBase.Extensions;
 using QuickNSmart.Contracts.Persistence.Account;
 using System;
-using System.Linq;
 using System.Threading.Tasks;
 
 namespace QuickNSmart.ConApp
@@ -12,12 +11,17 @@ namespace QuickNSmart.ConApp
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
-            //await InitAppAccess();
-            var login = await LogonAsync("g.gehrer@htl-leonding.ac.at", "passme");
+        //    await InitAppAccessAsync();
+            var login = await LogonAsync("g.gehrer@htl-leonding.ac.at", "Passme123!");
 
+            var x = Logic.Modules.Account.AccountManager.CheckJsonWebToken(login.JsonWebToken);
             await Task.Delay(10000);
             await LogoutAsync(login);
             Console.ReadLine();
+        }
+        private static async Task InitAppAccessAsync()
+        {
+            await Logic.Modules.Account.AccountManager.InitAppAccess("ggehrer", "g.gehrer@htl-leonding.ac.at", "Passme123!");
         }
         private static async Task<ILoginSession> LogonAsync(string email, string password)
         {
@@ -26,24 +30,6 @@ namespace QuickNSmart.ConApp
         private static async Task LogoutAsync(ILoginSession login)
         {
             await Logic.Modules.Account.AccountManager.LogoutAsync(login);
-        }
-        private static async Task InitAppAccessAsync()
-        {
-            Adapters.Factory.Adapter = Adapters.Factory.AdapterType.Controller;
-            var appAccCtrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>();
-            var appAcc = await appAccCtrl.CreateAsync();
-
-            appAcc.Identity.Name = "ggehrer";
-            appAcc.Identity.Email = "g.gehrer@htl-leonding.ac.at";
-            appAcc.Identity.Password = "passme";
-            var role = appAcc.CreateRole();
-
-            role.Designation = "Admin";
-            appAcc.AddRole(role);
-            role.Designation = "Manager";
-            appAcc.AddRole(role);
-
-            await Logic.Modules.Account.AccountManager.InitAppAccess(appAcc);
         }
 
         static async void CreateAccounts(ILoginSession login)
