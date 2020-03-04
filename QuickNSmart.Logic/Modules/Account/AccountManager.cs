@@ -2,20 +2,17 @@
 //MdStart
 using System;
 using System.Collections.Generic;
-using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Reflection;
-using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.IdentityModel.Tokens;
 using CommonBase.Extensions;
-using CommonBase.Security;
 using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Contracts.Persistence.Account;
 using QuickNSmart.Logic.Entities.Persistence.Account;
+using QuickNSmart.Logic.Modules.Security;
 
 namespace QuickNSmart.Logic.Modules.Account
 {
@@ -24,18 +21,6 @@ namespace QuickNSmart.Logic.Modules.Account
         static AccountManager()
         {
             ClassConstructing();
-            if (SystemAuthorizationToken.IsNullOrEmpty())
-            {
-                SystemAuthorizationToken = Guid.NewGuid().ToString();
-            }
-            if (Secret.IsNullOrEmpty())
-            {
-                Secret = "XCAP05H6LoKvbRRa/QkqLNMI7cOHguaRyHzyg7n5qEkGjQmtBhz4SzYh4Fqwjyi3KJHlSXKPwVu2+bXr6CtpgQ==";
-            }
-            if (Key.IsNullOrEmpty())
-            {
-                Key = "401b09eab3c013d4ca54922bb802bec8fd5318192b0a75f201d8b3727429090fb337591abd3e44453b954555b7a0812e1081c39b740293f765eae731f5a65ed1";
-            }
             Thread updateThread = new Thread(UpdateSession)
             {
                 IsBackground = true
@@ -49,17 +34,13 @@ namespace QuickNSmart.Logic.Modules.Account
         private const int UpdateDelay = 60000;
 
         private static List<LoginSession> LoginSessions { get; } = new List<LoginSession>();
-        internal static string SystemAuthorizationToken { get; set; }
-        internal static string Secret { get; set; }
-        internal static string Key { get; set; }
-        internal static string Issuer { get; set; } = nameof(QuickNSmart);
-        internal static string Audience { get; set; } = nameof(QuickNSmart.Logic);
 
+        #region Public logon
         public static async Task InitAppAccess(string name, string email, string password)
         {
             using var appAccessCtrl = new Controllers.Business.Account.AppAccessController(Factory.CreateContext())
             {
-                AuthenticationToken = SystemAuthorizationToken,
+                AuthenticationToken = Authorization.SystemAuthorizationToken,
             };
             if (await appAccessCtrl.CountAsync().ConfigureAwait(false) == 0)
             {
@@ -77,7 +58,7 @@ namespace QuickNSmart.Logic.Modules.Account
             }
             else
             {
-                throw new LogicException(ErrorType.InitAppAccess, "The initialization of the app access is not permitted because an app access has already been initialized.");
+                throw new LogicException(ErrorType.InitAppAccess);
             }
         }
         public static async Task<ILoginSession> LogonAsync(string email, string password)
@@ -86,7 +67,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
             if (result == null)
             {
-                throw new LogicException(ErrorType.InvalidAccount, "Invalid identity or password.");
+                throw new LogicException(ErrorType.InvalidAccount);
             }
             return result;
         }
@@ -97,7 +78,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
             using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
             {
-                AuthenticationToken = SystemAuthorizationToken
+                AuthenticationToken = Authorization.SystemAuthorizationToken
             };
             var session = (await sessionCtrl.QueryAsync(e => e.IsActive
                                                           && e.SessionToken.Equals(login.SessionToken))
@@ -111,68 +92,30 @@ namespace QuickNSmart.Logic.Modules.Account
                 await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
             }
         }
-
-        #region update thread
-        private static void UpdateSession()
+        [Authorize]
+        public static async Task ChangePassword(string token, string oldPassword, string newPassword)
         {
-            while (true)
+            var login = await QueryAliveSessionAsync(token).ConfigureAwait(false)
+                        ?? throw new LogicException(ErrorType.InvalidToken);
+
+            using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
             {
-                _ = Task.Run(async () =>
-                {
-                    try
-                    {
-                        using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
-                        {
-                            AuthenticationToken = SystemAuthorizationToken,
-                        };
-                        bool saveChanges = false;
-                        var qry = await sessionCtrl.QueryAsync(e => e.LogoutTime.HasValue == false)
-                                                   .ConfigureAwait(false);
+                AuthenticationToken = token
+            };
+            var identity = await identityCtrl.QueryByIdAsync(login.IdentityId).ConfigureAwait(false);
 
-                        foreach (var item in qry.ToList())
-                        {
-                            bool itemUpdate = false;
-                            bool curItemRemove = false;
-                            var curItem = LoginSessions.SingleOrDefault(e => e.Id == item.Id);
+            if (identity != null)
+            {
+                if (ComparePasswords(identity.PasswordHash, CalculateHash(oldPassword)) == false)
+                    throw new LogicException(ErrorType.InvalidPassword);
 
-                            if (curItem != null)
-                            {
-                                itemUpdate = true;
-                                item.LastAccess = curItem.LastAccess;
-                            }
-                            if (item.IsTimeout)
-                            {
-                                item.LogoutTime = DateTime.Now;
-                                itemUpdate = true;
-                                curItemRemove = true;
-                            }
-                            if (itemUpdate)
-                            {
-                                saveChanges = true;
-                                await sessionCtrl.UpdateAsync(item).ConfigureAwait(false);
-                            }
-                            if (curItem != null && curItemRemove)
-                            {
-                                LoginSessions.Remove(curItem);
-                            }
-                        }
-                        if (saveChanges)
-                        {
-                            await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
-                        }
-                    }
-                    catch (Exception e)
-                    {
-                        System.Diagnostics.Debug.WriteLine($"Error: {e.Message}");
-                    }
-                });
-                Thread.Sleep(UpdateDelay);
+//                identity.Password = 
             }
         }
-        #endregion update thread
+        #endregion Public logon
 
-        #region Logon
-        private static async Task<LoginSession> QueryLoginAsync(string email, string password)
+        #region Internal logon
+        internal static async Task<LoginSession> QueryLoginAsync(string email, string password)
         {
             email.CheckArgument(nameof(email));
             password.CheckArgument(nameof(password));
@@ -184,7 +127,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 Byte[] calculatedPassword = CalculateHash(password);
                 using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
                 {
-                    AuthenticationToken = SystemAuthorizationToken,
+                    AuthenticationToken = Authorization.SystemAuthorizationToken,
                 };
                 var identity = (await identityCtrl.QueryAsync(e => e.State == Contracts.State.Active
                                                                 && e.AccessFailedCount < 4
@@ -226,7 +169,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
                 {
-                    AuthenticationToken = SystemAuthorizationToken
+                    AuthenticationToken = Authorization.SystemAuthorizationToken
                 };
                 var session = (await sessionCtrl.QueryAsync(e => e.IsActive
                                                               && e.SessionToken.Equals(token))
@@ -266,7 +209,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
                 {
-                    AuthenticationToken = SystemAuthorizationToken,
+                    AuthenticationToken = Authorization.SystemAuthorizationToken,
                 };
                 var identity = (await identityCtrl.QueryAsync(e => e.Email.Equals(email, StringComparison.CurrentCulture)
                                                                    && ComparePasswords(e.PasswordHash, calculatedPassword))
@@ -314,121 +257,68 @@ namespace QuickNSmart.Logic.Modules.Account
             }
             return result;
         }
-        #endregion Logon
+        #endregion Internal logon
+
+        #region update thread
+        private static void UpdateSession()
+        {
+            while (true)
+            {
+                _ = Task.Run(async () =>
+                {
+                    try
+                    {
+                        using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
+                        {
+                            AuthenticationToken = Authorization.SystemAuthorizationToken,
+                        };
+                        bool saveChanges = false;
+                        var qry = await sessionCtrl.QueryAsync(e => e.LogoutTime.HasValue == false)
+                                                   .ConfigureAwait(false);
+
+                        foreach (var item in qry.ToList())
+                        {
+                            bool itemUpdate = false;
+                            bool curItemRemove = false;
+                            var curItem = LoginSessions.SingleOrDefault(e => e.Id == item.Id);
+
+                            if (curItem != null)
+                            {
+                                itemUpdate = true;
+                                item.LastAccess = curItem.LastAccess;
+                            }
+                            if (item.IsTimeout)
+                            {
+                                item.LogoutTime = DateTime.Now;
+                                itemUpdate = true;
+                                curItemRemove = true;
+                            }
+                            if (itemUpdate)
+                            {
+                                saveChanges = true;
+                                await sessionCtrl.UpdateAsync(item).ConfigureAwait(false);
+                            }
+                            if (curItem != null && curItemRemove)
+                            {
+                                LoginSessions.Remove(curItem);
+                            }
+                        }
+                        if (saveChanges)
+                        {
+                            await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        System.Diagnostics.Debug.WriteLine($"Error: {e.Message}");
+                    }
+                });
+                Thread.Sleep(UpdateDelay);
+            }
+        }
+        #endregion update thread
 
         #region Helpers
-        internal static string GenerateJsonWebToken(IEnumerable<Claim> claimsParam)
-        {
-            claimsParam.CheckArgument(nameof(claimsParam));
-
-            var securityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key));
-            var credentials = new SigningCredentials(securityKey, SecurityAlgorithms.HmacSha256);
-
-            var secToken = new JwtSecurityToken(
-                signingCredentials: credentials,
-                issuer: Issuer,
-                audience: Audience,
-                claims: claimsParam,
-                notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(30));
-
-            var handler = new JwtSecurityTokenHandler();
-            return handler.WriteToken(secToken);
-        }
-        public static bool CheckJsonWebToken(string token)
-        {
-            SecurityToken validatedToken;
-
-            return CheckJsonWebToken(token, out validatedToken);
-        }
-        internal static bool CheckJsonWebToken(string token, out SecurityToken validatedToken)
-        {
-            var result = false;
-            var tokenHandler = new JwtSecurityTokenHandler();
-            var validationParameters = GetValidationParameters();
-
-            validatedToken = null;
-            try
-            {
-                tokenHandler.ValidateToken(token, validationParameters, out validatedToken);
-                result = true;
-            }
-            catch (Exception ex)
-            {
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
-            }
-            return result;
-        }
-        internal static TokenValidationParameters GetValidationParameters()
-        {
-            return new TokenValidationParameters()
-            {
-                ValidateLifetime = false, // Because there is no expiration in the generated token
-                ValidateAudience = false, // Because there is no audiance in the generated token
-                ValidateIssuer = false,   // Because there is no issuer in the generated token
-                ValidIssuer = Issuer,
-                ValidAudience = Audience,
-                IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Key)) // The same key as the one that generate the token
-            };
-        }
-        internal static async Task CheckAuthorizationAsync(string token, Type type, MethodBase methodBase)
-        {
-            static AuthorizeAttribute GetClassAuthorization(Type classType)
-            {
-                var runType = classType;
-                var result = default(AuthorizeAttribute);
-
-                do
-                {
-                    result = runType.GetCustomAttribute<AuthorizeAttribute>();
-                    runType = runType.BaseType;
-                } while (result == null && runType != null);
-                return result;
-            }
-
-            type.CheckArgument(nameof(type));
-            methodBase.CheckArgument(nameof(methodBase));
-
-            if (token == null)
-            {
-                var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
-                                    ?? GetClassAuthorization(type);
-                bool isRequired = authorization?.IsRequired ?? false;
-
-                if (isRequired)
-                {
-                    throw new LogicException(ErrorType.NotLogedIn, "You are not logged in.");
-                }
-            }
-            else if (token.Equals(SystemAuthorizationToken) == false)
-            {
-                var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
-                                    ?? GetClassAuthorization(type);
-                bool isRequired = authorization?.IsRequired ?? false;
-
-                if (isRequired)
-                {
-                    var curSession = await QueryAliveSessionAsync(token).ConfigureAwait(false);
-
-                    if (curSession == null)
-                        throw new LogicException(ErrorType.InvalidAuthorizationToken, "Invalid authorization token!");
-
-                    if (curSession.IsTimeout)
-                    {
-                        throw new LogicException(ErrorType.AuthorizationTimeOut, "Time out.");
-                    }
-
-                    bool isAuthorized = authorization.Roles.Any() == false
-                                        || curSession.Roles.Any(lr => authorization.Roles.Contains(lr.Designation));
-
-                    if (isAuthorized == false)
-                    {
-                        throw new LogicException(ErrorType.NotAuthorized, "You are not authorized.");
-                    }
-                    curSession.LastAccess = DateTime.Now;
-                }
-            }
-        }
         internal static byte[] CalculateHash(string plainText)
         {
             if (String.IsNullOrEmpty(plainText))

@@ -2,15 +2,23 @@
 //MdStart
 using System;
 using System.Reflection;
-using CommonBase.Security;
 using CommonBase.Extensions;
-using QuickNSmart.Logic.DataContext;
 using System.Threading.Tasks;
+using QuickNSmart.Logic.DataContext;
+using QuickNSmart.Logic.Modules.Security;
 
 namespace QuickNSmart.Logic.Controllers
 {
     internal abstract partial class ControllerObject : IDisposable
     {
+        static ControllerObject()
+        {
+            ClassConstructing();
+            ClassConstructed();
+        }
+        static partial void ClassConstructing();
+        static partial void ClassConstructed();
+
         private bool contextDispose;
         protected IContext Context { get; private set; }
 
@@ -36,18 +44,40 @@ namespace QuickNSmart.Logic.Controllers
             if (context == null)
                 throw new ArgumentNullException(nameof(context));
 
+            Constructing();
             contextDispose = true;
             Context = context;
+            Constructed();
         }
         protected ControllerObject(ControllerObject controller)
         {
             if (controller == null)
                 throw new ArgumentNullException(nameof(controller));
 
+            Constructing();
             contextDispose = false;
             Context = controller.Context;
             AuthenticationToken = controller.AuthenticationToken;
+            Constructed();
         }
+        partial void Constructing();
+        partial void Constructed();
+
+        protected virtual void CheckAuthorization(MethodBase methodeBase)
+        {
+            methodeBase.CheckArgument(nameof(methodeBase));
+
+            bool handled = false;
+
+            BeforeCheckAuthorization(methodeBase, ref handled);
+            if (handled == false)
+            {
+                Authorization.CheckAuthorization(AuthenticationToken, methodeBase);
+            }
+            AfterCheckAuthorization(methodeBase);
+        }
+        partial void BeforeCheckAuthorization(MethodBase methodeBase, ref bool handled);
+        partial void AfterCheckAuthorization(MethodBase methodeBase);
 
         protected virtual void CheckAuthorization(Type instanceType, MethodBase methodeBase)
         {
@@ -59,32 +89,12 @@ namespace QuickNSmart.Logic.Controllers
             BeforeCheckAuthorization(instanceType, methodeBase, ref handled);
             if (handled == false)
             {
-                Task.Run(async () =>
-                {
-                    await Modules.Account.AccountManager.CheckAuthorizationAsync(AuthenticationToken, instanceType, methodeBase).ConfigureAwait(false);
-                });
+                Authorization.CheckAuthorization(AuthenticationToken, instanceType, methodeBase);
             }
             AfterCheckAuthorization(instanceType, methodeBase);
         }
-
         partial void BeforeCheckAuthorization(Type instanceType, MethodBase methodeBase, ref bool handled);
         partial void AfterCheckAuthorization(Type instanceType, MethodBase methodeBase);
-
-        public virtual void CheckAuthorizeAttribute(AuthorizeAttribute authorizeAttribute)
-        {
-            authorizeAttribute.CheckArgument(nameof(authorizeAttribute));
-
-            bool handled = false;
-
-            BeforeAuthorizeAttribute(authorizeAttribute, ref handled);
-            if (handled == false)
-            {
-
-            }
-            AfterAuthorizeAttribute(authorizeAttribute);
-        }
-        partial void BeforeAuthorizeAttribute(AuthorizeAttribute authorizeAttribute, ref bool handled);
-        partial void AfterAuthorizeAttribute(AuthorizeAttribute authorizeAttribute);
 
         #region IDisposable Support
         private bool disposedValue = false; // To detect redundant calls

@@ -8,6 +8,7 @@ namespace QuickNSmart.Logic
         InvalidAccount = InitAppAccess * 2,
         NotLogedIn = InvalidAccount * 2,
         NotAuthorized = NotLogedIn * 2,
+        InvalidToken = NotAuthorized * 2,
         InvalidId = NotLogedIn * 2,
         InvalidPageSize = InvalidId * 2,
         InvalidAuthorizationToken = InvalidPageSize * 2, 

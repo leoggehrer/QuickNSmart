@@ -14,7 +14,6 @@ namespace QuickNSmart.ConApp
         //    await InitAppAccessAsync();
             var login = await LogonAsync("g.gehrer@htl-leonding.ac.at", "Passme123!");
 
-            var x = Logic.Modules.Account.AccountManager.CheckJsonWebToken(login.JsonWebToken);
             await Task.Delay(10000);
             await LogoutAsync(login);
             Console.ReadLine();

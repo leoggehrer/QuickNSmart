@@ -11,6 +11,21 @@ namespace QuickNSmart.Logic.DataContext.Db
 {
     abstract partial class GenericDbContext : DbContext, IContext
     {
+        static GenericDbContext()
+        {
+            ClassConstructing();
+            ClassConstructed();
+        }
+        static partial void ClassConstructing();
+        static partial void ClassConstructed();
+        public GenericDbContext()
+        {
+            Constructing();
+            Constructed();
+        }
+        partial void Constructing();
+        partial void Constructed();
+
         IEnumerable<E> IContext.Set<I, E>()
         {
             return Set<I, E>();

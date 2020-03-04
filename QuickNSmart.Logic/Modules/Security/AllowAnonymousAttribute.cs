@@ -2,10 +2,10 @@
 //MdStart
 using System;
 
-namespace CommonBase.Security
+namespace QuickNSmart.Logic.Modules.Security
 {
     [AttributeUsage(AttributeTargets.Method)]
-    public class AllowAnonymousAttribute : AuthorizeAttribute
+    internal partial class AllowAnonymousAttribute : AuthorizeAttribute
     {
         public AllowAnonymousAttribute()
             : base(false)

@@ -18,6 +18,17 @@ namespace QuickNSmart.Adapters.Exceptions
         /// mit einer angegebenen Fehlermeldung.
         /// </summary>
         /// <param name="errorType">Identification der Fehlermeldung.</param>
+        public LogicException(ErrorType errorType)
+            : base(ErrorMessage.GetAt(errorType))
+        {
+            ErrorId = (int)errorType;
+        }
+
+        /// <summary>
+        /// Initialisiert eine neue Instanz der LogicException-Klasse 
+        /// mit einer angegebenen Fehlermeldung.
+        /// </summary>
+        /// <param name="errorType">Identification der Fehlermeldung.</param>
         /// <param name="message">Die Meldung, in der der Fehler beschrieben wird.</param>
         public LogicException(ErrorType errorType, string message)
             : base(message)

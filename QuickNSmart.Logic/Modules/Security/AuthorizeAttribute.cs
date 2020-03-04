@@ -3,10 +3,10 @@
 using System;
 using System.Collections.Generic;
 
-namespace CommonBase.Security
+namespace QuickNSmart.Logic.Modules.Security
 {
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Method)]
-    public class AuthorizeAttribute : Attribute
+    internal partial class AuthorizeAttribute : Attribute
     {
         public bool IsRequired { get; }
         public IEnumerable<string> Roles { get; }

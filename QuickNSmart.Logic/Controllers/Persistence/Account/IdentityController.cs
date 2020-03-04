@@ -3,35 +3,56 @@
 using System.Threading.Tasks;
 using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Logic.Entities.Persistence.Account;
+using QuickNSmart.Logic.Modules.Account;
+using CommonBase.Extensions;
 
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
     partial class IdentityController
     {
-        private void CheckEntity(Identity entity)
+        private void CheckInsertEntity(Identity entity)
         {
-            if (Modules.Account.AccountManager.CheckMailAddressSyntax(entity.Email) == false)
+            if (AccountManager.CheckMailAddressSyntax(entity.Email) == false)
             {
-                throw new LogicException(ErrorType.InvalidEmail, "Invalid email syntax.");
+                throw new LogicException(ErrorType.InvalidEmail);
             }
-            if (Modules.Account.AccountManager.CheckPasswordSyntax(entity.Password) == false)
+            if (AccountManager.CheckPasswordSyntax(entity.Password) == false)
             {
-                throw new LogicException(ErrorType.InvalidPassword, "Invalid password syntax.");
+                throw new LogicException(ErrorType.InvalidPassword);
+            }
+        }
+        private void CheckUpdateEntity(Identity entity)
+        {
+            if (AccountManager.CheckMailAddressSyntax(entity.Email) == false)
+            {
+                throw new LogicException(ErrorType.InvalidEmail);
+            }
+            if (entity.Password.HasContent())
+            {
+                if (AccountManager.CheckPasswordSyntax(entity.Password) == false)
+                {
+                    throw new LogicException(ErrorType.InvalidPassword);
+                }
             }
         }
 
         protected override Task BeforeInsertingAsync(Identity entity)
         {
-            CheckEntity(entity);
+            CheckInsertEntity(entity);
             entity.Guid = System.Guid.NewGuid().ToString();
             entity.State = Contracts.State.Active;
+            entity.PasswordHash = AccountManager.CalculateHash(entity.Password);
 
             return base.BeforeInsertingAsync(entity);
         }
+
         protected override Task BeforeUpdatingAsync(Identity entity)
         {
-            CheckEntity(entity);
-
+            CheckUpdateEntity(entity);
+            if (entity.Password.HasContent())
+            {
+                entity.PasswordHash = AccountManager.CalculateHash(entity.Password);
+            }
             return base.BeforeUpdatingAsync(entity);
         }
     }

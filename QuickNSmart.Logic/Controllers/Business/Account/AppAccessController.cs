@@ -64,7 +64,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             }
             else
             {
-                throw new LogicException(ErrorType.InvalidId, "Entity can't find!");
+                throw new LogicException(ErrorType.InvalidId);
             }
             return result;
         }

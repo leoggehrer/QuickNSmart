@@ -6,10 +6,11 @@ using System.Linq;
 using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using System.Reflection;
+using CommonBase.Extensions;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
 using QuickNSmart.Adapters.Exceptions;
-using CommonBase.Extensions;
+using QuickNSmart.Logic.Modules.Security;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -19,11 +20,19 @@ namespace QuickNSmart.Logic.Controllers
     /// </summary>
     /// <typeparam name="E">The entity type of element in the controller.</typeparam>
     /// <typeparam name="I">The interface type which implements the entity.</typeparam>
-    [CommonBase.Security.Authorize]
+    [Authorize]
     internal abstract partial class GenericController<I, E> : ControllerObject, IControllerAccess<I>
         where I : Contracts.IIdentifiable
         where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
     {
+        static GenericController()
+        {
+            ClassConstructing();
+            ClassConstructed();
+        }
+        static partial void ClassConstructing();
+        static partial void ClassConstructed();
+
         public int MaxPageSize => 500;
 
         internal IEnumerable<E> Set() => Context.Set<I, E>();
@@ -31,12 +40,17 @@ namespace QuickNSmart.Logic.Controllers
         protected GenericController(IContext context)
             : base(context)
         {
-
+            Constructing();
+            Constructed();
         }
         protected GenericController(ControllerObject controllerObject)
             : base(controllerObject)
         {
+            Constructing();
+            Constructed();
         }
+        partial void Constructing();
+        partial void Constructed();
 
         #region Async-Methods
         public Task<int> CountAsync()
@@ -73,7 +87,7 @@ namespace QuickNSmart.Logic.Controllers
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize);
 
             return Task.Run<IEnumerable<I>>(() =>
                 Set().Skip(pageIndex * pageSize)
@@ -84,7 +98,7 @@ namespace QuickNSmart.Logic.Controllers
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize);
 
             return Task.Run<IEnumerable<I>>(() =>
                 Set().AsQueryable()
@@ -201,6 +215,10 @@ namespace QuickNSmart.Logic.Controllers
         #endregion Async-Methods
 
         #region Internal-Methods
+        internal virtual Task<E> QueryByIdAsync(int id)
+        {
+            return Task.Run<E>(() => Set().SingleOrDefault(i => i.Id == id));
+        }
         internal virtual Task<IEnumerable<E>> QueryAsync(Func<E, bool> predicate)
         {
             return Task.Run(() => Set().Where(predicate));
@@ -208,7 +226,7 @@ namespace QuickNSmart.Logic.Controllers
         internal virtual Task<IEnumerable<E>> QueryAsync(string predicate, int pageIndex, int pageSize)
         {
             if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(ErrorType.InvalidPageSize, "Invalid PageSize");
+                throw new LogicException(ErrorType.InvalidPageSize);
 
             return Task.Run<IEnumerable<E>>(() =>
                 Set().AsQueryable()

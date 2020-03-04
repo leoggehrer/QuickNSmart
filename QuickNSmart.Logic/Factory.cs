@@ -12,6 +12,7 @@ namespace QuickNSmart.Logic
         }
         static partial void ClassConstructing();
         static partial void ClassConstructed();
+
         public enum PersistenceType
         {
             Db,

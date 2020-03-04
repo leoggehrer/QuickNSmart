@@ -7,15 +7,19 @@ using QuickNSmart.Logic.Entities.Persistence.Account;
 
 namespace QuickNSmart.Logic.DataContext.Db
 {
-    partial class QuickNSmartDbContext
+    internal partial class QuickNSmartDbContext
     {
         static QuickNSmartDbContext()
         {
+            ClassConstructing();
             if (Configuration.Configurator.Contains(CommonBase.StaticLiterals.ConnectionStringKey))
             {
                 ConnectionString = Configuration.Configurator.Get(CommonBase.StaticLiterals.ConnectionStringKey);
             }
+            ClassConstructed();
         }
+        static partial void ClassConstructing();
+        static partial void ClassConstructed();
 
 #if DEBUG
         //static LoggerFactory object
@@ -29,6 +33,14 @@ namespace QuickNSmart.Logic.DataContext.Db
         });
 #endif
         private static string ConnectionString { get; set; } = "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;";
+
+        public QuickNSmartDbContext()
+        {
+            Constructing();
+            Constructed();
+        }
+        partial void Constructing();
+        partial void Constructed();
 
         #region Configuration
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

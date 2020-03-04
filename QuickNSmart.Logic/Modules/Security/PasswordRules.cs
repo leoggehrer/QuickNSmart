@@ -2,7 +2,7 @@
 //MdStart
 using System;
 
-namespace CommonBase.Security
+namespace QuickNSmart.Logic.Modules.Security
 {
     public static class PasswordRules
     {

@@ -15,7 +15,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
             entity.LoginTime = DateTime.Now;
             entity.LastAccess = entity.LoginTime;
             entity.SessionToken = Guid.NewGuid().ToString();
-            entity.JsonWebToken = Modules.Account.AccountManager.GenerateJsonWebToken(entity.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation)));
+            entity.JsonWebToken = Modules.Security.JsonWebToken.GenerateToken(entity.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation)));
             return base.BeforeInsertingAsync(entity);
         }
     }
