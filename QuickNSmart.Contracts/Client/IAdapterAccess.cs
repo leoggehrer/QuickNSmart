@@ -13,7 +13,7 @@ namespace QuickNSmart.Contracts.Client
         /// <summary>
         /// Sets the authorization token.
         /// </summary>
-        string AuthenticationToken { set; }
+        string SessionToken { set; }
 
         #region Async-Methods
         /// <summary>

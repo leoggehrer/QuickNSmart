@@ -1,22 +1,22 @@
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
-	sealed partial class ClientController : GenericController<QuickNSmart.Contracts.Persistence.Account.IClient, Entities.Persistence.Account.Client>
+	sealed partial class ActionLogController : GenericController<QuickNSmart.Contracts.Persistence.Account.IActionLog, Entities.Persistence.Account.ActionLog>
 	{
-		static ClientController()
+		static ActionLogController()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public ClientController(DataContext.IContext context):base(context)
+		public ActionLogController(DataContext.IContext context):base(context)
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public ClientController(ControllerObject controller):base(controller)
+		public ActionLogController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();
@@ -25,6 +25,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	[Logic.Modules.Security.Authorize("SysAdmin")]
 	sealed partial class IdentityController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentity, Entities.Persistence.Account.Identity>
 	{
 		static IdentityController()
@@ -50,6 +51,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	[Logic.Modules.Security.Authorize("SysAdmin")]
 	sealed partial class IdentityXRoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentityXRole, Entities.Persistence.Account.IdentityXRole>
 	{
 		static IdentityXRoleController()
@@ -75,6 +77,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	[Logic.Modules.Security.Authorize("SysAdmin")]
 	sealed partial class LoginSessionController : GenericController<QuickNSmart.Contracts.Persistence.Account.ILoginSession, Entities.Persistence.Account.LoginSession>
 	{
 		static LoginSessionController()
@@ -100,6 +103,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 }
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
+	[Logic.Modules.Security.Authorize("SysAdmin")]
 	sealed partial class RoleController : GenericController<QuickNSmart.Contracts.Persistence.Account.IRole, Entities.Persistence.Account.Role>
 	{
 		static RoleController()

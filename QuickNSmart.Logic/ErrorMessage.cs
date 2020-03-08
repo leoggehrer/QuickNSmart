@@ -40,6 +40,8 @@ namespace QuickNSmart.Logic
                             }
                             sb.Append(chr);
                         }
+                        else
+                            sb.Append(chr);
                     }
                     Messages.Add((ErrorType)item, sb.ToString());
                 }

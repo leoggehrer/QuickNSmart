@@ -2,6 +2,7 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -37,17 +38,17 @@ namespace QuickNSmart.Logic.Controllers.Business
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 		}
 
-		public virtual Task<IEnumerable<I>> GetAllAsync()
+		public virtual Task<IQueryable<I>> GetAllAsync()
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 		}
 
-		public virtual Task<IEnumerable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+		public virtual Task<IQueryable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 		}
 
-		public virtual Task<IEnumerable<I>> GetPageListAsync(int pageIndex, int pageSize)
+		public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 		}

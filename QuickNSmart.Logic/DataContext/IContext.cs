@@ -1,7 +1,7 @@
 //@QnSBaseCode
 //MdStart
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using QuickNSmart.Contracts;
 using QuickNSmart.Logic.Entities;
@@ -10,7 +10,7 @@ namespace QuickNSmart.Logic.DataContext
 {
     internal interface IContext : IDisposable
     {
-        IEnumerable<E> Set<I, E>()
+        IQueryable<E> Set<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, I;
 

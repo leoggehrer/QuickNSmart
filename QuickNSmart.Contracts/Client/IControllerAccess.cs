@@ -1,7 +1,7 @@
 //@QnSBaseCode
 //MdStart
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 
 namespace QuickNSmart.Contracts.Client
@@ -20,7 +20,7 @@ namespace QuickNSmart.Contracts.Client
         /// <summary>
         /// Sets the authorization token.
         /// </summary>
-        string AuthenticationToken { set; }
+        string SessionToken { set; }
 
         #region Async-Methods
         /// <summary>
@@ -32,7 +32,7 @@ namespace QuickNSmart.Contracts.Client
         /// Returns all interfaces of the entities in the collection.
         /// </summary>
         /// <returns>All interfaces of the entity collection.</returns>
-        Task<IEnumerable<T>> GetAllAsync();
+        Task<IQueryable<T>> GetAllAsync();
         /// <summary>
         /// Filters a sequence of values based on a predicate.
         /// </summary>
@@ -40,14 +40,14 @@ namespace QuickNSmart.Contracts.Client
         /// <param name="pageIndex">0 based page index.</param>
         /// <param name="pageSize">The pagesize.</param>
         /// <returns>The filter result.</returns>
-        Task<IEnumerable<T>> QueryPageListAsync(string predicate, int pageIndex, int pageSize);
+        Task<IQueryable<T>> QueryPageListAsync(string predicate, int pageIndex, int pageSize);
         /// <summary>
         /// Gets a subset of items from the repository.
         /// </summary>
         /// <param name="pageIndex">0 based page index.</param>
         /// <param name="pageSize">The pagesize.</param>
         /// <returns>Subset in accordance with the parameters.</returns>
-        Task<IEnumerable<T>> GetPageListAsync(int pageIndex, int pageSize);
+        Task<IQueryable<T>> GetPageListAsync(int pageIndex, int pageSize);
         /// <summary>
         /// Returns the element of type T with the identification of id.
         /// </summary>

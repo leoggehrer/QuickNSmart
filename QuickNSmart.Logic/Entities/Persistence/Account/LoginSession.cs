@@ -1,6 +1,7 @@
-﻿using System;
+﻿//@QnSBaseCode
+//MdStart
+using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
@@ -19,7 +20,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
             {
                 TimeSpan ts = DateTime.Now - LastAccess;
 
-                return ts.TotalSeconds > 1800 || LogoutTime.HasValue;
+                return ts.TotalSeconds > Logic.Modules.Security.Authorization.TimeOutInSec || LogoutTime.HasValue;
             }
         }
         internal bool HasChanged { get; private set; }
@@ -31,3 +32,4 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
         #endregion Ignore properties
     }
 }
+//MdEnd

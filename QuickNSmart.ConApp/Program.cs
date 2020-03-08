@@ -11,31 +11,51 @@ namespace QuickNSmart.ConApp
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
-        //    await InitAppAccessAsync();
-            var login = await LogonAsync("g.gehrer@htl-leonding.ac.at", "Passme123!");
+            string user = "ggehrer";
+            string email = "g.gehrer@htl-leonding.ac.at";
+            string pwd = "Passme123!";
 
-            await Task.Delay(10000);
-            await LogoutAsync(login);
+            //await InitAppAccessAsync(user, email, pwd);
+            try
+            {
+                var login = await LogonAsync(email, pwd);
+
+                await ChangePassword(login, pwd, "Passme123!");
+
+                var login2 = await Logic.Modules.Account.AccountManager.QueryLoginAsync(login.SessionToken);
+                var login3 = await Logic.Modules.Account.AccountManager.LogonAsync(login.JsonWebToken);
+
+                await Task.Delay(5000);
+                await LogoutAsync(login.SessionToken);
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+            }
+
             Console.ReadLine();
         }
-        private static async Task InitAppAccessAsync()
+        private static async Task InitAppAccessAsync(string user, string email, string pwd)
         {
-            await Logic.Modules.Account.AccountManager.InitAppAccess("ggehrer", "g.gehrer@htl-leonding.ac.at", "Passme123!");
+            await Logic.Modules.Account.AccountManager.InitAppAccess(user, email, pwd);
         }
         private static async Task<ILoginSession> LogonAsync(string email, string password)
         {
             return await Logic.Modules.Account.AccountManager.LogonAsync(email, password);
         }
-        private static async Task LogoutAsync(ILoginSession login)
+        private static async Task LogoutAsync(string sessionToken)
         {
-            await Logic.Modules.Account.AccountManager.LogoutAsync(login);
+            await Logic.Modules.Account.AccountManager.LogoutAsync(sessionToken);
         }
-
+        private static async Task ChangePassword(ILoginSession login, string oldPwd, string newPwd)
+        {
+            await Logic.Modules.Account.AccountManager.ChangePassword(login.SessionToken, oldPwd, newPwd);
+        }
         static async void CreateAccounts(ILoginSession login)
         {
             login.CheckArgument(nameof(login));
 
-            Adapters.Factory.Adapter = Adapters.Factory.AdapterType.Controller;
+            Adapters.Factory.Adapter = Adapters.AdapterType.Controller;
             var appAccCtrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
             var appAcc = await appAccCtrl.CreateAsync();
 

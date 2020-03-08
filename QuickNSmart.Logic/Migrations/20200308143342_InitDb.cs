@@ -11,24 +11,6 @@ namespace QuickNSmart.Logic.Migrations
                 name: "Account");
 
             migrationBuilder.CreateTable(
-                name: "Client",
-                schema: "Account",
-                columns: table => new
-                {
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:Identity", "1, 1"),
-                    Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Guid = table.Column<string>(maxLength: 36, nullable: false),
-                    Name = table.Column<string>(maxLength: 128, nullable: false),
-                    Key = table.Column<string>(maxLength: 256, nullable: true),
-                    State = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Client", x => x.Id);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Identity",
                 schema: "Account",
                 columns: table => new
@@ -62,6 +44,32 @@ namespace QuickNSmart.Logic.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Role", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ActionLog",
+                schema: "Account",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    IdentityId = table.Column<int>(nullable: false),
+                    Time = table.Column<DateTime>(nullable: false),
+                    Subject = table.Column<string>(nullable: true),
+                    Action = table.Column<string>(nullable: true),
+                    Info = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ActionLog", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_ActionLog_Identity_IdentityId",
+                        column: x => x.IdentityId,
+                        principalSchema: "Account",
+                        principalTable: "Identity",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -122,26 +130,10 @@ namespace QuickNSmart.Logic.Migrations
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Client_Guid",
+                name: "IX_ActionLog_IdentityId",
                 schema: "Account",
-                table: "Client",
-                column: "Guid",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Client_Key",
-                schema: "Account",
-                table: "Client",
-                column: "Key",
-                unique: true,
-                filter: "[Key] IS NOT NULL");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Client_Name",
-                schema: "Account",
-                table: "Client",
-                column: "Name",
-                unique: true);
+                table: "ActionLog",
+                column: "IdentityId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Identity_Email",
@@ -186,7 +178,7 @@ namespace QuickNSmart.Logic.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Client",
+                name: "ActionLog",
                 schema: "Account");
 
             migrationBuilder.DropTable(

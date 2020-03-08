@@ -3,11 +3,11 @@ namespace QuickNSmart.WebApi.Controllers
 	using Microsoft.AspNetCore.Mvc;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Contract = QuickNSmart.Contracts.Persistence.Account.IClient;
-	using Model = Transfer.Persistence.Account.Client;
+	using Contract = QuickNSmart.Contracts.Persistence.Account.IActionLog;
+	using Model = Transfer.Persistence.Account.ActionLog;
 	[ApiController]
 	[Route("Controller")]
-	public partial class ClientController : GenericController<Contract, Model>
+	public partial class ActionLogController : GenericController<Contract, Model>
 	{
 		[HttpGet("/api/[controller]/MaxPage")]
 		public Task<int> GetMaxPageAsync()

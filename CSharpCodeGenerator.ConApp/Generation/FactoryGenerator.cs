@@ -19,14 +19,30 @@ namespace CSharpCodeGenerator.ConApp.Generation
         }
 
         #region General
-        private bool CanCreate(string generationName, Type type)
+        //private bool CanCreate(string generationName, Type type)
+        //{
+        //    bool create = true;
+
+        //    CanCreateController(generationName, type, ref create);
+        //    return create;
+        //}
+        //partial void CanCreateController(string generationName, Type type, ref bool create);
+        private bool CanCreateLogicAccess(Type type)
         {
             bool create = true;
 
-            CanCreateController(generationName, type, ref create);
+            CanCreateLogicAccess(type, ref create);
             return create;
         }
-        partial void CanCreateController(string generationName, Type type, ref bool create);
+        partial void CanCreateLogicAccess(Type type, ref bool create);
+        private bool CanCreateAdapterAccess(Type type)
+        {
+            bool create = true;
+
+            CanCreateAdapterAccess(type, ref create);
+            return create;
+        }
+        partial void CanCreateAdapterAccess(Type type, ref bool create);
         #endregion General
 
         #region Logic
@@ -49,7 +65,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("public static Contracts.Client.IControllerAccess<I> Create<I>() where I : Contracts.IIdentifiable");
             result.Add("{");
             result.Add("Contracts.Client.IControllerAccess<I> result = null;");
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateLogicFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = $"Controllers.{GetSubNamespaceFromInterface(type)}";
@@ -69,12 +85,12 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             result.Add("return result;");
             result.Add("}");
-            
+
             result.Add("public static Contracts.Client.IControllerAccess<I> Create<I>(object sharedController) where I : Contracts.IIdentifiable");
             result.Add("{");
             result.Add("Contracts.Client.IControllerAccess<I> result = null;");
             first = true;
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateLogicFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = $"Controllers.{GetSubNamespaceFromInterface(type)}";
@@ -95,11 +111,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return result;");
             result.Add("}");
 
-            result.Add("public static Contracts.Client.IControllerAccess<I> Create<I>(string authenticationToken) where I : Contracts.IIdentifiable");
+            result.Add("public static Contracts.Client.IControllerAccess<I> Create<I>(string sessionToken) where I : Contracts.IIdentifiable");
             result.Add("{");
             result.Add("Contracts.Client.IControllerAccess<I> result = null;");
             first = true;
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateLogicFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = $"Controllers.{GetSubNamespaceFromInterface(type)}";
@@ -113,7 +129,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"else if (typeof(I) == typeof({type.FullName}))");
                 }
                 result.Add("{");
-                result.Add($"result = new {controllerNameSpace}.{entityName}Controller(CreateContext()) " + "{ AuthenticationToken = authenticationToken } as Contracts.Client.IControllerAccess<I>;");
+                result.Add($"result = new {controllerNameSpace}.{entityName}Controller(CreateContext()) " + "{ SessionToken = sessionToken } as Contracts.Client.IControllerAccess<I>;");
                 result.Add("}");
                 first = false;
             }
@@ -153,7 +169,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("Contracts.Client.IAdapterAccess<I> result = null;");
             result.Add("if (Adapter == AdapterType.Controller)");
             result.Add("{");
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateAdapterFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t) && CanCreateAdapterAccess(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = CreateControllerNameSpace(type);
@@ -174,8 +190,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("}");
             result.Add("else if (Adapter == AdapterType.Service)");
             result.Add("{");
+
             first = true;
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateAdapterFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t) && CanCreateAdapterAccess(t)))
             {
                 string modelName = CreateEntityNameFromInterface(type);
                 string modelNameSpace = CreateTransferNameSpace(type);
@@ -189,7 +206,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"else if (typeof(I) == typeof({type.FullName}))");
                 }
                 result.Add("{");
-                result.Add($"result = new Service.GenericServiceAdapter<{type.FullName}, {modelNameSpace}.{modelName}>(BaseUri, \"{modelName}\") as Contracts.Client.IAdapterAccess<I>;");
+                result.Add($"result = new Service.GenericServiceAdapter<{type.FullName}, {modelNameSpace}.{modelName}>(BaseUri, \"{modelName}\")");
+                result.Add(" as Contracts.Client.IAdapterAccess<I>;");
                 result.Add("}");
                 first = false;
             }
@@ -197,13 +215,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return result;");
             result.Add("}");
 
-            first = true;
-            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>(string authenticationToken) where I : Contracts.IIdentifiable");
+            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>(string sessionToken) where I : Contracts.IIdentifiable");
             result.Add("{");
             result.Add("Contracts.Client.IAdapterAccess<I> result = null;");
             result.Add("if (Adapter == AdapterType.Controller)");
             result.Add("{");
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateAdapterFactory), t)))
+
+            first = true;
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t) && CanCreateAdapterAccess(t)))
             {
                 string entityName = CreateEntityNameFromInterface(type);
                 string controllerNameSpace = CreateControllerNameSpace(type);
@@ -217,7 +236,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"else if (typeof(I) == typeof({type.FullName}))");
                 }
                 result.Add("{");
-                result.Add($"result = new Controller.GenericControllerAdapter<{type.FullName}>(authenticationToken) as Contracts.Client.IAdapterAccess<I>;");
+                result.Add($"result = new Controller.GenericControllerAdapter<{type.FullName}>(sessionToken) as Contracts.Client.IAdapterAccess<I>;");
                 result.Add("}");
                 first = false;
             }
@@ -225,7 +244,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("else if (Adapter == AdapterType.Service)");
             result.Add("{");
             first = true;
-            foreach (var type in types.Where(t => CanCreate(nameof(CreateAdapterFactory), t)))
+            foreach (var type in types.Where(t => CanCreateLogicAccess(t) && CanCreateAdapterAccess(t)))
             {
                 string modelName = CreateEntityNameFromInterface(type);
                 string modelNameSpace = CreateTransferNameSpace(type);
@@ -239,7 +258,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"else if (typeof(I) == typeof({type.FullName}))");
                 }
                 result.Add("{");
-                result.Add($"result = new Service.GenericServiceAdapter<{type.FullName}, {modelNameSpace}.{modelName}>(authenticationToken, BaseUri, \"{modelName}\") as Contracts.Client.IAdapterAccess<I>;");
+                result.Add($"result = new Service.GenericServiceAdapter<{type.FullName}, {modelNameSpace}.{modelName}>(sessionToken, BaseUri, \"{modelName}\") as Contracts.Client.IAdapterAccess<I>;");
                 result.Add("}");
                 first = false;
             }

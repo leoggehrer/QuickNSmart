@@ -26,7 +26,7 @@ namespace QuickNSmart.Logic.DataContext.Db
         partial void Constructing();
         partial void Constructed();
 
-        IEnumerable<E> IContext.Set<I, E>()
+        IQueryable<E> IContext.Set<I, E>()
         {
             return Set<I, E>();
         }

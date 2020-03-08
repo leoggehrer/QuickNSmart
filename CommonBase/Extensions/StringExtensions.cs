@@ -463,6 +463,27 @@ namespace CommonBase.Extensions
         /// Extracts a substring from a string.
         /// </summary>
         /// <param name="text">The text.</param>
+        /// <param name="from">Starttext</param>
+        /// <param name="to">Endtext</param>
+        /// <returns>The substring.</returns>
+        public static string Partialstring(this string text, string from, string to)
+        {
+            var result = default(string);
+
+            if (text.HasContent())
+            {
+                int f = text.IndexOf(from);
+                int t = text.IndexOf(to, f + 1);
+
+                result = text.Partialstring(f, t);
+            }
+            return result;
+        }
+
+        /// <summary>
+        /// Extracts a substring from a string.
+        /// </summary>
+        /// <param name="text">The text.</param>
         /// <param name="from">Startposition</param>
         /// <param name="to">Endposition</param>
         /// <returns>The substring.</returns>

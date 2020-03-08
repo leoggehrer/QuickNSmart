@@ -1,12 +1,11 @@
 ﻿//@QnSBaseCode
 //MdStart
-
-using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using Microsoft.IdentityModel.Tokens;
 using CommonBase.Extensions;
 
 namespace QuickNSmart.Logic.Modules.Security
@@ -47,12 +46,12 @@ namespace QuickNSmart.Logic.Modules.Security
                 audience: Audience,
                 claims: claimsParam,
                 notBefore: DateTime.UtcNow,
-                expires: DateTime.UtcNow.AddMinutes(30));
+                expires: DateTime.UtcNow.AddSeconds(Authorization.TimeOutInSec));
 
             var handler = new JwtSecurityTokenHandler();
             return handler.WriteToken(secToken);
         }
-        public static bool CheckJsonWebToken(string token)
+        public static bool CheckToken(string token)
         {
             SecurityToken validatedToken;
 

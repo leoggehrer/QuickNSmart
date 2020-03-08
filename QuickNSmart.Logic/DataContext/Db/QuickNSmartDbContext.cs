@@ -96,29 +96,6 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .Property(p => p.PasswordHash)
                 .IsRequired();
         }
-        partial void ConfigureEntityType(EntityTypeBuilder<Client> entityTypeBuilder)
-        {
-            entityTypeBuilder
-                .HasIndex(p => p.Guid)
-                .IsUnique();
-            entityTypeBuilder
-                .Property(p => p.Guid)
-                .IsRequired()
-                .HasMaxLength(36);
-            entityTypeBuilder
-                .HasIndex(p => p.Name)
-                .IsUnique();
-            entityTypeBuilder
-                .Property(p => p.Name)
-                .IsRequired()
-                .HasMaxLength(128);
-            entityTypeBuilder
-                .HasIndex(p => p.Key)
-                .IsUnique();
-            entityTypeBuilder
-                .Property(p => p.Key)
-                .HasMaxLength(256);
-        }
         partial void ConfigureEntityType(EntityTypeBuilder<Role> entityTypeBuilder)
         {
             entityTypeBuilder

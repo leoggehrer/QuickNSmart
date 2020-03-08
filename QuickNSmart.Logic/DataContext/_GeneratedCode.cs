@@ -4,7 +4,7 @@ namespace QuickNSmart.Logic.DataContext.Db
 	using Microsoft.EntityFrameworkCore.Metadata.Builders;
 	partial class QuickNSmartDbContext : GenericDbContext
 	{
-		protected DbSet<Entities.Persistence.Account.Client> ClientSet
+		protected DbSet<Entities.Persistence.Account.ActionLog> ActionLogSet
 		{
 			get;
 			set;
@@ -32,9 +32,9 @@ namespace QuickNSmart.Logic.DataContext.Db
 		public override DbSet<E> Set<I, E>()
 		{
 			DbSet<E> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IClient))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IActionLog))
 			{
-				result = ClientSet as DbSet<E>;
+				result = ActionLogSet as DbSet<E>;
 			}
 			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IIdentity))
 			{
@@ -56,9 +56,9 @@ namespace QuickNSmart.Logic.DataContext.Db
 		}
 		partial void DoModelCreating(ModelBuilder modelBuilder)
 		{
-			modelBuilder.Entity<Entities.Persistence.Account.Client>().ToTable(nameof(Entities.Persistence.Account.Client), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Client.Id));
-			modelBuilder.Entity<Entities.Persistence.Account.Client>().Property(p => p.Timestamp).IsRowVersion();
-			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Client>());
+			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().ToTable(nameof(Entities.Persistence.Account.ActionLog), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.ActionLog.Id));
+			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().Property(p => p.Timestamp).IsRowVersion();
+			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.ActionLog>());
 			modelBuilder.Entity<Entities.Persistence.Account.Identity>().ToTable(nameof(Entities.Persistence.Account.Identity), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.Identity.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.Identity>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Identity>());
@@ -72,7 +72,7 @@ namespace QuickNSmart.Logic.DataContext.Db
 			modelBuilder.Entity<Entities.Persistence.Account.Role>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Role>());
 		}
-		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Client> entityTypeBuilder);
+		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.ActionLog> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Identity> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.IdentityXRole> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.LoginSession> entityTypeBuilder);

@@ -1,22 +1,20 @@
 ﻿//@QnSBaseCode
 //MdStart
 using System;
-using System.Collections.Generic;
 
 namespace CSharpCodeGenerator.ConApp.Generation
 {
-    partial class ControllerGenerator
+    partial class FactoryGenerator
     {
-        partial void CreateLogicControllerAttributes(Type type, List<string> codeLines)
+        partial void CanCreateLogicAccess(Type type, ref bool create)
         {
-            if (type.FullName.EndsWith(".Business.Account.IAppAccess")
-                || type.FullName.EndsWith(".Persistence.Account.IIdentity")
+            if (type.FullName.EndsWith(".Persistence.Account.IIdentity")
                 || type.FullName.EndsWith(".Persistence.Account.IRole")
                 || type.FullName.EndsWith(".Persistence.Account.IIdentityXRole")
                 || type.FullName.EndsWith(".Persistence.Account.ILoginSession")
                 )
             {
-                codeLines.Add("[Logic.Modules.Security.Authorize(\"SysAdmin\")]");
+                create = false;
             }
         }
     }

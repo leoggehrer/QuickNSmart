@@ -1,111 +1,133 @@
 namespace QuickNSmart.Transfer.Persistence.Account
 {
 	using System.Text.Json.Serialization;
-	public partial class Client : QuickNSmart.Contracts.Persistence.Account.IClient
+	public partial class ActionLog : QuickNSmart.Contracts.Persistence.Account.IActionLog
 	{
-		static Client()
+		static ActionLog()
 		{
 			ClassConstructing();
 			ClassConstructed();
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
-		public Client()
+		public ActionLog()
 		{
 			Constructing();
 			Constructed();
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public System.String Guid
+		public System.Int32 IdentityId
 		{
 			get
 			{
-				OnGuidReading();
-				return _guid;
+				OnIdentityIdReading();
+				return _identityId;
 			}
 			set
 			{
 				bool handled = false;
-				OnGuidChanging(ref handled, ref _guid);
+				OnIdentityIdChanging(ref handled, ref _identityId);
 				if (handled == false)
 				{
-					this._guid = value;
+					this._identityId = value;
 				}
-				OnGuidChanged();
+				OnIdentityIdChanged();
 			}
 		}
-		private System.String _guid;
-		partial void OnGuidReading();
-		partial void OnGuidChanging(ref bool handled, ref System.String _guid);
-		partial void OnGuidChanged();
-		public System.String Name
+		private System.Int32 _identityId;
+		partial void OnIdentityIdReading();
+		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
+		partial void OnIdentityIdChanged();
+		public System.DateTime Time
 		{
 			get
 			{
-				OnNameReading();
-				return _name;
+				OnTimeReading();
+				return _time;
 			}
 			set
 			{
 				bool handled = false;
-				OnNameChanging(ref handled, ref _name);
+				OnTimeChanging(ref handled, ref _time);
 				if (handled == false)
 				{
-					this._name = value;
+					this._time = value;
 				}
-				OnNameChanged();
+				OnTimeChanged();
 			}
 		}
-		private System.String _name;
-		partial void OnNameReading();
-		partial void OnNameChanging(ref bool handled, ref System.String _name);
-		partial void OnNameChanged();
-		public System.String Key
+		private System.DateTime _time;
+		partial void OnTimeReading();
+		partial void OnTimeChanging(ref bool handled, ref System.DateTime _time);
+		partial void OnTimeChanged();
+		public System.String Subject
 		{
 			get
 			{
-				OnKeyReading();
-				return _key;
+				OnSubjectReading();
+				return _subject;
 			}
 			set
 			{
 				bool handled = false;
-				OnKeyChanging(ref handled, ref _key);
+				OnSubjectChanging(ref handled, ref _subject);
 				if (handled == false)
 				{
-					this._key = value;
+					this._subject = value;
 				}
-				OnKeyChanged();
+				OnSubjectChanged();
 			}
 		}
-		private System.String _key;
-		partial void OnKeyReading();
-		partial void OnKeyChanging(ref bool handled, ref System.String _key);
-		partial void OnKeyChanged();
-		public QuickNSmart.Contracts.State State
+		private System.String _subject;
+		partial void OnSubjectReading();
+		partial void OnSubjectChanging(ref bool handled, ref System.String _subject);
+		partial void OnSubjectChanged();
+		public System.String Action
 		{
 			get
 			{
-				OnStateReading();
-				return _state;
+				OnActionReading();
+				return _action;
 			}
 			set
 			{
 				bool handled = false;
-				OnStateChanging(ref handled, ref _state);
+				OnActionChanging(ref handled, ref _action);
 				if (handled == false)
 				{
-					this._state = value;
+					this._action = value;
 				}
-				OnStateChanged();
+				OnActionChanged();
 			}
 		}
-		private QuickNSmart.Contracts.State _state;
-		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
-		partial void OnStateChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IClient other)
+		private System.String _action;
+		partial void OnActionReading();
+		partial void OnActionChanging(ref bool handled, ref System.String _action);
+		partial void OnActionChanged();
+		public System.String Info
+		{
+			get
+			{
+				OnInfoReading();
+				return _info;
+			}
+			set
+			{
+				bool handled = false;
+				OnInfoChanging(ref handled, ref _info);
+				if (handled == false)
+				{
+					this._info = value;
+				}
+				OnInfoChanged();
+			}
+		}
+		private System.String _info;
+		partial void OnInfoReading();
+		partial void OnInfoChanging(ref bool handled, ref System.String _info);
+		partial void OnInfoChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IActionLog other)
 		{
 			if (other == null)
 			{
@@ -117,20 +139,21 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
-				Guid = other.Guid;
-				Name = other.Name;
-				Key = other.Key;
-				State = other.State;
+				IdentityId = other.IdentityId;
+				Time = other.Time;
+				Subject = other.Subject;
+				Action = other.Action;
+				Info = other.Info;
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IClient other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IClient other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IActionLog other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IActionLog other);
 	}
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class Client : TransferObject
+	partial class ActionLog : TransferObject
 	{
 	}
 }

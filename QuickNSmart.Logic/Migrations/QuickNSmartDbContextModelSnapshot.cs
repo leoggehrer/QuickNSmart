@@ -19,29 +19,27 @@ namespace QuickNSmart.Logic.Migrations
                 .HasAnnotation("Relational:MaxIdentifierLength", 128)
                 .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-            modelBuilder.Entity("QuickNSmart.Logic.Entities.Persistence.Account.Client", b =>
+            modelBuilder.Entity("QuickNSmart.Logic.Entities.Persistence.Account.ActionLog", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.Property<string>("Guid")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(36)")
-                        .HasMaxLength(36);
+                    b.Property<string>("Action")
+                        .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Key")
-                        .HasColumnType("nvarchar(256)")
-                        .HasMaxLength(256);
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(128)")
-                        .HasMaxLength(128);
-
-                    b.Property<int>("State")
+                    b.Property<int>("IdentityId")
                         .HasColumnType("int");
+
+                    b.Property<string>("Info")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Subject")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("Time")
+                        .HasColumnType("datetime2");
 
                     b.Property<byte[]>("Timestamp")
                         .IsConcurrencyToken()
@@ -50,17 +48,9 @@ namespace QuickNSmart.Logic.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Guid")
-                        .IsUnique();
+                    b.HasIndex("IdentityId");
 
-                    b.HasIndex("Key")
-                        .IsUnique()
-                        .HasFilter("[Key] IS NOT NULL");
-
-                    b.HasIndex("Name")
-                        .IsUnique();
-
-                    b.ToTable("Client","Account");
+                    b.ToTable("ActionLog","Account");
                 });
 
             modelBuilder.Entity("QuickNSmart.Logic.Entities.Persistence.Account.Identity", b =>
@@ -204,6 +194,15 @@ namespace QuickNSmart.Logic.Migrations
                         .IsUnique();
 
                     b.ToTable("Role","Account");
+                });
+
+            modelBuilder.Entity("QuickNSmart.Logic.Entities.Persistence.Account.ActionLog", b =>
+                {
+                    b.HasOne("QuickNSmart.Logic.Entities.Persistence.Account.Identity", "Identity")
+                        .WithMany("ActionLogs")
+                        .HasForeignKey("IdentityId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("QuickNSmart.Logic.Entities.Persistence.Account.IdentityXRole", b =>

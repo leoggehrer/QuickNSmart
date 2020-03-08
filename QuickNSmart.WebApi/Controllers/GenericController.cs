@@ -1,19 +1,27 @@
 //@QnSBaseCode
 //MdStart
-using Microsoft.AspNetCore.Mvc;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Linq;
+using CommonBase.Extensions;
 
 namespace QuickNSmart.WebApi.Controllers
 {
-    public abstract class GenericController<I, M> : ControllerBase
+    public abstract class GenericController<I, M> : ApiControllerBase
         where I : Contracts.IIdentifiable
         where M : Transfer.TransferObject, I, Contracts.ICopyable<I>, new()
     {
         protected Contracts.Client.IControllerAccess<I> CreateController()
         {
-            return Logic.Factory.Create<I>();
+            var result = Logic.Factory.Create<I>();
+            string authHeader = HttpContext.Request.Headers["Authorization"];
+            string sessionToken = GetSessionToken(authHeader);
+
+            if (sessionToken.HasContent())
+            {
+                result.SessionToken = sessionToken;
+            }
+            return result;
         }
         protected M ToModel(I entity)
         {

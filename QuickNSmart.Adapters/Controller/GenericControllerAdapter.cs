@@ -2,6 +2,7 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -35,7 +36,7 @@ namespace QuickNSmart.Adapters.Controller
         partial void Constructing();
         partial void Constructed();
 
-        public string AuthenticationToken { set => controller.AuthenticationToken = value; }
+        public string SessionToken { set => controller.SessionToken = value; }
         public int MaxPageSize => controller.MaxPageSize;
 
         #region Async-Methods
@@ -44,19 +45,19 @@ namespace QuickNSmart.Adapters.Controller
             return controller.CountAsync();
         }
 
-        public Task<IEnumerable<TContract>> GetAllAsync()
+        public async Task<IEnumerable<TContract>> GetAllAsync()
         {
-            return controller.GetAllAsync();
+            return (await controller.GetAllAsync().ConfigureAwait(false)).ToArray();
         }
 
-        public Task<IEnumerable<TContract>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        public async Task<IEnumerable<TContract>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
-            return controller.QueryPageListAsync(predicate, pageIndex, pageSize);
+            return (await controller.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToArray();
         }
 
-        public Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
+        public async Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
         {
-            return controller.GetPageListAsync(pageIndex, pageSize);
+            return (await controller.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToArray();
         }
 
         public Task<TContract> GetByIdAsync(int id)

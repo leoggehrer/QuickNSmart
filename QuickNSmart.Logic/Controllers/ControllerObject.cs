@@ -22,20 +22,20 @@ namespace QuickNSmart.Logic.Controllers
         private bool contextDispose;
         protected IContext Context { get; private set; }
 
-        protected event EventHandler ChangedAuthenticationToken;
+        protected event EventHandler ChangedSessionToken;
 
-        private string authenticationToken;
+        private string sessionToken;
 
         /// <summary>
-        /// Sets the authorization token.
+        /// Sets the session token.
         /// </summary>
-        public string AuthenticationToken
+        public string SessionToken
         {
-            internal get => authenticationToken;
+            internal get => sessionToken;
             set
             {
-                authenticationToken = value;
-                ChangedAuthenticationToken?.Invoke(this, EventArgs.Empty);
+                sessionToken = value;
+                ChangedSessionToken?.Invoke(this, EventArgs.Empty);
             }
         }
 
@@ -57,7 +57,7 @@ namespace QuickNSmart.Logic.Controllers
             Constructing();
             contextDispose = false;
             Context = controller.Context;
-            AuthenticationToken = controller.AuthenticationToken;
+            SessionToken = controller.SessionToken;
             Constructed();
         }
         partial void Constructing();
@@ -72,7 +72,7 @@ namespace QuickNSmart.Logic.Controllers
             BeforeCheckAuthorization(methodeBase, ref handled);
             if (handled == false)
             {
-                Authorization.CheckAuthorization(AuthenticationToken, methodeBase);
+                Authorization.CheckAuthorization(SessionToken, methodeBase);
             }
             AfterCheckAuthorization(methodeBase);
         }
@@ -89,7 +89,7 @@ namespace QuickNSmart.Logic.Controllers
             BeforeCheckAuthorization(instanceType, methodeBase, ref handled);
             if (handled == false)
             {
-                Authorization.CheckAuthorization(AuthenticationToken, instanceType, methodeBase);
+                Authorization.CheckAuthorization(SessionToken, instanceType, methodeBase);
             }
             AfterCheckAuthorization(instanceType, methodeBase);
         }

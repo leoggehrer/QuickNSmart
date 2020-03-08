@@ -2,13 +2,17 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CommonBase.Extensions;
+using Microsoft.IdentityModel.Tokens;
 using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Contracts.Persistence.Account;
 using QuickNSmart.Logic.Entities.Persistence.Account;
@@ -40,9 +44,12 @@ namespace QuickNSmart.Logic.Modules.Account
         {
             using var appAccessCtrl = new Controllers.Business.Account.AppAccessController(Factory.CreateContext())
             {
-                AuthenticationToken = Authorization.SystemAuthorizationToken,
+                SessionToken = Authorization.SystemAuthorizationToken,
             };
-            if (await appAccessCtrl.CountAsync().ConfigureAwait(false) == 0)
+
+            var appAccessCount = await appAccessCtrl.CountAsync().ConfigureAwait(false);
+
+            if (appAccessCount == 0)
             {
                 var appAccess = await appAccessCtrl.CreateAsync().ConfigureAwait(false);
 
@@ -61,28 +68,64 @@ namespace QuickNSmart.Logic.Modules.Account
                 throw new LogicException(ErrorType.InitAppAccess);
             }
         }
+        public async static Task<ILoginSession> LogonAsync(string jsonWebToken)
+        {
+            jsonWebToken.CheckArgument(nameof(jsonWebToken));
+
+            var result = default(LoginSession);
+
+            if (JsonWebToken.CheckToken(jsonWebToken, out SecurityToken validatedToken))
+            {
+                if (validatedToken.ValidTo < DateTime.UtcNow)
+                    throw new LogicException(ErrorType.AuthorizationTimeOut);
+
+                var jwtValidatedToken = validatedToken as JwtSecurityToken;
+
+                if (jwtValidatedToken != null)
+                {
+                    var email = jwtValidatedToken.Claims.SingleOrDefault(e => e.Type == ClaimTypes.Email);
+
+                    if (email != null && email.Value != null)
+                    {
+                        using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
+                        {
+                            SessionToken = Authorization.SystemAuthorizationToken
+                        };
+                        var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                                                            && e.Email.ToLower() == email.Value.ToString().ToLower()).FirstOrDefault();
+
+                        if (identity != null)
+                        {
+                            result = await QueryLoginAsync(identity.Email, identity.PasswordHash).ConfigureAwait(false);
+                        }
+                    }
+                }
+            }
+            else
+            {
+                throw new LogicException(ErrorType.InvalidJsonWebToken);
+            }
+            return result ?? throw new LogicException(ErrorType.InvalidAccount);
+        }
         public static async Task<ILoginSession> LogonAsync(string email, string password)
         {
-            LoginSession result = await QueryLoginAsync(email, password).ConfigureAwait(false);
+            var calculatedHash = CalculateHash(password);
+            var result = await QueryLoginAsync(email, calculatedHash).ConfigureAwait(false);
 
-            if (result == null)
-            {
-                throw new LogicException(ErrorType.InvalidAccount);
-            }
-            return result;
+            return result ?? throw new LogicException(ErrorType.InvalidAccount);
         }
-        public static async Task LogoutAsync(ILoginSession login)
+        [Authorize]
+        public static async Task LogoutAsync(string sessionToken)
         {
-            login.CheckArgument(nameof(login));
-            login.SessionToken.CheckArgument(nameof(login.SessionToken));
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
             using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
             {
-                AuthenticationToken = Authorization.SystemAuthorizationToken
+                SessionToken = Authorization.SystemAuthorizationToken
             };
-            var session = (await sessionCtrl.QueryAsync(e => e.IsActive
-                                                          && e.SessionToken.Equals(login.SessionToken))
-                                            .ConfigureAwait(false)).FirstOrDefault();
+            var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
+                                     .ToList()
+                                     .FirstOrDefault(e => e.IsActive);
 
             if (session != null)
             {
@@ -93,53 +136,154 @@ namespace QuickNSmart.Logic.Modules.Account
             }
         }
         [Authorize]
-        public static async Task ChangePassword(string token, string oldPassword, string newPassword)
+        public static async Task<ILoginSession> QueryLoginAsync(string sessionToken)
         {
-            var login = await QueryAliveSessionAsync(token).ConfigureAwait(false)
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
+
+            return await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false);
+
+        }
+        [Authorize]
+        public static async Task ChangePassword(string sessionToken, string oldPassword, string newPassword)
+        {
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
+
+            var login = await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false)
                         ?? throw new LogicException(ErrorType.InvalidToken);
 
             using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
             {
-                AuthenticationToken = token
+                SessionToken = sessionToken
             };
-            var identity = await identityCtrl.QueryByIdAsync(login.IdentityId).ConfigureAwait(false);
+            var identity = identityCtrl.QueryById(login.IdentityId);
 
             if (identity != null)
             {
                 if (ComparePasswords(identity.PasswordHash, CalculateHash(oldPassword)) == false)
                     throw new LogicException(ErrorType.InvalidPassword);
 
-//                identity.Password = 
+                identity.Password = newPassword;
+                await identityCtrl.UpdateAsync(identity).ConfigureAwait(false);
+                await identityCtrl.SaveChangesAsync().ConfigureAwait(false);
+                if (login.Identity != null)
+                {
+                    login.Identity.PasswordHash = CalculateHash(newPassword);
+                }
             }
+        }
+        [Authorize("SysAdmin")]
+        public static async Task ChangePasswordFor(string sessionToken, string email, string newPassword)
+        {
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
+
+            var login = await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false)
+                        ?? throw new LogicException(ErrorType.InvalidToken);
+
+            using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
+            {
+                SessionToken = sessionToken
+            };
+            var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                                                && e.AccessFailedCount < 4
+                                                && e.Email.ToLower() == email.ToLower())
+                                       .FirstOrDefault();
+
+            if (identity == null)
+                throw new LogicException(ErrorType.InvalidAccount);
+
+
+            identity.AccessFailedCount = 0;
+            identity.Password = newPassword;
+            await identityCtrl.UpdateAsync(identity).ConfigureAwait(false);
+            await identityCtrl.SaveChangesAsync().ConfigureAwait(false);
+            if (login.Identity != null)
+            {
+                login.Identity.PasswordHash = CalculateHash(newPassword);
+            }
+        }
+        [Authorize("SysAdmin")]
+        public static async Task ResetPasswordFor(string sessionToken, string email)
+        {
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
+
+            var login = await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false)
+                        ?? throw new LogicException(ErrorType.InvalidToken);
+
+            using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
+            {
+                SessionToken = sessionToken
+            };
+            var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                                                && e.Email.ToLower() == email.ToLower())
+                                       .FirstOrDefault();
+
+            if (identity == null)
+                throw new LogicException(ErrorType.InvalidAccount);
+
+
+            identity.AccessFailedCount = 0;
+            await identityCtrl.UpdateAsync(identity).ConfigureAwait(false);
+            await identityCtrl.SaveChangesAsync().ConfigureAwait(false);
         }
         #endregion Public logon
 
         #region Internal logon
-        internal static async Task<LoginSession> QueryLoginAsync(string email, string password)
+        internal static async Task<LoginSession> QueryAliveSessionAsync(string sessionToken)
         {
-            email.CheckArgument(nameof(email));
-            password.CheckArgument(nameof(password));
-
-            LoginSession result = await QueryAliveSessionAsync(email, password).ConfigureAwait(false);
+            LoginSession result = LoginSessions.SingleOrDefault(ls => ls.SessionToken.Equals(sessionToken));
 
             if (result == null)
             {
-                Byte[] calculatedPassword = CalculateHash(password);
+                using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
+                {
+                    SessionToken = Authorization.SystemAuthorizationToken
+                };
+                var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
+                                         .ToList()
+                                         .FirstOrDefault(e => e.IsActive);
+
+                if (session != null)
+                {
+                    using var identityCtrl = new Controllers.Persistence.Account.IdentityController(sessionCtrl);
+                    var identity = identityCtrl.Query(e => e.Id == session.IdentityId).SingleOrDefault();
+
+                    if (identity != null)
+                    {
+                        result = new LoginSession();
+                        result.CopyProperties(session);
+                        result.Identity = new Identity();
+                        result.Identity.CopyProperties(identity);
+                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                        LoginSessions.Add(result);
+                    }
+                }
+            }
+            return result;
+        }
+        internal static async Task<LoginSession> QueryLoginAsync(string email, byte[] calculatedHash)
+        {
+            email.CheckArgument(nameof(email));
+            calculatedHash.CheckArgument(nameof(calculatedHash));
+
+            LoginSession result = await QueryAliveSessionAsync(email, calculatedHash).ConfigureAwait(false);
+
+            if (result == null)
+            {
                 using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
                 {
-                    AuthenticationToken = Authorization.SystemAuthorizationToken,
+                    SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = (await identityCtrl.QueryAsync(e => e.State == Contracts.State.Active
-                                                                && e.AccessFailedCount < 4
-                                                                && e.Email.Equals(email, StringComparison.CurrentCulture)
-                                                                && ComparePasswords(e.PasswordHash, calculatedPassword))
-                                                  .ConfigureAwait(false)).FirstOrDefault();
+                var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                                                && e.AccessFailedCount < 4
+                                                && e.Email.ToLower() == email.ToLower()
+                                                && e.PasswordHash == calculatedHash).FirstOrDefault();
 
                 if (identity != null)
                 {
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
                     var session = new LoginSession();
 
+                    session.Identity = identity;
                     session.IdentityId = identity.Id;
                     session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
                     var entity = await sessionCtrl.InsertAsync(session).ConfigureAwait(false);
@@ -161,66 +305,33 @@ namespace QuickNSmart.Logic.Modules.Account
             }
             return result;
         }
-        internal static async Task<LoginSession> QueryAliveSessionAsync(string token)
-        {
-            LoginSession result = LoginSessions.SingleOrDefault(ls => ls.SessionToken.Equals(token));
-
-            if (result == null)
-            {
-                using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
-                {
-                    AuthenticationToken = Authorization.SystemAuthorizationToken
-                };
-                var session = (await sessionCtrl.QueryAsync(e => e.IsActive
-                                                              && e.SessionToken.Equals(token))
-                                                .ConfigureAwait(false)).FirstOrDefault();
-
-                if (session != null)
-                {
-                    using var identityCtrl = new Controllers.Persistence.Account.IdentityController(sessionCtrl);
-                    var identity = (await identityCtrl.QueryAsync(e => e.Id == session.IdentityId)
-                                                      .ConfigureAwait(false))
-                                                      .SingleOrDefault();
-
-                    if (identity != null)
-                    {
-                        result = new LoginSession();
-                        result.CopyProperties(session);
-                        result.Identity = new Identity();
-                        result.Identity.CopyProperties(identity);
-                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
-                        LoginSessions.Add(result);
-                    }
-                }
-            }
-            return result;
-        }
-        internal static async Task<LoginSession> QueryAliveSessionAsync(string email, string password)
+        internal static async Task<LoginSession> QueryAliveSessionAsync(string email, byte[] calculatedHash)
         {
             email.CheckArgument(nameof(email));
-            password.CheckArgument(nameof(password));
+            calculatedHash.CheckArgument(nameof(calculatedHash));
 
-            Byte[] calculatedPassword = CalculateHash(password);
             LoginSession result = LoginSessions.SingleOrDefault(e => e.IsActive
-                                                                  && e.Email.Equals(email, StringComparison.CurrentCulture)
-                                                                  && ComparePasswords(e.PasswordHash, calculatedPassword));
+                                                                  && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)
+                                                                  && e.PasswordHash.SequenceEqual(calculatedHash));
 
             if (result == null)
             {
                 using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
                 {
-                    AuthenticationToken = Authorization.SystemAuthorizationToken,
+                    SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = (await identityCtrl.QueryAsync(e => e.Email.Equals(email, StringComparison.CurrentCulture)
-                                                                   && ComparePasswords(e.PasswordHash, calculatedPassword))
-                                                  .ConfigureAwait(false)).FirstOrDefault();
+                var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                                                    && e.AccessFailedCount < 4
+                                                    && e.Email.ToLower() == email.ToLower()
+                                                    && e.PasswordHash == calculatedHash).FirstOrDefault();
 
                 if (identity != null)
                 {
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
-                    var session = (await sessionCtrl.QueryAsync(e => e.IsActive
-                                                                  && e.IdentityId == identity.Id)
-                                                    .ConfigureAwait(false)).FirstOrDefault();
+                    var session = sessionCtrl.Query(e => e.LogoutTime == null
+                                                      && e.IdentityId == identity.Id)
+                                             .ToList()
+                                             .FirstOrDefault(e => e.IsActive);
 
                     if (session != null)
                     {
@@ -243,7 +354,7 @@ namespace QuickNSmart.Logic.Modules.Account
             using var identityXRoleCtrl = new Controllers.Persistence.Account.IdentityXRoleController(controllerObject);
             using var roleCtrl = new Controllers.Persistence.Account.RoleController(controllerObject);
 
-            foreach (var item in (await identityXRoleCtrl.QueryAsync(e => e.IdentityId == identityId).ConfigureAwait(false)).ToList())
+            foreach (var item in identityXRoleCtrl.Query(e => e.IdentityId == identityId).ToList())
             {
                 var entity = await roleCtrl.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
@@ -270,11 +381,10 @@ namespace QuickNSmart.Logic.Modules.Account
                     {
                         using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
                         {
-                            AuthenticationToken = Authorization.SystemAuthorizationToken,
+                            SessionToken = Authorization.SystemAuthorizationToken,
                         };
                         bool saveChanges = false;
-                        var qry = await sessionCtrl.QueryAsync(e => e.LogoutTime.HasValue == false)
-                                                   .ConfigureAwait(false);
+                        var qry = sessionCtrl.Query(e => e.LogoutTime.HasValue == false);
 
                         foreach (var item in qry.ToList())
                         {
@@ -329,20 +439,20 @@ namespace QuickNSmart.Logic.Modules.Account
             byte[] hashedBytes = sha1.ComputeHash(plainTextBytes);
             return hashedBytes;
         }
-        internal static bool ComparePasswords(Byte[] hashedPassword, string password)
+        internal static bool ComparePasswords(Byte[] passwordHash, string password)
         {
-            return ComparePasswords(hashedPassword, CalculateHash(password));
+            return ComparePasswords(passwordHash, CalculateHash(password));
         }
-        internal static bool ComparePasswords(Byte[] hashedPassword, Byte[] calculatePassword)
+        internal static bool ComparePasswords(Byte[] passwordHash, Byte[] calculatedHash)
         {
-            if (hashedPassword == null)
-                throw new ArgumentNullException(nameof(hashedPassword));
+            if (passwordHash == null)
+                throw new ArgumentNullException(nameof(passwordHash));
 
-            if (calculatePassword == null)
-                throw new ArgumentNullException(nameof(calculatePassword));
+            if (calculatedHash == null)
+                throw new ArgumentNullException(nameof(calculatedHash));
 
-            byte[] originalArray = hashedPassword.ToArray();
-            byte[] compareArray = calculatePassword.ToArray();
+            byte[] originalArray = passwordHash.ToArray();
+            byte[] compareArray = calculatedHash.ToArray();
 
             if (compareArray.Length != originalArray.Length)
             {

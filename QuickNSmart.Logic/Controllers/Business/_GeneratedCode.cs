@@ -1,5 +1,6 @@
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
+	[Logic.Modules.Security.Authorize("SysAdmin")]
 	sealed partial class AppAccessController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.IAppAccess>
 	{
 		static AppAccessController()

@@ -16,13 +16,12 @@ namespace QuickNSmart.Adapters
         static partial void ClassConstructing();
         static partial void ClassConstructed();
 
-        public static string BaseUri = "";
-        public enum AdapterType
-        {
-           Controller,
-           Service,
-        }
-        public static AdapterType Adapter { get; set; } = Factory.AdapterType.Controller;
+        /// <summary>
+        /// The base url like https://localhost:5001/api
+        /// </summary>
+        public static string BaseUri { get; set; }
+
+        public static AdapterType Adapter { get; set; } = AdapterType.Controller;
     }
 }
 //MdEnd

@@ -7,10 +7,13 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using System.Reflection;
 using CommonBase.Extensions;
+using CommonBase.Helpers;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
 using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Logic.Modules.Security;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore;
 
 namespace QuickNSmart.Logic.Controllers
 {
@@ -35,7 +38,7 @@ namespace QuickNSmart.Logic.Controllers
 
         public int MaxPageSize => 500;
 
-        internal IEnumerable<E> Set() => Context.Set<I, E>();
+        internal IQueryable<E> Set() => Context.Set<I, E>();
 
         protected GenericController(IContext context)
             : base(context)
@@ -65,7 +68,7 @@ namespace QuickNSmart.Logic.Controllers
 
             return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
         }
-        public async virtual Task<IEnumerable<I>> GetAllAsync()
+        public async virtual Task<IQueryable<I>> GetAllAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
@@ -80,28 +83,25 @@ namespace QuickNSmart.Logic.Controllers
                 qryCount = qry.Count();
                 result.AddRange(qry);
             } while (qryCount == MaxPageSize);
-            return result;
+            return result.AsQueryable();
         }
-        public virtual Task<IEnumerable<I>> GetPageListAsync(int pageIndex, int pageSize)
+        public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.Run<IEnumerable<I>>(() =>
-                Set().Skip(pageIndex * pageSize)
-                     .Take(pageSize));
+            return Task.FromResult<IQueryable<I>>(Set().Skip(pageIndex * pageSize).Take(pageSize));
         }
-        public virtual Task<IEnumerable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        public virtual Task<IQueryable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.Run<IEnumerable<I>>(() =>
-                Set().AsQueryable()
+            return Task.FromResult<IQueryable<I>>(Set().AsQueryable()
                      .Where(predicate)
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
@@ -215,25 +215,30 @@ namespace QuickNSmart.Logic.Controllers
         #endregion Async-Methods
 
         #region Internal-Methods
-        internal virtual Task<E> QueryByIdAsync(int id)
+        internal virtual E QueryById(int id)
         {
-            return Task.Run<E>(() => Set().SingleOrDefault(i => i.Id == id));
+            return Set().SingleOrDefault(i => i.Id == id);
         }
-        internal virtual Task<IEnumerable<E>> QueryAsync(Func<E, bool> predicate)
+        internal virtual IQueryable<E> Query(Expression<Func<E, bool>> predicate)
         {
-            return Task.Run(() => Set().Where(predicate));
+            return Set().Where(predicate);
         }
-        internal virtual Task<IEnumerable<E>> QueryAsync(string predicate, int pageIndex, int pageSize)
+        internal virtual IQueryable<E> Query(string predicate, int pageIndex, int pageSize)
         {
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.Run<IEnumerable<E>>(() =>
-                Set().AsQueryable()
-                     .Where(predicate)
-                     .Skip(pageIndex * pageSize)
-                     .Take(pageSize));
+            return Set().Where(predicate)
+                       .Skip(pageIndex * pageSize)
+                       .Take(pageSize);
         }
+
+        //internal virtual async Task<IEnumerable<I>> QueryAsyncFacade(Expression<Func<I, bool>> predicate)
+        //{
+        //    var newPredicate = ExpressionConverter.ConvertToObject<I, bool, E, bool>(predicate);
+
+        //    return await QueryAsync(newPredicate).ToArrayAsync().ConfigureAwait(false);
+        //}
         #endregion Internal-Methods
     }
 }

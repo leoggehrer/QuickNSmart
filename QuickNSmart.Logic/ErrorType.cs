@@ -11,8 +11,9 @@ namespace QuickNSmart.Logic
         InvalidToken = NotAuthorized * 2,
         InvalidId = NotLogedIn * 2,
         InvalidPageSize = InvalidId * 2,
-        InvalidAuthorizationToken = InvalidPageSize * 2, 
-        AuthorizationTimeOut = InvalidAuthorizationToken * 2,
+        InvalidSessionToken = InvalidPageSize * 2,
+        InvalidJsonWebToken = InvalidSessionToken * 2,
+        AuthorizationTimeOut = InvalidJsonWebToken * 2,
         InvalidEmail = AuthorizationTimeOut * 2,
         InvalidPassword = InvalidEmail * 2,
     }

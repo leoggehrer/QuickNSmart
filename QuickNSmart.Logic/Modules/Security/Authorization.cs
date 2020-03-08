@@ -1,6 +1,5 @@
 ﻿//@QnSBaseCode
 //MdStart
-
 using System;
 using System.Linq;
 using System.Reflection;
@@ -26,6 +25,8 @@ namespace QuickNSmart.Logic.Modules.Security
         static partial void ClassConstructing();
         static partial void ClassConstructed();
 
+        internal static int TimeOutInMin { get; private set; } = 30;
+        internal static int TimeOutInSec => TimeOutInMin * 60;
         internal static string SystemAuthorizationToken { get; set; }
 
         internal static void CheckAuthorization(string token, MethodBase methodeBase)
@@ -62,7 +63,7 @@ namespace QuickNSmart.Logic.Modules.Security
                     var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(token));
 
                     if (curSession == null)
-                        throw new LogicException(ErrorType.InvalidAuthorizationToken);
+                        throw new LogicException(ErrorType.InvalidSessionToken);
 
                     if (curSession.IsTimeout)
                         throw new LogicException(ErrorType.AuthorizationTimeOut);
@@ -132,7 +133,7 @@ namespace QuickNSmart.Logic.Modules.Security
                     var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(token));
 
                     if (curSession == null)
-                        throw new LogicException(ErrorType.InvalidAuthorizationToken);
+                        throw new LogicException(ErrorType.InvalidSessionToken);
 
                     if (curSession.IsTimeout)
                         throw new LogicException(ErrorType.AuthorizationTimeOut);

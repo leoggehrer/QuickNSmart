@@ -12,7 +12,7 @@ using QuickNSmart.Adapters.Exceptions;
 
 namespace QuickNSmart.Adapters.Service
 {
-    partial class GenericServiceAdapter<TContract, TEntity> : Contracts.Client.IAdapterAccess<TContract>
+    partial class GenericServiceAdapter<TContract, TEntity> : ServiceAdapterObject, Contracts.Client.IAdapterAccess<TContract>
         where TContract : Contracts.IIdentifiable
         where TEntity : TContract, Contracts.ICopyable<TContract>, new()
     {
@@ -23,27 +23,22 @@ namespace QuickNSmart.Adapters.Service
         }
         static partial void ClassConstructing();
         static partial void ClassConstructed();
-        private static string Separator => ";";
 
         public GenericServiceAdapter(string baseUri, string extUri)
+            : base(baseUri, extUri)
         {
             Constructing();
-            BaseUri = baseUri;
-            ExtUri = extUri;
             Constructed();
         }
-        public GenericServiceAdapter(string authenticationToken, string baseUri, string extUri)
+        public GenericServiceAdapter(string baseUri, string extUri, string sessionToken)
+            : base(baseUri, extUri, sessionToken)
         {
             Constructing();
-            AuthenticationToken = authenticationToken;
-            BaseUri = baseUri;
-            ExtUri = extUri;
             Constructed();
         }
         partial void Constructing();
         partial void Constructed();
 
-        private JsonSerializerOptions DeserializerOptions => new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
         public int MaxPageSize
         {
             get
@@ -70,18 +65,6 @@ namespace QuickNSmart.Adapters.Service
                 }).Result;
             }
         }
-        /// <summary>
-        /// The base url like https://localhost:5001/api
-        /// </summary>
-        public string BaseUri
-        {
-            get;
-        }
-        public string ExtUri
-        {
-            get;
-        }
-        public string AuthenticationToken { private get; set; }
 
         public async Task<int> CountAsync()
         {
@@ -104,6 +87,28 @@ namespace QuickNSmart.Adapters.Service
             }
         }
 
+        public async Task<TContract> GetByIdAsync(int id)
+        {
+            using (var client = GetClient(BaseUri))
+            {
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentData = await response.Content.ReadAsStreamAsync();
+
+                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData, DeserializerOptions);
+                }
+                else
+                {
+                    string stringData = await response.Content.ReadAsStringAsync();
+                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
         public async Task<IEnumerable<TContract>> GetAllAsync()
         {
             using (var client = GetClient(BaseUri))
@@ -171,29 +176,6 @@ namespace QuickNSmart.Adapters.Service
             }
         }
 
-        public async Task<TContract> GetByIdAsync(int id)
-        {
-            using (var client = GetClient(BaseUri))
-            {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get/{id}");
-
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync();
-
-                    return await JsonSerializer.DeserializeAsync<TEntity>(contentData, DeserializerOptions);
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync();
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
-            }
-        }
-
         public async Task<TContract> CreateAsync()
         {
             using (var client = GetClient(BaseUri))
@@ -215,7 +197,6 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
-
         public async Task<TContract> InsertAsync(TContract entity)
         {
             entity.CheckArgument(nameof(entity));
@@ -241,7 +222,6 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
-
         public async Task<TContract> UpdateAsync(TContract entity)
         {
             entity.CheckArgument(nameof(entity));
@@ -280,33 +260,6 @@ namespace QuickNSmart.Adapters.Service
         public void Dispose()
         {
         }
-
-        #region Helpers
-        protected static string MediaType => "application/json";
-        protected HttpClient CreateClient(string baseAddress)
-        {
-            HttpClient client = new HttpClient();
-
-            if (baseAddress.EndsWith(@"/") == false
-                || baseAddress.EndsWith(@"\") == false)
-            {
-                baseAddress = baseAddress + "/";
-            }
-
-            client.BaseAddress = new Uri(baseAddress);
-            client.DefaultRequestHeaders.Accept.Clear();
-
-            // Add an Accept header for JSON format.
-            client.DefaultRequestHeaders.Accept.Add(
-                new MediaTypeWithQualityHeaderValue(MediaType));
-
-            return client;
-        }
-        protected HttpClient GetClient(string baseAddress)
-        {
-            return CreateClient(baseAddress);
-        }
-        #endregion Helpers
     }
 }
 //MdEnd
