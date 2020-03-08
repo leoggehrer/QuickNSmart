@@ -8,6 +8,7 @@ using CommonBase.Extensions;
 using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Logic.Entities.Persistence.Account;
 using QuickNSmart.Logic.Modules.Account;
+using System.Threading.Tasks;
 
 namespace QuickNSmart.Logic.Modules.Security
 {
@@ -45,6 +46,7 @@ namespace QuickNSmart.Logic.Modules.Security
         }
         private static void CheckAuthorizationInternal(string token, MethodBase methodBase)
         {
+            methodBase = methodBase.GetOriginal();
             if (token.IsNullOrEmpty())
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>();
@@ -75,18 +77,15 @@ namespace QuickNSmart.Logic.Modules.Security
                         throw new LogicException(ErrorType.NotAuthorized);
 
                     curSession.LastAccess = DateTime.Now;
+                    LoggingAsync(curSession.IdentityId, methodBase.DeclaringType.Name, methodBase.Name, string.Empty);
                 }
             }
         }
-        static partial void BeforeCheckAuthorization(string token,MethodBase methodeBase, ref bool handled);
+        static partial void BeforeCheckAuthorization(string token, MethodBase methodeBase, ref bool handled);
         static partial void AfterCheckAuthorization(string token, MethodBase methodeBase);
 
         internal static void CheckAuthorization(string token, Type instanceType, MethodBase methodeBase)
         {
-            token.CheckArgument(nameof(token));
-            instanceType.CheckArgument(nameof(instanceType));
-            methodeBase.CheckArgument(nameof(methodeBase));
-
             bool handled = false;
 
             BeforeCheckAuthorization(token, instanceType, methodeBase, ref handled);
@@ -111,11 +110,12 @@ namespace QuickNSmart.Logic.Modules.Security
                 return result;
             }
 
+            methodBase = methodBase.GetOriginal();
             if (token.IsNullOrEmpty())
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
                                     ?? GetClassAuthorization(instanceType);
-                bool isRequired = authorization?.IsRequired ?? false;
+                var isRequired = authorization?.IsRequired ?? false;
 
                 if (isRequired)
                 {
@@ -126,7 +126,7 @@ namespace QuickNSmart.Logic.Modules.Security
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
                                     ?? GetClassAuthorization(instanceType);
-                bool isRequired = authorization?.IsRequired ?? false;
+                var isRequired = authorization?.IsRequired ?? false;
 
                 if (isRequired)
                 {
@@ -145,12 +145,33 @@ namespace QuickNSmart.Logic.Modules.Security
                         throw new LogicException(ErrorType.NotAuthorized);
 
                     curSession.LastAccess = DateTime.Now;
+                    LoggingAsync(curSession.IdentityId, instanceType.Name, methodBase.Name, string.Empty);
                 }
             }
         }
 
         static partial void BeforeCheckAuthorization(string token, Type instanceType, MethodBase methodeBase, ref bool handled);
         static partial void AfterCheckAuthorization(string token, Type instanceType, MethodBase methodeBase);
+
+        static Task LoggingAsync(int identityId, string subject, string action, string info)
+        {
+            return Task.Run(async () =>
+            {
+                using var actionLogCtrl = new Logic.Controllers.Persistence.Account.ActionLogController(Factory.CreateContext())
+                {
+                    SessionToken = SystemAuthorizationToken
+                };
+                var entity = new ActionLog();
+
+                entity.IdentityId = identityId;
+                entity.Time = DateTime.Now;
+                entity.Subject = subject;
+                entity.Action = action;
+                entity.Info = info;
+                await actionLogCtrl.InsertAsync(entity).ConfigureAwait(false);
+                await actionLogCtrl.SaveChangesAsync().ConfigureAwait(false);
+            });
+        }
     }
 }
 //MdEnd

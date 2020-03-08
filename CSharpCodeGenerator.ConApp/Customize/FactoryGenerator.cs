@@ -8,7 +8,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
     {
         partial void CanCreateLogicAccess(Type type, ref bool create)
         {
-            if (type.FullName.EndsWith(".Persistence.Account.IIdentity")
+            if (type.FullName.EndsWith(".Persistence.Account.IActionLog")
+                || type.FullName.EndsWith(".Persistence.Account.IIdentity")
                 || type.FullName.EndsWith(".Persistence.Account.IRole")
                 || type.FullName.EndsWith(".Persistence.Account.IIdentityXRole")
                 || type.FullName.EndsWith(".Persistence.Account.ILoginSession")
