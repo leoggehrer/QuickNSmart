@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Net.Http;
-using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
@@ -25,19 +24,26 @@ namespace QuickNSmart.Adapters.Service
         static partial void ClassConstructed();
 
         public GenericServiceAdapter(string baseUri, string extUri)
-            : base(baseUri, extUri)
+            : base(baseUri)
         {
             Constructing();
+            ExtUri = extUri;
             Constructed();
         }
         public GenericServiceAdapter(string baseUri, string extUri, string sessionToken)
-            : base(baseUri, extUri, sessionToken)
+            : base(baseUri, sessionToken)
         {
             Constructing();
+            ExtUri = extUri;
             Constructed();
         }
         partial void Constructing();
         partial void Constructed();
+
+        public string ExtUri
+        {
+            get;
+        }
 
         public int MaxPageSize
         {

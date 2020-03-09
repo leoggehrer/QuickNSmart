@@ -295,6 +295,28 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnPasswordReading();
 		partial void OnPasswordChanging(ref bool handled, ref System.String _password);
 		partial void OnPasswordChanged();
+		public System.Boolean EnableJwtAuth
+		{
+			get
+			{
+				OnEnableJwtAuthReading();
+				return _enableJwtAuth;
+			}
+			set
+			{
+				bool handled = false;
+				OnEnableJwtAuthChanging(ref handled, ref _enableJwtAuth);
+				if (handled == false)
+				{
+					this._enableJwtAuth = value;
+				}
+				OnEnableJwtAuthChanged();
+			}
+		}
+		private System.Boolean _enableJwtAuth;
+		partial void OnEnableJwtAuthReading();
+		partial void OnEnableJwtAuthChanging(ref bool handled, ref System.Boolean _enableJwtAuth);
+		partial void OnEnableJwtAuthChanged();
 		public System.Int32 AccessFailedCount
 		{
 			get
@@ -355,6 +377,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				Name = other.Name;
 				Email = other.Email;
 				Password = other.Password;
+				EnableJwtAuth = other.EnableJwtAuth;
 				AccessFailedCount = other.AccessFailedCount;
 				State = other.State;
 			}
@@ -376,11 +399,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && AccessFailedCount == other.AccessFailedCount && State == other.State;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && EnableJwtAuth == other.EnableJwtAuth && AccessFailedCount == other.AccessFailedCount && State == other.State;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Guid, Name, Email, Password, HashCode.Combine(AccessFailedCount, State));
+			return HashCode.Combine(Id, Timestamp, Guid, Name, Email, Password, HashCode.Combine(EnableJwtAuth, AccessFailedCount, State));
 		}
 	}
 }
@@ -578,6 +601,50 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnIdentityIdReading();
 		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
 		partial void OnIdentityIdChanged();
+		public System.String Name
+		{
+			get
+			{
+				OnNameReading();
+				return _name;
+			}
+			set
+			{
+				bool handled = false;
+				OnNameChanging(ref handled, ref _name);
+				if (handled == false)
+				{
+					this._name = value;
+				}
+				OnNameChanged();
+			}
+		}
+		private System.String _name;
+		partial void OnNameReading();
+		partial void OnNameChanging(ref bool handled, ref System.String _name);
+		partial void OnNameChanged();
+		public System.String Email
+		{
+			get
+			{
+				OnEmailReading();
+				return _email;
+			}
+			set
+			{
+				bool handled = false;
+				OnEmailChanging(ref handled, ref _email);
+				if (handled == false)
+				{
+					this._email = value;
+				}
+				OnEmailChanged();
+			}
+		}
+		private System.String _email;
+		partial void OnEmailReading();
+		partial void OnEmailChanging(ref bool handled, ref System.String _email);
+		partial void OnEmailChanged();
 		public System.String JsonWebToken
 		{
 			get
@@ -701,6 +768,8 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				Id = other.Id;
 				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
+				Name = other.Name;
+				Email = other.Email;
 				JsonWebToken = other.JsonWebToken;
 				SessionToken = other.SessionToken;
 				LoginTime = other.LoginTime;
@@ -725,11 +794,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, JsonWebToken, SessionToken, LoginTime, HashCode.Combine(LastAccess, LogoutTime));
+			return HashCode.Combine(Id, Timestamp, IdentityId, Name, Email, JsonWebToken, HashCode.Combine(SessionToken, LoginTime, LastAccess, LogoutTime));
 		}
 	}
 }

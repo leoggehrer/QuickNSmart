@@ -10,7 +10,7 @@ using QuickNSmart.Logic.DataContext.Db;
 namespace QuickNSmart.Logic.Migrations
 {
     [DbContext(typeof(QuickNSmartDbContext))]
-    [Migration("20200308143342_InitDb")]
+    [Migration("20200309073308_InitDb")]
     partial class InitDb
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -70,6 +70,9 @@ namespace QuickNSmart.Logic.Migrations
                         .HasColumnType("nvarchar(128)")
                         .HasMaxLength(128);
 
+                    b.Property<bool>("EnableJwtAuth")
+                        .HasColumnType("bit");
+
                     b.Property<string>("Guid")
                         .IsRequired()
                         .HasColumnType("nvarchar(36)")
@@ -95,9 +98,6 @@ namespace QuickNSmart.Logic.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
-                        .IsUnique();
-
-                    b.HasIndex("Guid")
                         .IsUnique();
 
                     b.ToTable("Identity","Account");
@@ -139,9 +139,6 @@ namespace QuickNSmart.Logic.Migrations
 
                     b.Property<int>("IdentityId")
                         .HasColumnType("int");
-
-                    b.Property<string>("JsonWebToken")
-                        .HasColumnType("nvarchar(max)");
 
                     b.Property<DateTime>("LastAccess")
                         .HasColumnType("datetime2");

@@ -32,6 +32,21 @@ namespace QuickNSmart.WebApi.Controllers
         {
             return Logic.Modules.Account.AccountManager.LogoutAsync(sessionToken);
         }
+        [HttpGet("/api/[controller]/ChangePassword/{sessionToken}/{oldPwd}/{newPwd}")]
+        public Task ChangePasswordAsync(string sessionToken, string oldPwd, string newPwd)
+        {
+            return Logic.Modules.Account.AccountManager.ChangePassword(sessionToken, oldPwd, newPwd);
+        }
+        [HttpGet("/api/[controller]/ChangePasswordFor/{sessionToken}/{email}/{newPwd}")]
+        public Task ChangePasswordForAsync(string sessionToken, string email, string newPwd)
+        {
+            return Logic.Modules.Account.AccountManager.ChangePasswordForAsync(sessionToken, email, newPwd);
+        }
+        [HttpGet("/api/[controller]/ResetFor/{sessionToken}/{email}")]
+        public Task ChangeForAsync(string sessionToken, string email)
+        {
+            return Logic.Modules.Account.AccountManager.ResetForAsync(sessionToken, email);
+        }
     }
 }
 //MdEnd

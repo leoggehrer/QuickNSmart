@@ -22,6 +22,7 @@ namespace QuickNSmart.Logic.Migrations
                     Guid = table.Column<string>(maxLength: 36, nullable: false),
                     Name = table.Column<string>(maxLength: 128, nullable: false),
                     Email = table.Column<string>(maxLength: 128, nullable: false),
+                    EnableJwtAuth = table.Column<bool>(nullable: false),
                     AccessFailedCount = table.Column<int>(nullable: false),
                     State = table.Column<int>(nullable: false)
                 },
@@ -81,7 +82,6 @@ namespace QuickNSmart.Logic.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Timestamp = table.Column<byte[]>(rowVersion: true, nullable: true),
                     IdentityId = table.Column<int>(nullable: false),
-                    JsonWebToken = table.Column<string>(nullable: true),
                     SessionToken = table.Column<string>(maxLength: 256, nullable: false),
                     LoginTime = table.Column<DateTime>(nullable: false),
                     LastAccess = table.Column<DateTime>(nullable: false),
@@ -140,13 +140,6 @@ namespace QuickNSmart.Logic.Migrations
                 schema: "Account",
                 table: "Identity",
                 column: "Email",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Identity_Guid",
-                schema: "Account",
-                table: "Identity",
-                column: "Guid",
                 unique: true);
 
             migrationBuilder.CreateIndex(

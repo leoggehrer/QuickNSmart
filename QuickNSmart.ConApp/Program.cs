@@ -1,89 +1,79 @@
-using CommonBase.Extensions;
-using QuickNSmart.Contracts.Persistence.Account;
 using System;
 using System.Threading.Tasks;
+using CommonBase.Extensions;
+using QuickNSmart.Contracts.Persistence.Account;
 
 namespace QuickNSmart.ConApp
 {
     class Program
     {
+        static string SaUser => "SysAdmin";
+        static string SaEmail => "SysAdmin@QuickNSmart.gmx.at";
+        static string SaPwd => "Sys2189!Admin";
+        static bool SaEnableJwt => true;
+
+        static string AaUser => "AppAdmin";
+        static string AaEmail => "AppAdmin@QuickNSmart.gmx.at";
+        static string AaPwd => "App2189!Admin";
+        static string AaRole => "AppAdmin";
+        static bool AaEnableJwt => true;
+
         static async Task Main(string[] args)
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
-            string user = "ggehrer";
-            string email = "g.gehrer@htl-leonding.ac.at";
-            string pwd = "Passme123!";
 
-            //await InitAppAccessAsync(user, email, pwd);
+            Adapters.Factory.BaseUri = "https://localhost:5001/api";
+            Adapters.Factory.Adapter = Adapters.AdapterType.Service;
+
+            //await InitAppAccessAsync();
+            //await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
             try
             {
-                var login = await LogonAsync(email, pwd);
+                var login = await Adapters.Modules.Account.AccountManager.LogonAsync(SaEmail, SaPwd);
 
-                await ChangePassword(login, pwd, "Passme123!");
+                await ChangePassword(login, SaPwd, SaPwd);
 
-                var login2 = await Logic.Modules.Account.AccountManager.QueryLoginAsync(login.SessionToken);
-                var login3 = await Logic.Modules.Account.AccountManager.LogonAsync(login.JsonWebToken);
+                var login2 = await Adapters.Modules.Account.AccountManager.LogonAsync(login.JsonWebToken);
 
                 await Task.Delay(5000);
-                await LogoutAsync(login.SessionToken);
+                await Adapters.Modules.Account.AccountManager.LogoutAsync(login.SessionToken);
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
             }
+            Console.WriteLine("Press any key to end!");
+            Console.ReadKey();
+        }
+        private static async Task InitAppAccessAsync()
+        {
+            await Logic.Modules.Account.AccountManager.InitAppAccess(SaUser, SaEmail, SaPwd, true);
+        }
+        private static async Task AddAppAccess(string user, string email, string pwd, bool enableJwtAuth, params string[] roles)
+        {
+            var login = await Adapters.Modules.Account.AccountManager.LogonAsync(SaEmail, SaPwd);
+            using var ctrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
+            var entity = await ctrl.CreateAsync();
 
-            Console.ReadLine();
-        }
-        private static async Task InitAppAccessAsync(string user, string email, string pwd)
-        {
-            await Logic.Modules.Account.AccountManager.InitAppAccess(user, email, pwd);
-        }
-        private static async Task<ILoginSession> LogonAsync(string email, string password)
-        {
-            return await Logic.Modules.Account.AccountManager.LogonAsync(email, password);
-        }
-        private static async Task LogoutAsync(string sessionToken)
-        {
-            await Logic.Modules.Account.AccountManager.LogoutAsync(sessionToken);
+            entity.Identity.Name = user;
+            entity.Identity.Email = email;
+            entity.Identity.Password = pwd;
+            entity.Identity.EnableJwtAuth = enableJwtAuth;
+
+            foreach (var item in roles)
+            {
+                var role = entity.CreateRole();
+
+                role.Designation = item;
+                entity.AddRole(role);
+            }
+            await ctrl.InsertAsync(entity);
+            await Adapters.Modules.Account.AccountManager.LogoutAsync(login.SessionToken);
         }
         private static async Task ChangePassword(ILoginSession login, string oldPwd, string newPwd)
         {
             await Logic.Modules.Account.AccountManager.ChangePassword(login.SessionToken, oldPwd, newPwd);
-        }
-        static async void CreateAccounts(ILoginSession login)
-        {
-            login.CheckArgument(nameof(login));
-
-            Adapters.Factory.Adapter = Adapters.AdapterType.Controller;
-            var appAccCtrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
-            var appAcc = await appAccCtrl.CreateAsync();
-
-            appAcc.Identity.Name = "user1";
-            appAcc.Identity.Email = "user1@gmx.at";
-            appAcc.Identity.Password = "passme";
-            var role = appAcc.CreateRole();
-
-            role.Designation = "user";
-            appAcc.AddRole(role);
-
-            await appAccCtrl.InsertAsync(appAcc);
-
-            appAcc = await appAccCtrl.CreateAsync();
-
-            appAcc.Identity.Name = "user2";
-            appAcc.Identity.Email = "user2@gmx.at";
-            appAcc.Identity.Password = "passme";
-            role = appAcc.CreateRole();
-
-            role.Designation = "User";
-            appAcc.AddRole(role);
-            role.Designation = "Manager";
-            appAcc.AddRole(role);
-            role.Designation = "controller";
-            appAcc.AddRole(role);
-
-            await appAccCtrl.InsertAsync(appAcc);
         }
     }
 }

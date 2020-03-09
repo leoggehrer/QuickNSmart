@@ -75,9 +75,6 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .Ignore(p => p.Password);
 
             entityTypeBuilder
-                .HasIndex(p => p.Guid)
-                .IsUnique();
-            entityTypeBuilder
                 .Property(p => p.Guid)
                 .IsRequired()
                 .HasMaxLength(36);
@@ -115,6 +112,13 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .Property(p => p.SessionToken)
                 .IsRequired()
                 .HasMaxLength(256);
+
+            entityTypeBuilder
+                .Ignore(p => p.Name);
+            entityTypeBuilder
+                .Ignore(p => p.Email);
+            entityTypeBuilder
+                .Ignore(p => p.JsonWebToken);
         }
         #endregion Configuration
     }

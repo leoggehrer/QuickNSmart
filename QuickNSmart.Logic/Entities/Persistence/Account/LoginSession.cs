@@ -25,7 +25,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
         }
         internal bool HasChanged { get; private set; }
 
-        internal string Email => Identity?.Email;
         internal byte[] PasswordHash => Identity?.PasswordHash;
 
         internal List<Role> Roles { get; } = new List<Role>();

@@ -40,7 +40,7 @@ namespace QuickNSmart.Logic.Modules.Account
         private static List<LoginSession> LoginSessions { get; } = new List<LoginSession>();
 
         #region Public logon
-        public static async Task InitAppAccess(string name, string email, string password)
+        public static async Task InitAppAccess(string name, string email, string password, bool enableJwtAuth)
         {
             using var appAccessCtrl = new Controllers.Business.Account.AppAccessController(Factory.CreateContext())
             {
@@ -56,6 +56,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 appAccess.Identity.Name = name;
                 appAccess.Identity.Email = email;
                 appAccess.Identity.Password = password;
+                appAccess.Identity.EnableJwtAuth = enableJwtAuth;
                 var role = appAccess.CreateRole();
 
                 role.Designation = "SysAdmin";
@@ -83,7 +84,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
                 if (jwtValidatedToken != null)
                 {
-                    var email = jwtValidatedToken.Claims.SingleOrDefault(e => e.Type == ClaimTypes.Email);
+                    var email = jwtValidatedToken.Claims.FirstOrDefault(e => e.Type == ClaimTypes.Email);
 
                     if (email != null && email.Value != null)
                     {
@@ -92,11 +93,20 @@ namespace QuickNSmart.Logic.Modules.Account
                             SessionToken = Authorization.SystemAuthorizationToken
                         };
                         var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
-                                                            && e.Email.ToLower() == email.Value.ToString().ToLower()).FirstOrDefault();
+                                                            && e.EnableJwtAuth == true
+                                                            && e.Email.ToLower() == email.Value.ToString().ToLower())
+                                                   .ToList()
+                                                   .FirstOrDefault();
 
                         if (identity != null)
                         {
-                            result = await QueryLoginAsync(identity.Email, identity.PasswordHash).ConfigureAwait(false);
+                            var login = await QueryLoginAsync(identity.Email, identity.PasswordHash).ConfigureAwait(false);
+
+                            if (login != null)
+                            {
+                                result = new LoginSession();
+                                result.CopyProperties(login);
+                            }
                         }
                     }
                 }
@@ -109,9 +119,15 @@ namespace QuickNSmart.Logic.Modules.Account
         }
         public static async Task<ILoginSession> LogonAsync(string email, string password)
         {
+            var result = default(ILoginSession);
             var calculatedHash = CalculateHash(password);
-            var result = await QueryLoginAsync(email, calculatedHash).ConfigureAwait(false);
+            var login = await QueryLoginAsync(email, calculatedHash).ConfigureAwait(false);
 
+            if (login != null)
+            {
+                result = new LoginSession();
+                result.CopyProperties(login);
+            }
             return result ?? throw new LogicException(ErrorType.InvalidAccount);
         }
         [Authorize]
@@ -172,7 +188,7 @@ namespace QuickNSmart.Logic.Modules.Account
             }
         }
         [Authorize("SysAdmin")]
-        public static async Task ChangePasswordFor(string sessionToken, string email, string newPassword)
+        public static async Task ChangePasswordForAsync(string sessionToken, string email, string newPassword)
         {
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
@@ -202,7 +218,7 @@ namespace QuickNSmart.Logic.Modules.Account
             }
         }
         [Authorize("SysAdmin")]
-        public static async Task ResetPasswordFor(string sessionToken, string email)
+        public static async Task ResetForAsync(string sessionToken, string email)
         {
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
@@ -230,7 +246,7 @@ namespace QuickNSmart.Logic.Modules.Account
         #region Internal logon
         internal static async Task<LoginSession> QueryAliveSessionAsync(string sessionToken)
         {
-            LoginSession result = LoginSessions.SingleOrDefault(ls => ls.SessionToken.Equals(sessionToken));
+            LoginSession result = LoginSessions.FirstOrDefault(ls => ls.SessionToken.Equals(sessionToken));
 
             if (result == null)
             {
@@ -245,7 +261,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 if (session != null)
                 {
                     using var identityCtrl = new Controllers.Persistence.Account.IdentityController(sessionCtrl);
-                    var identity = identityCtrl.Query(e => e.Id == session.IdentityId).SingleOrDefault();
+                    var identity = identityCtrl.Query(e => e.Id == session.IdentityId).FirstOrDefault();
 
                     if (identity != null)
                     {
@@ -253,7 +269,13 @@ namespace QuickNSmart.Logic.Modules.Account
                         result.CopyProperties(session);
                         result.Identity = new Identity();
                         result.Identity.CopyProperties(identity);
+                        result.Name = identity.Name;
+                        result.Email = identity.Email;
                         result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                        result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                        {
+                            new Claim(ClaimTypes.Email, identity.Email),
+                        }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
                         LoginSessions.Add(result);
                     }
                 }
@@ -265,7 +287,7 @@ namespace QuickNSmart.Logic.Modules.Account
             email.CheckArgument(nameof(email));
             calculatedHash.CheckArgument(nameof(calculatedHash));
 
-            LoginSession result = await QueryAliveSessionAsync(email, calculatedHash).ConfigureAwait(false);
+            var result = await QueryAliveSessionAsync(email, calculatedHash).ConfigureAwait(false);
 
             if (result == null)
             {
@@ -285,6 +307,8 @@ namespace QuickNSmart.Logic.Modules.Account
 
                     session.Identity = identity;
                     session.IdentityId = identity.Id;
+                    session.Name = identity.Name;
+                    session.Email = identity.Email;
                     session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
                     var entity = await sessionCtrl.InsertAsync(session).ConfigureAwait(false);
 
@@ -296,10 +320,14 @@ namespace QuickNSmart.Logic.Modules.Account
                     await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
 
                     result = new LoginSession();
-                    result.CopyProperties(entity);
-                    result.Identity = new Identity();
-                    result.Identity.CopyProperties(identity);
+                    result.CopyProperties(session);
+                    result.Name = identity.Name;
+                    result.Email = identity.Email;
                     result.Roles.AddRange(session.Roles);
+                    result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Email, identity.Email),
+                    }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
                     LoginSessions.Add(result);
                 }
             }
@@ -310,9 +338,9 @@ namespace QuickNSmart.Logic.Modules.Account
             email.CheckArgument(nameof(email));
             calculatedHash.CheckArgument(nameof(calculatedHash));
 
-            LoginSession result = LoginSessions.SingleOrDefault(e => e.IsActive
-                                                                  && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)
-                                                                  && e.PasswordHash.SequenceEqual(calculatedHash));
+            LoginSession result = LoginSessions.FirstOrDefault(e => e.IsActive
+                                                                 && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)
+                                                                 && e.PasswordHash == calculatedHash);
 
             if (result == null)
             {
@@ -339,7 +367,13 @@ namespace QuickNSmart.Logic.Modules.Account
                         result.CopyProperties(session);
                         result.Identity = new Identity();
                         result.Identity.CopyProperties(identity);
+                        result.Name = identity.Name;
+                        result.Email = identity.Email;
                         result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                        result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                        {
+                            new Claim(ClaimTypes.Email, identity.Email),
+                        }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
                         LoginSessions.Add(result);
                     }
                 }
@@ -390,7 +424,7 @@ namespace QuickNSmart.Logic.Modules.Account
                         {
                             bool itemUpdate = false;
                             bool curItemRemove = false;
-                            var curItem = LoginSessions.SingleOrDefault(e => e.Id == item.Id);
+                            var curItem = LoginSessions.FirstOrDefault(e => e.Id == item.Id);
 
                             if (curItem != null)
                             {

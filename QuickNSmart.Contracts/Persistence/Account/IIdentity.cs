@@ -8,6 +8,7 @@ namespace QuickNSmart.Contracts.Persistence.Account
         string Name { get; set; }
         string Email { get; set; }
         string Password { get; set; }
+        bool EnableJwtAuth { get; set; }
         int AccessFailedCount { get; set; }
         State State { get; set; }
     }

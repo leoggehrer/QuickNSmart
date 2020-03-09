@@ -9,7 +9,7 @@ using System.Text.Json;
 
 namespace QuickNSmart.Adapters.Service
 {
-    abstract partial class ServiceAdapterObject
+    abstract partial class ServiceAdapterObject : IDisposable
     {
         static ServiceAdapterObject()
         {
@@ -19,18 +19,16 @@ namespace QuickNSmart.Adapters.Service
         static partial void ClassConstructing();
         static partial void ClassConstructed();
 
-        public ServiceAdapterObject(string baseUri, string extUri)
+        public ServiceAdapterObject(string baseUri)
         {
             Constructing();
             BaseUri = baseUri;
-            ExtUri = extUri;
             Constructed();
         }
-        public ServiceAdapterObject(string baseUri, string extUri, string sessionToken)
+        public ServiceAdapterObject(string baseUri, string sessionToken)
         {
             Constructing();
             BaseUri = baseUri;
-            ExtUri = extUri;
             SessionToken = sessionToken;
             Constructed();
         }
@@ -42,10 +40,6 @@ namespace QuickNSmart.Adapters.Service
         /// The base url like https://localhost:5001/api
         /// </summary>
         public string BaseUri
-        {
-            get;
-        }
-        public string ExtUri
         {
             get;
         }
@@ -89,7 +83,44 @@ namespace QuickNSmart.Adapters.Service
         {
             return CreateClient(baseAddress, sessionToken);
         }
+
         #endregion Helpers
+
+        #region IDisposable Support
+        private bool disposedValue = false; // To detect redundant calls
+
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!disposedValue)
+            {
+                if (disposing)
+                {
+                    // TODO: dispose managed state (managed objects).
+                }
+
+                // TODO: free unmanaged resources (unmanaged objects) and override a finalizer below.
+                // TODO: set large fields to null.
+
+                disposedValue = true;
+            }
+        }
+
+        // TODO: override a finalizer only if Dispose(bool disposing) above has code to free unmanaged resources.
+        // ~ServiceAdapterObject()
+        // {
+        //   // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+        //   Dispose(false);
+        // }
+
+        // This code added to correctly implement the disposable pattern.
+        public void Dispose()
+        {
+            // Do not change this code. Put cleanup code in Dispose(bool disposing) above.
+            Dispose(true);
+            // TODO: uncomment the following line if the finalizer is overridden above.
+            // GC.SuppressFinalize(this);
+        }
+        #endregion
     }
 }
 //MdEnd

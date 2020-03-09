@@ -7,6 +7,8 @@ namespace QuickNSmart.Contracts.Persistence.Account
     public partial interface ILoginSession : IIdentifiable, ICopyable<ILoginSession>
     {
         int IdentityId { get; }
+        string Name { get; }
+        string Email { get; }
         string JsonWebToken { get; }
         string SessionToken { get; }
         DateTime LoginTime { get; }
