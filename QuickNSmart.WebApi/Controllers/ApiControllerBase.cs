@@ -33,26 +33,10 @@ namespace QuickNSmart.WebApi.Controllers
             {
                 if (authHeader.StartsWith("Bearer"))
                 {
-                    var startChr = '[';
-                    var endChr = ']';
-                    var start = false;
-                    var end = false;
-                    var sb = new StringBuilder();
+                    var encoding = Encoding.GetEncoding("iso-8859-1");
+                    var encodedToken = authHeader.Substring("Bearer ".Length).Trim();
 
-                    foreach (var item in authHeader)
-                    {
-                        if (start == false && item == startChr)
-                            start = true;
-                        else if (start && end == false && item == endChr)
-                            end = true;
-                        else if (start && end == false)
-                            sb.Append(item);
-                    }
-
-                    if (sb.Length > 0)
-                    {
-                        result = sb.ToString();
-                    }
+                    result = encoding.GetString(Convert.FromBase64String(encodedToken));
                 }
                 else if (authHeader.StartsWith("Basic"))
                 {

@@ -25,11 +25,11 @@ namespace QuickNSmart.Adapters.Service
             BaseUri = baseUri;
             Constructed();
         }
-        public ServiceAdapterObject(string baseUri, string sessionToken)
+        public ServiceAdapterObject(string sessionToken, string baseUri)
         {
             Constructing();
-            BaseUri = baseUri;
             SessionToken = sessionToken;
+            BaseUri = baseUri;
             Constructed();
         }
         partial void Constructing();
@@ -71,7 +71,7 @@ namespace QuickNSmart.Adapters.Service
             {
                 client.DefaultRequestHeaders.Authorization =
                     new AuthenticationHeaderValue("Bearer",
-                        Convert.ToBase64String(Encoding.ASCII.GetBytes($"[{sessionToken}]")));
+                        Convert.ToBase64String(Encoding.ASCII.GetBytes($"{sessionToken}")));
             }
             return client;
         }

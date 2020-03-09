@@ -30,8 +30,8 @@ namespace QuickNSmart.Adapters.Service
             ExtUri = extUri;
             Constructed();
         }
-        public GenericServiceAdapter(string baseUri, string extUri, string sessionToken)
-            : base(baseUri, sessionToken)
+        public GenericServiceAdapter(string sessionToken, string baseUri, string extUri)
+            : base(sessionToken, baseUri)
         {
             Constructing();
             ExtUri = extUri;

@@ -22,12 +22,17 @@ namespace QuickNSmart.ConApp
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
-
             Adapters.Factory.BaseUri = "https://localhost:5001/api";
             Adapters.Factory.Adapter = Adapters.AdapterType.Service;
 
             //await InitAppAccessAsync();
             //await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
+            
+            //await AddAppAccess("ggehrer", "ggehrer@hotmail.com", "Passme1234!", AaEnableJwt);
+            //await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
+            //await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
+            
+            
             try
             {
                 var login = await Adapters.Modules.Account.AccountManager.LogonAsync(SaEmail, SaPwd);
