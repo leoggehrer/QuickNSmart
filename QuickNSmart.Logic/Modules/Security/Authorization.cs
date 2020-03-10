@@ -5,10 +5,10 @@ using System.Linq;
 using System.Reflection;
 using CommonBase.Helpers;
 using CommonBase.Extensions;
-using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Logic.Entities.Persistence.Account;
 using QuickNSmart.Logic.Modules.Account;
 using System.Threading.Tasks;
+using QuickNSmart.Logic.Exceptions;
 
 namespace QuickNSmart.Logic.Modules.Security
 {
@@ -30,51 +30,51 @@ namespace QuickNSmart.Logic.Modules.Security
         internal static int TimeOutInSec => TimeOutInMin * 60;
         internal static string SystemAuthorizationToken { get; set; }
 
-        internal static void CheckAuthorization(string token, MethodBase methodeBase)
+        internal static void CheckAuthorization(string sessionToken, MethodBase methodeBase)
         {
-            token.CheckArgument(nameof(token));
+            sessionToken.CheckArgument(nameof(sessionToken));
             methodeBase.CheckArgument(nameof(methodeBase));
 
             bool handled = false;
 
-            BeforeCheckAuthorization(token, methodeBase, ref handled);
+            BeforeCheckAuthorization(sessionToken, methodeBase, ref handled);
             if (handled == false)
             {
-                CheckAuthorizationInternal(token, methodeBase);
+                CheckAuthorizationInternal(sessionToken, methodeBase);
             }
-            AfterCheckAuthorization(token, methodeBase);
+            AfterCheckAuthorization(sessionToken, methodeBase);
         }
-        private static void CheckAuthorizationInternal(string token, MethodBase methodBase)
+        private static void CheckAuthorizationInternal(string sessionToken, MethodBase methodBase)
         {
             methodBase = methodBase.GetOriginal();
-            if (token.IsNullOrEmpty())
+            if (sessionToken.IsNullOrEmpty())
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>();
                 var isRequired = authorization?.IsRequired ?? false;
 
                 if (isRequired)
-                    throw new LogicException(ErrorType.NotLogedIn);
+                    throw new AuthorizationException(ErrorType.NotLogedIn);
             }
-            else if (token.Equals(SystemAuthorizationToken) == false)
+            else if (sessionToken.Equals(SystemAuthorizationToken) == false)
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>();
                 bool isRequired = authorization?.IsRequired ?? false;
 
                 if (isRequired)
                 {
-                    var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(token));
+                    var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(sessionToken));
 
                     if (curSession == null)
-                        throw new LogicException(ErrorType.InvalidSessionToken);
+                        throw new AuthorizationException(ErrorType.InvalidSessionToken);
 
                     if (curSession.IsTimeout)
-                        throw new LogicException(ErrorType.AuthorizationTimeOut);
+                        throw new AuthorizationException(ErrorType.AuthorizationTimeOut);
 
                     bool isAuthorized = authorization.Roles.Any() == false
                                         || curSession.Roles.Any(lr => authorization.Roles.Contains(lr.Designation));
 
                     if (isAuthorized == false)
-                        throw new LogicException(ErrorType.NotAuthorized);
+                        throw new AuthorizationException(ErrorType.NotAuthorized);
 
                     curSession.LastAccess = DateTime.Now;
                     LoggingAsync(curSession.IdentityId, methodBase.DeclaringType.Name, methodBase.Name, string.Empty);
@@ -119,7 +119,7 @@ namespace QuickNSmart.Logic.Modules.Security
 
                 if (isRequired)
                 {
-                    throw new LogicException(ErrorType.NotLogedIn);
+                    throw new AuthorizationException(ErrorType.NotLogedIn);
                 }
             }
             else if (token.Equals(SystemAuthorizationToken) == false)
@@ -133,16 +133,16 @@ namespace QuickNSmart.Logic.Modules.Security
                     var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(token));
 
                     if (curSession == null)
-                        throw new LogicException(ErrorType.InvalidSessionToken);
+                        throw new AuthorizationException(ErrorType.InvalidSessionToken);
 
                     if (curSession.IsTimeout)
-                        throw new LogicException(ErrorType.AuthorizationTimeOut);
+                        throw new AuthorizationException(ErrorType.AuthorizationTimeOut);
 
                     bool isAuthorized = authorization.Roles.Any() == false
                                         || curSession.Roles.Any(lr => authorization.Roles.Contains(lr.Designation));
 
                     if (isAuthorized == false)
-                        throw new LogicException(ErrorType.NotAuthorized);
+                        throw new AuthorizationException(ErrorType.NotAuthorized);
 
                     curSession.LastAccess = DateTime.Now;
                     LoggingAsync(curSession.IdentityId, instanceType.Name, methodBase.Name, string.Empty);

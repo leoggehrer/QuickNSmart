@@ -1,6 +1,6 @@
 ﻿//@QnSBaseCode
 //MdStart
-namespace QuickNSmart.Logic
+namespace QuickNSmart.Logic.Exceptions
 {
     public enum ErrorType : int
     {

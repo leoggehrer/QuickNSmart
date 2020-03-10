@@ -7,6 +7,9 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 {
     partial class LoginSession
     {
+        partial void OnOriginReading()
+        {
+        }
         partial void OnLastAccessChanged()
         {
             HasChanged = true;
@@ -20,13 +23,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
             {
                 TimeSpan ts = DateTime.Now - LastAccess;
 
-                return ts.TotalSeconds > Logic.Modules.Security.Authorization.TimeOutInSec || LogoutTime.HasValue;
+                return LogoutTime.HasValue || ts.TotalSeconds > Logic.Modules.Security.Authorization.TimeOutInSec;
             }
         }
-        internal bool HasChanged { get; private set; }
-
+        internal bool HasChanged { get; set; }
         internal byte[] PasswordHash => Identity?.PasswordHash;
-
         internal List<Role> Roles { get; } = new List<Role>();
         #endregion Ignore properties
     }

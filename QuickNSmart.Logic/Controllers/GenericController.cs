@@ -7,13 +7,11 @@ using System.Linq.Dynamic.Core;
 using System.Threading.Tasks;
 using System.Reflection;
 using CommonBase.Extensions;
-using CommonBase.Helpers;
 using QuickNSmart.Contracts.Client;
 using QuickNSmart.Logic.DataContext;
-using QuickNSmart.Adapters.Exceptions;
 using QuickNSmart.Logic.Modules.Security;
 using System.Linq.Expressions;
-using Microsoft.EntityFrameworkCore;
+using QuickNSmart.Logic.Exceptions;
 
 namespace QuickNSmart.Logic.Controllers
 {

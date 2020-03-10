@@ -1,10 +1,10 @@
 ﻿//@QnSBaseCode
 //MdStart
 using System.Threading.Tasks;
-using QuickNSmart.Adapters.Exceptions;
+using CommonBase.Extensions;
+using QuickNSmart.Logic.Exceptions;
 using QuickNSmart.Logic.Entities.Persistence.Account;
 using QuickNSmart.Logic.Modules.Account;
-using CommonBase.Extensions;
 
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {

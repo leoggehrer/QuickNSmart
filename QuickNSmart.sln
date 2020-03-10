@@ -12,6 +12,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickNSmart.ConApp", "Quick
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{65F328D9-9323-4047-A9F4-B4E3F38F33FF}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Contracts.png = Contracts.png
 		Controllers.png = Controllers.png
 		Entities.png = Entities.png
@@ -25,7 +26,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickNSmart.Transfer", "Qui
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CSharpCodeGenerator.ConApp", "CSharpCodeGenerator.ConApp\CSharpCodeGenerator.ConApp.csproj", "{945605E7-63CA-406C-87E8-AC39FF082268}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QuickNSmart.Adapters", "QuickNSmart.Adapters\QuickNSmart.Adapters.csproj", "{24916419-BA6F-471A-B148-8E880EB328C1}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "QuickNSmart.Adapters", "QuickNSmart.Adapters\QuickNSmart.Adapters.csproj", "{24916419-BA6F-471A-B148-8E880EB328C1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

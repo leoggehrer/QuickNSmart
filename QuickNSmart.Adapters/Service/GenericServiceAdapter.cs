@@ -263,9 +263,6 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
-        public void Dispose()
-        {
-        }
     }
 }
 //MdEnd

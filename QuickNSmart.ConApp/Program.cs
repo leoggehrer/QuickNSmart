@@ -1,7 +1,8 @@
 using System;
+using System.Reflection;
 using System.Threading.Tasks;
-using CommonBase.Extensions;
 using QuickNSmart.Contracts.Persistence.Account;
+using AccountManager = QuickNSmart.Adapters.Modules.Account.AccountManager;
 
 namespace QuickNSmart.ConApp
 {
@@ -22,31 +23,39 @@ namespace QuickNSmart.ConApp
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
 
-            Adapters.Factory.BaseUri = "https://localhost:5001/api";
-            Adapters.Factory.Adapter = Adapters.AdapterType.Service;
+            var rmAccountManager = new AccountManager
+            {
+//                BaseUri = "https://localhost:5001/api",
+                BaseUri = "https://localhost:5001/api",
+                Adapter = Adapters.AdapterType.Service,
+            };
+            var appAccountManager = new AccountManager
+            {
+                BaseUri = "https://localhost:5001/api",
+                Adapter = Adapters.AdapterType.Controller,
+            };
 
-            //await InitAppAccessAsync();
-            //await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
-            
-            //await AddAppAccess("ggehrer", "ggehrer@hotmail.com", "Passme1234!", AaEnableJwt);
-            //await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
-            //await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
-            
-            
+            Adapters.Factory.BaseUri = "https://localhost:5001/api";
+            Adapters.Factory.Adapter = Adapters.AdapterType.Controller;
+
             try
             {
-                var login = await Adapters.Modules.Account.AccountManager.LogonAsync(SaEmail, SaPwd);
+                //await InitAppAccessAsync();
+                //await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
 
-                await ChangePassword(login, SaPwd, SaPwd);
+                //await AddAppAccess("ggehrer", "ggehrer@hotmail.com", "Passme1234!", AaEnableJwt);
+                //await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
+                //await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
 
-                var login2 = await Adapters.Modules.Account.AccountManager.LogonAsync(login.JsonWebToken);
+                var rmLogin = await rmAccountManager.LogonAsync("ggehrer@hotmail.com", "Passme123!");
+                var appLogin = await appAccountManager.LogonAsync(rmLogin.JsonWebToken);
 
-                await Task.Delay(5000);
-                await Adapters.Modules.Account.AccountManager.LogoutAsync(login.SessionToken);
+                await appAccountManager.LogoutAsync(appLogin.SessionToken);
+                await rmAccountManager.LogoutAsync(rmLogin.SessionToken);
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
             Console.WriteLine("Press any key to end!");
             Console.ReadKey();
@@ -57,7 +66,8 @@ namespace QuickNSmart.ConApp
         }
         private static async Task AddAppAccess(string user, string email, string pwd, bool enableJwtAuth, params string[] roles)
         {
-            var login = await Adapters.Modules.Account.AccountManager.LogonAsync(SaEmail, SaPwd);
+            var accMngr = new AccountManager();
+            var login = await accMngr.LogonAsync(SaEmail, SaPwd);
             using var ctrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
             var entity = await ctrl.CreateAsync();
 
@@ -74,11 +84,7 @@ namespace QuickNSmart.ConApp
                 entity.AddRole(role);
             }
             await ctrl.InsertAsync(entity);
-            await Adapters.Modules.Account.AccountManager.LogoutAsync(login.SessionToken);
-        }
-        private static async Task ChangePassword(ILoginSession login, string oldPwd, string newPwd)
-        {
-            await Logic.Modules.Account.AccountManager.ChangePassword(login.SessionToken, oldPwd, newPwd);
+            await accMngr.LogoutAsync(login.SessionToken);
         }
     }
 }

@@ -601,6 +601,28 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnIdentityIdReading();
 		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
 		partial void OnIdentityIdChanged();
+		public System.String Origin
+		{
+			get
+			{
+				OnOriginReading();
+				return _origin;
+			}
+			set
+			{
+				bool handled = false;
+				OnOriginChanging(ref handled, ref _origin);
+				if (handled == false)
+				{
+					this._origin = value;
+				}
+				OnOriginChanged();
+			}
+		}
+		private System.String _origin;
+		partial void OnOriginReading();
+		partial void OnOriginChanging(ref bool handled, ref System.String _origin);
+		partial void OnOriginChanged();
 		public System.String Name
 		{
 			get
@@ -768,6 +790,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				Id = other.Id;
 				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
+				Origin = other.Origin;
 				Name = other.Name;
 				Email = other.Email;
 				JsonWebToken = other.JsonWebToken;
@@ -794,11 +817,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Origin, other.Origin) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, Name, Email, JsonWebToken, HashCode.Combine(SessionToken, LoginTime, LastAccess, LogoutTime));
+			return HashCode.Combine(Id, Timestamp, IdentityId, Origin, Name, Email, HashCode.Combine(JsonWebToken, SessionToken, LoginTime, LastAccess, LogoutTime));
 		}
 	}
 }

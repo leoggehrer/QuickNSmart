@@ -4,7 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace QuickNSmart.Logic
+namespace QuickNSmart.Logic.Exceptions
 {
     internal static partial class ErrorMessage
     {

@@ -114,6 +114,8 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .HasMaxLength(256);
 
             entityTypeBuilder
+                .Ignore(p => p.Origin);
+            entityTypeBuilder
                 .Ignore(p => p.Name);
             entityTypeBuilder
                 .Ignore(p => p.Email);

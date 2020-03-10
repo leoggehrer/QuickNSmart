@@ -7,6 +7,7 @@ using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
 using CommonBase.Extensions;
+using System.Reflection;
 
 namespace QuickNSmart.Logic.Modules.Security
 {
@@ -71,7 +72,7 @@ namespace QuickNSmart.Logic.Modules.Security
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error: {ex.Message}");
+                System.Diagnostics.Debug.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
             return result;
         }

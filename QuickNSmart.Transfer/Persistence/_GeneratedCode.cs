@@ -493,6 +493,28 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnIdentityIdReading();
 		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
 		partial void OnIdentityIdChanged();
+		public System.String Origin
+		{
+			get
+			{
+				OnOriginReading();
+				return _origin;
+			}
+			set
+			{
+				bool handled = false;
+				OnOriginChanging(ref handled, ref _origin);
+				if (handled == false)
+				{
+					this._origin = value;
+				}
+				OnOriginChanged();
+			}
+		}
+		private System.String _origin;
+		partial void OnOriginReading();
+		partial void OnOriginChanging(ref bool handled, ref System.String _origin);
+		partial void OnOriginChanged();
 		public System.String Name
 		{
 			get
@@ -660,6 +682,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 				Id = other.Id;
 				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
+				Origin = other.Origin;
 				Name = other.Name;
 				Email = other.Email;
 				JsonWebToken = other.JsonWebToken;

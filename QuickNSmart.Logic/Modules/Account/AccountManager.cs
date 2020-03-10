@@ -4,18 +4,17 @@ using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CommonBase.Extensions;
 using Microsoft.IdentityModel.Tokens;
-using QuickNSmart.Adapters.Exceptions;
+using CommonBase.Extensions;
 using QuickNSmart.Contracts.Persistence.Account;
 using QuickNSmart.Logic.Entities.Persistence.Account;
+using QuickNSmart.Logic.Exceptions;
 using QuickNSmart.Logic.Modules.Security;
 
 namespace QuickNSmart.Logic.Modules.Account
@@ -37,7 +36,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
         private const int UpdateDelay = 60000;
 
-        private static List<LoginSession> LoginSessions { get; } = new List<LoginSession>();
+        internal static readonly List<LoginSession> LoginSessions = new List<LoginSession>();
 
         #region Public logon
         public static async Task InitAppAccess(string name, string email, string password, bool enableJwtAuth)
@@ -135,20 +134,27 @@ namespace QuickNSmart.Logic.Modules.Account
         {
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
-            using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
+            try
             {
-                SessionToken = Authorization.SystemAuthorizationToken
-            };
-            var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
-                                     .ToList()
-                                     .FirstOrDefault(e => e.IsActive);
+                using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(Factory.CreateContext())
+                {
+                    SessionToken = Authorization.SystemAuthorizationToken
+                };
+                var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
+                                         .ToList()
+                                         .FirstOrDefault(e => e.IsActive);
 
-            if (session != null)
+                if (session != null)
+                {
+                    session.LogoutTime = DateTime.Now;
+
+                    await sessionCtrl.UpdateAsync(session).ConfigureAwait(false);
+                    await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
+                }
+            }
+            catch (LogicException ex)
             {
-                session.LogoutTime = DateTime.Now;
-
-                await sessionCtrl.UpdateAsync(session).ConfigureAwait(false);
-                await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
+                System.Diagnostics.Debug.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
         }
         [Authorize]
@@ -157,7 +163,6 @@ namespace QuickNSmart.Logic.Modules.Account
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
             return await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false);
-
         }
         [Authorize]
         public static async Task ChangePassword(string sessionToken, string oldPassword, string newPassword)
@@ -404,12 +409,12 @@ namespace QuickNSmart.Logic.Modules.Account
         }
         #endregion Internal logon
 
-        #region update thread
+        #region Update thread
         private static void UpdateSession()
         {
             while (true)
             {
-                _ = Task.Run(async () =>
+                Task.Run(async () =>
                 {
                     try
                     {
@@ -422,27 +427,34 @@ namespace QuickNSmart.Logic.Modules.Account
 
                         foreach (var item in qry.ToList())
                         {
-                            bool itemUpdate = false;
-                            bool curItemRemove = false;
+                            var itemUpdate = false;
+                            var curItemRemove = false;
                             var curItem = LoginSessions.FirstOrDefault(e => e.Id == item.Id);
 
-                            if (curItem != null)
+                            if (curItem != null && curItem.HasChanged)
                             {
                                 itemUpdate = true;
+                                curItem.HasChanged = false;
                                 item.LastAccess = curItem.LastAccess;
                             }
                             if (item.IsTimeout)
                             {
-                                item.LogoutTime = DateTime.Now;
                                 itemUpdate = true;
-                                curItemRemove = true;
+                                if (curItem != null)
+                                {
+                                    curItemRemove = true;
+                                }
+                                if (item.LogoutTime.HasValue == false)
+                                {
+                                    item.LogoutTime = DateTime.Now;
+                                }
                             }
                             if (itemUpdate)
                             {
                                 saveChanges = true;
                                 await sessionCtrl.UpdateAsync(item).ConfigureAwait(false);
                             }
-                            if (curItem != null && curItemRemove)
+                            if (curItemRemove)
                             {
                                 LoginSessions.Remove(curItem);
                             }
@@ -452,15 +464,15 @@ namespace QuickNSmart.Logic.Modules.Account
                             await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
                         }
                     }
-                    catch (Exception e)
+                    catch (Exception ex)
                     {
-                        System.Diagnostics.Debug.WriteLine($"Error: {e.Message}");
+                        System.Diagnostics.Debug.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
                     }
                 });
                 Thread.Sleep(UpdateDelay);
             }
         }
-        #endregion update thread
+        #endregion Update thread
 
         #region Helpers
         internal static byte[] CalculateHash(string plainText)

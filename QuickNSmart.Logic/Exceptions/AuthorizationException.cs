@@ -4,23 +4,16 @@ using System;
 
 namespace QuickNSmart.Logic.Exceptions
 {
-    /// <inheritdoc />
-    /// <summary>
-    /// Stellt Fehler dar, die beim Ausfuehren der Anwendung auftreten.
-    /// </summary>
-    public partial class LogicException : Exception
+    public class AuthorizationException : LogicException
     {
-        public int ErrorId { get; } = -1;
-
         /// <summary>
         /// Initialisiert eine neue Instanz der LogicException-Klasse 
         /// mit einer angegebenen Fehlermeldung.
         /// </summary>
         /// <param name="errorType">Identification der Fehlermeldung.</param>
-        public LogicException(ErrorType errorType)
-            : base(ErrorMessage.GetAt(errorType))
+        public AuthorizationException(ErrorType errorType)
+            : base(errorType)
         {
-            ErrorId = (int)errorType;
         }
 
         /// <summary>
@@ -29,10 +22,9 @@ namespace QuickNSmart.Logic.Exceptions
         /// </summary>
         /// <param name="errorType">Identification der Fehlermeldung.</param>
         /// <param name="message">Die Meldung, in der der Fehler beschrieben wird.</param>
-        public LogicException(ErrorType errorType, string message)
-            : base(message)
+        public AuthorizationException(ErrorType errorType, string message)
+            : base(errorType, message)
         {
-            ErrorId = (int)errorType;
         }
 
         /// <summary>
@@ -41,10 +33,9 @@ namespace QuickNSmart.Logic.Exceptions
         /// </summary>
         /// <param name="errorType">Identification der Fehlermeldung.</param>
         /// <param name="ex">Exception die aufgetreten ist.</param>
-        public LogicException(ErrorType errorType, Exception ex)
-            : base(ex.Message, ex.InnerException)
+        public AuthorizationException(ErrorType errorType, Exception ex)
+            : base(errorType, ex.InnerException)
         {
-            ErrorId = (int)errorType;
         }
     }
 }

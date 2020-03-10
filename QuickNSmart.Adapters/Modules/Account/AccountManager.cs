@@ -5,7 +5,7 @@ using QuickNSmart.Contracts.Persistence.Account;
 
 namespace QuickNSmart.Adapters.Modules.Account
 {
-    public static partial class AccountManager
+    public partial class AccountManager
     {
         static AccountManager()
         {
@@ -18,10 +18,18 @@ namespace QuickNSmart.Adapters.Modules.Account
         /// <summary>
         /// The base url like https://localhost:5001/api
         /// </summary>
-        public static string BaseUri = Factory.BaseUri;
-        public static AdapterType Adapter { get; set; } = Factory.Adapter;
+        public string BaseUri { get; set; } = Factory.BaseUri;
+        public AdapterType Adapter { get; set; } = Factory.Adapter;
 
-        public static async Task<ILoginSession> LogonAsync(string jsonWebToken)
+        public AccountManager()
+        {
+            Constructing();
+            Constructed();
+        }
+        partial void Constructing();
+        partial void Constructed();
+
+        public async Task<ILoginSession> LogonAsync(string jsonWebToken)
         {
             var result = default(ILoginSession);
 
@@ -37,7 +45,7 @@ namespace QuickNSmart.Adapters.Modules.Account
             }
             return result;
         }
-        public static async Task<ILoginSession> LogonAsync(string email, string password)
+        public async Task<ILoginSession> LogonAsync(string email, string password)
         {
             var result = default(ILoginSession);
 
@@ -53,7 +61,7 @@ namespace QuickNSmart.Adapters.Modules.Account
             }
             return result;
         }
-        public static async Task LogoutAsync(string sessionToken)
+        public async Task LogoutAsync(string sessionToken)
         {
             if (Adapter == AdapterType.Controller)
             {
@@ -67,7 +75,7 @@ namespace QuickNSmart.Adapters.Modules.Account
                 await serviceInvoker.LogoutAsync(sessionToken).ConfigureAwait(false);
             }
         }
-        public static async Task ChangePasswordAsync(string sessionToken, string oldPwd, string newPwd)
+        public async Task ChangePasswordAsync(string sessionToken, string oldPwd, string newPwd)
         {
             if (Adapter == AdapterType.Controller)
             {
@@ -80,7 +88,7 @@ namespace QuickNSmart.Adapters.Modules.Account
                 await serviceInvoker.ChangePasswordAsync(sessionToken, oldPwd, newPwd).ConfigureAwait(false);
             }
         }
-        public static async Task ChangePasswordForAsync(string sessionToken, string email, string password)
+        public async Task ChangePasswordForAsync(string sessionToken, string email, string password)
         {
             if (Adapter == AdapterType.Controller)
             {
@@ -93,7 +101,7 @@ namespace QuickNSmart.Adapters.Modules.Account
                 await serviceInvoker.ChangePasswordForAsync(sessionToken, email, password).ConfigureAwait(false);
             }
         }
-        public static async Task ResetForAsync(string sessionToken, string email)
+        public async Task ResetForAsync(string sessionToken, string email)
         {
             if (Adapter == AdapterType.Controller)
             {
