@@ -9,6 +9,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
     {
         partial void OnOriginReading()
         {
+            _origin = nameof(QuickNSmart);
         }
         partial void OnLastAccessChanged()
         {

@@ -81,21 +81,21 @@ namespace QuickNSmart.Logic.Modules.Security
                 }
             }
         }
-        static partial void BeforeCheckAuthorization(string token, MethodBase methodeBase, ref bool handled);
-        static partial void AfterCheckAuthorization(string token, MethodBase methodeBase);
+        static partial void BeforeCheckAuthorization(string sessionToken, MethodBase methodeBase, ref bool handled);
+        static partial void AfterCheckAuthorization(string sessionToken, MethodBase methodeBase);
 
-        internal static void CheckAuthorization(string token, Type instanceType, MethodBase methodeBase)
+        internal static void CheckAuthorization(string sessionToken, Type instanceType, MethodBase methodeBase)
         {
             bool handled = false;
 
-            BeforeCheckAuthorization(token, instanceType, methodeBase, ref handled);
+            BeforeCheckAuthorization(sessionToken, instanceType, methodeBase, ref handled);
             if (handled == false)
             {
-                CheckAuthorizationInternal(token, instanceType, methodeBase);
+                CheckAuthorizationInternal(sessionToken, instanceType, methodeBase);
             }
-            AfterCheckAuthorization(token, instanceType, methodeBase);
+            AfterCheckAuthorization(sessionToken, instanceType, methodeBase);
         }
-        private static void CheckAuthorizationInternal(string token, Type instanceType, MethodBase methodBase)
+        private static void CheckAuthorizationInternal(string sessionToken, Type instanceType, MethodBase methodBase)
         {
             static AuthorizeAttribute GetClassAuthorization(Type classType)
             {
@@ -111,7 +111,7 @@ namespace QuickNSmart.Logic.Modules.Security
             }
 
             methodBase = methodBase.GetOriginal();
-            if (token.IsNullOrEmpty())
+            if (sessionToken.IsNullOrEmpty())
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
                                     ?? GetClassAuthorization(instanceType);
@@ -122,7 +122,7 @@ namespace QuickNSmart.Logic.Modules.Security
                     throw new AuthorizationException(ErrorType.NotLogedIn);
                 }
             }
-            else if (token.Equals(SystemAuthorizationToken) == false)
+            else if (sessionToken.Equals(SystemAuthorizationToken) == false)
             {
                 var authorization = methodBase.GetCustomAttribute<AuthorizeAttribute>()
                                     ?? GetClassAuthorization(instanceType);
@@ -130,7 +130,7 @@ namespace QuickNSmart.Logic.Modules.Security
 
                 if (isRequired)
                 {
-                    var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(token));
+                    var curSession = AsyncHelper.RunSync<LoginSession>(() => AccountManager.QueryAliveSessionAsync(sessionToken));
 
                     if (curSession == null)
                         throw new AuthorizationException(ErrorType.InvalidSessionToken);
@@ -150,8 +150,8 @@ namespace QuickNSmart.Logic.Modules.Security
             }
         }
 
-        static partial void BeforeCheckAuthorization(string token, Type instanceType, MethodBase methodeBase, ref bool handled);
-        static partial void AfterCheckAuthorization(string token, Type instanceType, MethodBase methodeBase);
+        static partial void BeforeCheckAuthorization(string sessionToken, Type instanceType, MethodBase methodeBase, ref bool handled);
+        static partial void AfterCheckAuthorization(string sessionToken, Type instanceType, MethodBase methodeBase);
 
         static Task LoggingAsync(int identityId, string subject, string action, string info)
         {

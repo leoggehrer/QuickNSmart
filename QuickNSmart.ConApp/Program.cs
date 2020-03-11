@@ -47,11 +47,14 @@ namespace QuickNSmart.ConApp
                 //await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
                 //await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
 
-                var rmLogin = await rmAccountManager.LogonAsync("ggehrer@hotmail.com", "Passme123!");
-                var appLogin = await appAccountManager.LogonAsync(rmLogin.JsonWebToken);
+                for (int i = 0; i < 100; i++)
+                {
+                    var rmLogin = await rmAccountManager.LogonAsync("ggehrer@hotmail.com", "Passme123!");
+                    var appLogin = await appAccountManager.LogonAsync(rmLogin.JsonWebToken);
 
-                await appAccountManager.LogoutAsync(appLogin.SessionToken);
-                await rmAccountManager.LogoutAsync(rmLogin.SessionToken);
+                    await appAccountManager.LogoutAsync(appLogin.SessionToken);
+                    await rmAccountManager.LogoutAsync(rmLogin.SessionToken);
+                }
             }
             catch (Exception ex)
             {
