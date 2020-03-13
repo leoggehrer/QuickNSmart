@@ -63,16 +63,11 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 		partial void OnRolesChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IAppAccess other)
 		{
-			if (other == null)
-			{
-				throw new System.ArgumentNullException(nameof(other));
-			}
+			base.CopyProperties(other);
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
-				Id = other.Id;
-				Timestamp = other.Timestamp;
 				Identity = other.Identity;
 				Roles = other.Roles;
 			}

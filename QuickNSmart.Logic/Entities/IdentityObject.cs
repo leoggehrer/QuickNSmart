@@ -1,11 +1,13 @@
 //@QnSBaseCode
 //MdStart
+using CommonBase.Extensions;
+using QuickNSmart.Contracts;
 using System.Collections;
 using System.Linq;
 
 namespace QuickNSmart.Logic.Entities
 {
-    internal abstract partial class IdentityObject : Contracts.IIdentifiable
+    internal abstract partial class IdentityObject : Contracts.IIdentifiable, Contracts.ICopyable<Contracts.IIdentifiable>
     {
 		private System.Int32 _id;
 		public virtual System.Int32 Id
@@ -77,6 +79,22 @@ namespace QuickNSmart.Logic.Entities
 			}
 			return result;
 		}
+
+		public void CopyProperties(IIdentifiable other)
+		{
+			other.CheckArgument(nameof(other));
+
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(IIdentifiable other, ref bool handled);
+		partial void AfterCopyProperties(IIdentifiable other);
 	}
 }
 //MdEnd

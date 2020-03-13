@@ -2,6 +2,7 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using CommonBase.Extensions;
 
@@ -217,6 +218,36 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add($"partial void BeforeCopyProperties({type.FullName} other, ref bool handled);");
             result.Add($"partial void AfterCopyProperties({type.FullName} other);");
 
+            return result;
+        }
+        internal static IEnumerable<string> CreateSubCopyProperties(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>
+            {
+                $"public void CopyProperties({type.FullName} other)",
+                "{",
+                "base.CopyProperties(other);",
+                string.Empty,
+                "bool handled = false;",
+                $"BeforeCopyProperties(other, ref handled);",
+                "if (handled == false)",
+                "{",
+            };
+            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            {
+                if (item.CanRead)
+                {
+                    result.Add($"{item.Name} = other.{item.Name};".SetIndent(2));
+                }
+            }
+            result.Add("}");
+            result.Add("AfterCopyProperties(other);");
+            result.Add("}");
+
+            result.Add($"partial void BeforeCopyProperties({type.FullName} other, ref bool handled);");
+            result.Add($"partial void AfterCopyProperties({type.FullName} other);");
             return result;
         }
         #endregion CreateCopyProperties

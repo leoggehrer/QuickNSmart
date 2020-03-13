@@ -5,9 +5,9 @@ using System.Collections;
 using System.Linq;
 using CommonBase.Extensions;
 
-namespace QuickNSmart.Logic.Entities.Modules
+namespace QuickNSmart.Transfer.Modules
 {
-	internal partial class ModuleObject
+	public partial class ModuleObject
     {
 		protected static bool IsEqualsWith(object obj1, object obj2)
 		{

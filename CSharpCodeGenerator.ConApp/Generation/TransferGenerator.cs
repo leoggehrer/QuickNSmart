@@ -62,7 +62,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 CreateTransferPropertyAttributes(type, item.Name, result);
                 result.AddRange(CreatePartialProperty(item));
             }
-            result.AddRange(CreateCopyProperties(type));
+            result.AddRange(CreateSubCopyProperties(type));
             result.Add("}");
             return result;
         }
@@ -77,7 +77,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 if (CanCreate(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateTransferFromInterface(type), CreateNameSpace(type), "using System.Text.Json.Serialization;"));
-                    result.AddRange(EnvelopeWithANamespace(CreateTransferModel(type), CreateNameSpace(type)));
+                    result.AddRange(EnvelopeWithANamespace(CreateModuleModel(type), CreateNameSpace(type)));
                 }
             }
             return result;
@@ -119,6 +119,17 @@ namespace CSharpCodeGenerator.ConApp.Generation
             List<string> result = new List<string>();
 
             result.Add($"partial class {CreateEntityNameFromInterface(type)} : TransferObject");
+            result.Add("{");
+            result.Add("}");
+            return result;
+        }
+        private IEnumerable<string> CreateModuleModel(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : ModuleObject");
             result.Add("{");
             result.Add("}");
             return result;
