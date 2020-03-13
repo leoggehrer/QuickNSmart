@@ -114,6 +114,22 @@ namespace QuickNSmart.Adapters.Modules.Account
                 await serviceInvoker.ResetForAsync(sessionToken, email).ConfigureAwait(false);
             }
         }
+        public async Task<bool> HasRoleAsync(string sessionToken, string role)
+        {
+            var result = false;
+
+            if (Adapter == AdapterType.Controller)
+            {
+                result = await Logic.Modules.Account.AccountManager.HasRoleAsync(sessionToken, role).ConfigureAwait(false);
+            }
+            else if (Adapter == AdapterType.Service)
+            {
+                var serviceInvoker = new Service.InvokeServiceAdapter(BaseUri);
+
+                result = await serviceInvoker.HasRoleAsync(sessionToken, role).ConfigureAwait(false);
+            }
+            return result;
+        }
     }
 }
 //MdEnd

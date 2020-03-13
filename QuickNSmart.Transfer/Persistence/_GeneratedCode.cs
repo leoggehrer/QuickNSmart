@@ -129,11 +129,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnInfoChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IActionLog other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
 				Time = other.Time;
 				Subject = other.Subject;
@@ -327,11 +332,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnStateChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentity other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
 				Guid = other.Guid;
 				Name = other.Name;
 				Email = other.Email;
@@ -417,11 +427,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnRoleIdChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentityXRole other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
 				RoleId = other.RoleId;
 			}
@@ -656,11 +671,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnLogoutTimeChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.ILoginSession other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
 				IdentityId = other.IdentityId;
 				Origin = other.Origin;
 				Name = other.Name;
@@ -748,11 +768,16 @@ namespace QuickNSmart.Transfer.Persistence.Account
 		partial void OnDescriptionChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IRole other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)
 			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
 				Designation = other.Designation;
 				Description = other.Description;
 			}

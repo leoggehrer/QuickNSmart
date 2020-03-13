@@ -62,7 +62,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 CreateTransferPropertyAttributes(type, item.Name, result);
                 result.AddRange(CreatePartialProperty(item));
             }
-            result.AddRange(CreateSubCopyProperties(type));
+            result.AddRange(CreateCopyProperties(type));
             result.Add("}");
             return result;
         }

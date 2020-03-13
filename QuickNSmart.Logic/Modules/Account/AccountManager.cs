@@ -158,6 +158,17 @@ namespace QuickNSmart.Logic.Modules.Account
             }
         }
         [Authorize]
+        public static async Task<bool> HasRoleAsync(string sessionToken, string role)
+        {
+            Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
+
+            role.CheckArgument(nameof(role));
+
+            var loginSession = await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false);
+
+            return loginSession != null && loginSession.Roles.Any(r => r.Designation.Equals(role, StringComparison.CurrentCultureIgnoreCase));
+        }
+        [Authorize]
         public static async Task<ILoginSession> QueryLoginAsync(string sessionToken)
         {
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());

@@ -33,19 +33,6 @@ namespace QuickNSmart.Transfer.Modules
 			}
 			return result;
 		}
-		public void CopyProperties(Object other)
-		{
-			other.CheckArgument(nameof(other));
-
-			bool handled = false;
-			BeforeCopyProperties(other, ref handled);
-			if (handled == false)
-			{
-			}
-			AfterCopyProperties(other);
-		}
-		partial void BeforeCopyProperties(Object other, ref bool handled);
-		partial void AfterCopyProperties(Object other);
 	}
 }
 //MdEnd

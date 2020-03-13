@@ -141,6 +141,28 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
+        public async Task<bool> HasRoleAsync(string sessionToken, string role)
+        {
+            using (var client = GetClient(BaseUri))
+            {
+                HttpResponseMessage response = await client.GetAsync($"Account/HasRole/{sessionToken}/{role}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentData = await response.Content.ReadAsStreamAsync();
+
+                    return await JsonSerializer.DeserializeAsync<bool>(contentData, DeserializerOptions);
+                }
+                else
+                {
+                    string stringData = await response.Content.ReadAsStringAsync();
+                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
     }
 }
 //MdEnd

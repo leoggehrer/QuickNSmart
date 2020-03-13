@@ -151,7 +151,10 @@ namespace QuickNSmart.Logic.Entities.Modules.Account
 		partial void OnAuthenticationTokenChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Modules.Account.ILogin other)
 		{
-			base.CopyProperties(other);
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
 			bool handled = false;
 			BeforeCopyProperties(other, ref handled);
 			if (handled == false)

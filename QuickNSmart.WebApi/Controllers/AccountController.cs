@@ -47,6 +47,11 @@ namespace QuickNSmart.WebApi.Controllers
         {
             return Logic.Modules.Account.AccountManager.ResetForAsync(sessionToken, email);
         }
+        [HttpGet("/api/[controller]/HasRole/{sessionToken}/{role}")]
+        public Task<bool> HasRoleAsync(string sessionToken, string role)
+        {
+            return Logic.Modules.Account.AccountManager.HasRoleAsync(sessionToken, role);
+        }
     }
 }
 //MdEnd
