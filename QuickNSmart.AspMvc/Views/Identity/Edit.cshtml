@@ -1,28 +1,47 @@
 @*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using QuickNSmart.AspMvc.Modules.Session
 @model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
 
 @{
-    ViewData["Title"] = "Edit";
+    string title = Model.Id == 0 ? "Create" : "Edit";
+
+    title = translate(title);
+    ViewData["Title"] = title;
 }
 
-<h1>Edit</h1>
+<h1>@title</h1>
 
-@if (Model.HasError)
-{
-    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
-}
 <form asp-action="IdentityEdit">
-    <div style="margin-top: 1em;">
-        <h4>Identity</h4>
-        <hr />
-        @await Html.PartialAsync("IdentityEdit", Model.Identity)
-    </div>
-
     <div class="row">
+        <div class="col-md-8">
+            <h4>Identity</h4>
+        </div>
         <div class="col-md-4">
             <input type="submit" value="Save" class="btn btn-primary" style="min-width: 8em;" />
             <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
         </div>
+    </div>
+    <hr />
+
+    @if (Model.HasError)
+    {
+        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+    }
+    <div style="margin-top: 1em;">
+        @await Html.PartialAsync("IdentityEdit", Model.Identity)
     </div>
 
     <div style="margin-top: 1em;">
@@ -30,6 +49,15 @@
         @await Html.PartialAsync("RoleListEdit", Model.Roles)
     </div>
 </form>
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

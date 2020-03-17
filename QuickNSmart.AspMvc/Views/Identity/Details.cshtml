@@ -1,26 +1,54 @@
 @*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using QuickNSmart.AspMvc.Modules.Session
 @model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
-
+@*Begin:Header*@
 @{
-    ViewData["Title"] = "Details";
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
 }
 
-<h1>AppAccess</h1>
+@{
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+@{
+    string title = translate("Details");
 
-<div style="margin-top: 1em;">
-    <h4>Identity</h4>
-    <hr />
-    @await Html.PartialAsync("IdentityDetails", Model.Identity)
-</div>
+    ViewData["Title"] = title;
+}
 
+<h1>@title</h1>
 <div class="row">
+    <div class="col-md-8">
+        <h4>Identity</h4>
+    </div>
     <div class="col-md-4">
         @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
         <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
     </div>
+</div>
+<hr />
+
+<div style="margin-top: 1em;">
+    @await Html.PartialAsync("IdentityDetails", Model.Identity)
 </div>
 
 <div style="margin-top: 1em;">
     <h4>Rolen</h4>
     @await Html.PartialAsync("RoleListDetails", Model.Roles)
 </div>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

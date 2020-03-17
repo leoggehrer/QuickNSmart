@@ -30,7 +30,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
                     }
                 }
             }
-            return result.ToString();
+            return result.Length > 0 ? result.ToString() : null;
         }
     }
 }

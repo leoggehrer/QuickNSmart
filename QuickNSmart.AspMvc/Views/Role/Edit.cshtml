@@ -1,11 +1,47 @@
 @*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using QuickNSmart.AspMvc.Modules.Session
 @model QuickNSmart.AspMvc.Models.Persistence.Account.Role
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
 
-<h4>Role</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Edit">
+@{
+    string title = Model.Id == 0 ? "Create" : "Edit";
+
+    title = translate(title);
+    ViewData["Title"] = title;
+}
+
+<h1>@title</h1>
+
+<form asp-action="Edit">
+    <div class="row">
+        <div class="col-md-8">
+            <h4>Role</h4>
+        </div>
+        <div class="col-md-4">
+            <input type="submit" value="Save" class="btn btn-primary" style="min-width: 8em;" />
+            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
+        </div>
+    </div>
+    <hr />
+
+    @if (Model.HasError)
+    {
+        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+    }
+    <div class="row">
+        <div class="col-md-4">
             <input asp-for="Id" type="hidden" />
             <input asp-for="Timestamp" type="hidden" />
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
@@ -19,16 +55,18 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
-            <div class="form-group">
-                <input type="submit" value="Save" class="btn btn-primary" />
-            </div>
-        </form>
+        </div>
     </div>
-</div>
+</form>
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
