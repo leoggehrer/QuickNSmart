@@ -1,0 +1,55 @@
+@*@QnSBaseCode*@
+@model IEnumerable<QuickNSmart.AspMvc.Models.Business.Account.AppAccess>
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+
+<p>
+    <a asp-action="Create">Create New</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayName("Identity.Name")
+            </th>
+            <th>
+                @Html.DisplayName("Identity.Email")
+            </th>
+            <th>
+                @Html.DisplayName("Identity.AccessFailedCount")
+            </th>
+            <th>
+                @Html.DisplayName("Identity.State")
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            <tr>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identity.Name)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identity.Email)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identity.AccessFailedCount)
+                </td>
+                <td>
+                    @Html.DisplayFor(modelItem => item.Identity.State)
+                </td>
+                <td>
+                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
+                    @Html.ActionLink("Details", "Details", new { id = item.Id }) |
+                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

@@ -18,6 +18,7 @@ namespace CSharpCodeGenerator.ConApp
             ControllerGenerator controllerGenerator = ControllerGenerator.Create(solutionProperties);
             FactoryGenerator factoryGenerator = FactoryGenerator.Create(solutionProperties);
             TransferGenerator transferGenerator = TransferGenerator.Create(solutionProperties);
+            AspMvcGenerator aspMvcGenerator = AspMvcGenerator.Create(solutionProperties);
 
             List<string> lines = new List<string>();
 
@@ -56,22 +57,22 @@ namespace CSharpCodeGenerator.ConApp
             lines.AddRange(factoryGenerator.CreateLogicFactory());
             WriteAllLines(solutionProperties.LogicFactoryFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Modules-Transfer...");
+            Console.WriteLine("Create Transfer-Modules...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreateModulesTransfers());
             WriteAllLines(solutionProperties.TransferModulesFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Business-Transfer...");
+            Console.WriteLine("Create Transfer-Business...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreateBusinessTransfers());
             WriteAllLines(solutionProperties.TransferBusinessFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Persistence-Transfer...");
+            Console.WriteLine("Create Transfer-Persistence...");
             lines.Clear();
             lines.AddRange(transferGenerator.CreatePersistenceTransfers());
             WriteAllLines(solutionProperties.TransferPersistenceFilePath, FormatCSharp(lines));
 
-            Console.WriteLine("Create Controllers-WebApi...");
+            Console.WriteLine("Create WebApi-Controllers...");
             lines.Clear();
             lines.AddRange(controllerGenerator.CreateWebApiControllers());
             WriteAllLines(solutionProperties.WebApiControllersFilePath, FormatCSharp(lines));
@@ -80,6 +81,22 @@ namespace CSharpCodeGenerator.ConApp
             lines.Clear();
             lines.AddRange(factoryGenerator.CreateAdapterFactory());
             WriteAllLines(solutionProperties.AdaptersFactoryFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create AspMvc-Modules...");
+            lines.Clear();
+            lines.AddRange(aspMvcGenerator.CreateModulesModels());
+            WriteAllLines(solutionProperties.AspMvcModulesFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Business-AspMvc...");
+            lines.Clear();
+            lines.AddRange(aspMvcGenerator.CreateBusinessModels());
+            WriteAllLines(solutionProperties.AspMvcBusinessFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Persistence-AspMvc...");
+            lines.Clear();
+            lines.AddRange(aspMvcGenerator.CreatePersistenceModels());
+            WriteAllLines(solutionProperties.AspMvcPersistenceFilePath, FormatCSharp(lines));
+
         }
 
         private static string[] FormatCSharp(IEnumerable<string> source)

@@ -1,5 +1,6 @@
 ﻿//@CustomizeCode
 //MdStart
+using System.Linq;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
@@ -59,11 +60,18 @@ namespace QuickNSmart.Logic.DataContext.Db
         partial void AfterConfiguring(DbContextOptionsBuilder optionsBuilder);
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             BeforeModelCreating(modelBuilder);
             DoModelCreating(modelBuilder);
             AfterModelCreating(modelBuilder);
+
+            var cascadeFKs = modelBuilder.Model.GetEntityTypes()
+                .SelectMany(t => t.GetForeignKeys())
+                .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
+
+            foreach (var fk in cascadeFKs)
+                fk.DeleteBehavior = DeleteBehavior.Restrict;
+
+            base.OnModelCreating(modelBuilder);
         }
         partial void BeforeModelCreating(ModelBuilder modelBuilder);
         partial void DoModelCreating(ModelBuilder modelBuilder);

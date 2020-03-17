@@ -1,0 +1,31 @@
+@*@QnSBaseCode*@
+@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+
+@{
+    ViewData["Title"] = "Edit";
+}
+
+<h1>Edit</h1>
+
+@if (Model.HasError)
+{
+    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+}
+
+<div style="margin-top: 1em;">
+    <h4>Identity</h4>
+    <hr />
+    @await Html.PartialAsync("IdentityEdit", Model.Identity)
+</div>
+<div>
+    <h4>Rolen</h4>
+    @await Html.PartialAsync("RoleListDetails", Model.Roles)
+</div>
+
+<div>
+    <a asp-action="Index">Back to List</a>
+</div>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -13,15 +13,22 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string ProjectExtension => ".csproj";
         public static string AssemblyInfo => "AssemblyInfo.cs";
         public static string GeneratedCodeFileName => "_GeneratedCode.cs";
+
+        #region Project-postfixes
         public static string ContractsPostfix => ".Contracts";
         public static string LogicPostfix => ".Logic";
         public static string TransferPostfix => ".Transfer";
         public static string WebApiPostfix => ".WebApi";
         public static string AdaptersPostfix => ".Adapters";
+        public static string AspMvcPostfix => ".AspMvc";
+        #endregion Project-postfixes
+
+        #region Folders
         public static string ModulesFolder => "Modules";
         public static string BusinessFolder => "Business";
         public static string PersistenceFolder => "Persistence";
         public static string WebApiControllersFolder => "Controllers";
+        #endregion Folders
 
         #region ProjectNames
         public string ContractsProjectName => $"{SolutionName}{ContractsPostfix}";
@@ -29,6 +36,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string TransferProjectName => $"{SolutionName}{TransferPostfix}";
         public string WebApiProjectName => $"{SolutionName}{WebApiPostfix}";
         public string AdaptersProjectName => $"{SolutionName}{AdaptersPostfix}";
+        public string AspMvcProjectName => $"{SolutionName}{AspMvcPostfix}";
         #endregion ProjectNames
 
         #region Entities
@@ -84,6 +92,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string AdaptersFactoryFilePath => Path.Combine(AdaptersFactoryPath, GeneratedCodeFileName);
         #endregion Adapters-Factory
 
+        #region AspMvc
+        public static string AspMvcModelsFolder => "Models";
+        public string AspMvcModulesPath => Path.Combine(AspMvcPath, AspMvcModelsFolder, ModulesFolder);
+        public string AspMvcBusinessPath => Path.Combine(AspMvcPath, AspMvcModelsFolder, BusinessFolder);
+        public string AspMvcPersistencePath => Path.Combine(AspMvcPath, AspMvcModelsFolder, PersistenceFolder);
+        public string AspMvcModulesFilePath => Path.Combine(AspMvcModulesPath, GeneratedCodeFileName);
+        public string AspMvcBusinessFilePath => Path.Combine(AspMvcBusinessPath, GeneratedCodeFileName);
+        public string AspMvcPersistenceFilePath => Path.Combine(AspMvcPersistencePath, GeneratedCodeFileName);
+        #endregion AspMvc
+
         public static string[] BuildSubDirectories => new string[]
         {
             "//bin//", "//obj//", "\\bin\\", "\\obj\\", "//wwwroot//lib//", "\\wwwroot\\lib\\"
@@ -98,6 +116,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public virtual string TransferPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(TransferPostfix));
         public virtual string WebApiPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(WebApiPostfix));
         public virtual string AdaptersPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AdaptersPostfix));
+        public virtual string AspMvcPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AspMvcPostfix));
 
         protected SolutionProperties(string solutionPath)
         {

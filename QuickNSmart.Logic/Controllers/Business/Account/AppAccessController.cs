@@ -81,7 +81,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             }
             return result;
         }
-
         public override Task<IQueryable<IAppAccess>> GetAllAsync()
         {
             return Task.Run<IQueryable<IAppAccess>>(async () =>
@@ -95,7 +94,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 return result.AsQueryable();
             });
         }
-
         public override Task<IQueryable<IAppAccess>> GetPageListAsync(int pageIndex, int pageSize)
         {
             return Task.Run<IQueryable<IAppAccess>>(async () =>
@@ -109,7 +107,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 return result.AsQueryable();
             });
         }
-
         public override Task<IQueryable<IAppAccess>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             return Task.Run<IQueryable<IAppAccess>>(async () =>
@@ -143,7 +140,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 joinRole.Identity = result.IdentityEntity;
                 if (item.Id == 0)
                 {
-                    item.Designation = ClearRoleDesigantion(item.Designation);
+                    item.Designation = RoleController.ClearRoleDesignation(item.Designation);
 
                     var qryItem = roleController.Query(e => e.Designation.Equals(item.Designation)).FirstOrDefault();
 
@@ -173,6 +170,72 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             }
             return result;
         }
+        public override async Task<IAppAccess> UpdateAsync(IAppAccess entity)
+        {
+            entity.CheckArgument(nameof(entity));
+            entity.Identity.CheckArgument(nameof(entity.Identity));
+            entity.Roles.CheckArgument(nameof(entity.Roles));
+
+            //Delete all costs that are no longer included in the list.
+            var identXRoles = identityXroleController.Query(e => e.IdentityId == entity.Identity.Id).ToList();
+            foreach (var item in identXRoles)
+            {
+                var tmpItem = entity.Roles.SingleOrDefault(i => i.Id == item.RoleId);
+
+                if (tmpItem == null)
+                {
+                    await identityXroleController.DeleteAsync(item.RoleId);
+                }
+            }
+
+            var result = new AppAccess();
+            var identity = await identityController.UpdateAsync(entity.Identity);
+
+            foreach (var item in entity.Roles)
+            {
+                var role = new Role();
+                var joinRole = new IdentityXRole();
+
+                role.Id = item.Id;
+                joinRole.IdentityId = identity.Id;
+                if (item.Id == 0)
+                {
+                    item.Designation = RoleController.ClearRoleDesignation(role.Designation);
+                    var qryItem = roleController.Query(e => e.Designation.Equals(item.Designation))
+                                                .FirstOrDefault();
+
+                    if (qryItem != null)
+                    {
+                        role.CopyProperties(qryItem);
+                        joinRole.RoleId = role.Id;
+                    }
+                    else
+                    {
+                        role.CopyProperties(item);
+                        await roleController.InsertAsync(role);
+                        joinRole.Role = role;
+                    }
+                }
+                else
+                {
+                    var qryItem = await roleController.GetByIdAsync(role.Id);
+
+                    if (qryItem != null)
+                    {
+                        role.CopyProperties(qryItem);
+                        joinRole.RoleId = role.Id;
+                    }
+                }
+                var tmpItem = identXRoles.SingleOrDefault(e => e.IdentityId == joinRole.IdentityId && e.RoleId == joinRole.RoleId);
+
+                if (tmpItem == null)
+                {
+                    await identityXroleController.InsertAsync(joinRole);
+                }
+                result.RoleEntities.Add(role);
+            }
+            return result;
+        }
 
         public override Task SaveChangesAsync()
         {
@@ -180,7 +243,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
             return Context.SaveAsync();
         }
-
         protected override void Dispose(bool disposing)
         {
             base.Dispose(disposing);
@@ -192,23 +254,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             identityController = null;
             roleController = null;
             identityXroleController = null;
-        }
-
-        public static string ClearRoleDesigantion(string name)
-        {
-            StringBuilder result = new StringBuilder();
-
-            if (name.HasContent())
-            {
-                foreach (var item in name)
-                {
-                    if (char.IsLetter(item) || char.IsDigit(item))
-                    {
-                        result.Append(result.Length == 0 ? char.ToUpper(item) : item);
-                    }
-                }
-            }
-            return result.ToString();
         }
     }
 }

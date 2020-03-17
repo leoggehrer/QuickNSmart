@@ -2,6 +2,7 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CommonBase.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Generation

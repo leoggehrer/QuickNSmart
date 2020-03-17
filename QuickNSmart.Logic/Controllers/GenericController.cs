@@ -111,32 +111,43 @@ namespace QuickNSmart.Logic.Controllers
             return Task.Run<I>(() => new E());
         }
 
-        protected virtual Task BeforeInsertingAsync(E entity)
+        protected virtual Task BeforeInsertingUpdateingAsync(E entiy)
         {
-            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
             return Task.FromResult(0);
         }
-        public virtual Task<I> InsertAsync(I entity)
+        protected virtual Task AfterInsertedUpdatedAsync(E entiy)
+        {
+            return Task.FromResult(0);
+        }
+        protected virtual Task BeforeInsertingAsync(E entity)
+        {
+            return Task.FromResult(0);
+        }
+        public virtual async Task<I> InsertAsync(I entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
             entity.CheckArgument(nameof(entity));
 
             var entityModel = new E();
 
             entityModel.CopyProperties(entity);
-            return InsertAsync(entityModel);
+            await BeforeInsertingUpdateingAsync(entityModel).ConfigureAwait(false);
+            await BeforeInsertingAsync(entityModel).ConfigureAwait(false);
+            var result = await Context.InsertAsync<I, E>(entityModel).ConfigureAwait(false);
+            await AfterInsertedAsync(result).ConfigureAwait(false);
+            await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
+            return result;
         }
-        public virtual async Task<I> InsertAsync(E entity)
+        internal virtual async Task<I> InsertAsync(E entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
             entity.CheckArgument(nameof(entity));
 
+            await BeforeInsertingUpdateingAsync(entity).ConfigureAwait(false);
             await BeforeInsertingAsync(entity).ConfigureAwait(false);
             var result = await Context.InsertAsync<I, E>(entity).ConfigureAwait(false);
             await AfterInsertedAsync(result).ConfigureAwait(false);
+            await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
             return result;
         }
         protected virtual Task AfterInsertedAsync(E entity)
@@ -151,7 +162,6 @@ namespace QuickNSmart.Logic.Controllers
         public virtual async Task<I> UpdateAsync(I entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
             entity.CheckArgument(nameof(entity));
 
             var entityModel = Set().SingleOrDefault(i => i.Id == entity.Id);
@@ -159,23 +169,28 @@ namespace QuickNSmart.Logic.Controllers
             if (entityModel != null)
             {
                 entityModel.CopyProperties(entity);
-                var result = await UpdateAsync(entityModel).ConfigureAwait(false);
+                await BeforeInsertingUpdateingAsync(entityModel).ConfigureAwait(false);
+                await BeforeUpdatingAsync(entityModel).ConfigureAwait(false);
+                var result = await Context.UpdateAsync<I, E>(entityModel).ConfigureAwait(false);
+                await AfterUpdatedAsync(result).ConfigureAwait(false);
+                await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
                 return result;
             }
             else
             {
-                throw new Exception("Entity can't find!");
+                throw new LogicException(ErrorType.InvalidId);
             }
         }
-        public virtual async Task<I> UpdateAsync(E entity)
+        internal virtual async Task<I> UpdateAsync(E entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
             entity.CheckArgument(nameof(entity));
 
+            await BeforeInsertingUpdateingAsync(entity).ConfigureAwait(false);
             await BeforeUpdatingAsync(entity).ConfigureAwait(false);
             var result = await Context.UpdateAsync<I, E>(entity).ConfigureAwait(false);
-            await AfterUpdatedAsync(entity).ConfigureAwait(false);
+            await AfterUpdatedAsync(result).ConfigureAwait(false);
+            await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
             return result;
         }
         protected virtual Task AfterUpdatedAsync(E entity)

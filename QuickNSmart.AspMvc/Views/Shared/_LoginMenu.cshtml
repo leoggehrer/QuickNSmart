@@ -1,0 +1,92 @@
+@*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using QuickNSmart.AspMvc.Modules.Session
+@*Begin:Header*@
+@{
+#if DEBUG
+	string currentView = ((RazorView)ViewContext.View).Path;
+	string beginLabel = $"<!--View Begin: '{currentView}'-->";
+	@Html.Raw(beginLabel)
+#endif
+	SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+	Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+
+@{
+	string welcome = "";
+	string mnoLogon = "Logon";
+	string mnuLogout = "Logout";
+	string mnuUserMngr = "User-Manage";
+	string mnuRoleMngr = "Role-Manage";
+	string mnuPwdChange = "Change password";
+	string mnuTranslation = "Translation Settings";
+	string mnuModelConfig = "Model Configuration";
+	string mnuUser = sessionWrapper.LoginSession?.Name;
+
+	welcome = translate(welcome);
+	mnoLogon = translate(mnoLogon);
+	mnuLogout = translate(mnuLogout);
+	mnuUserMngr = translate(mnuUserMngr);
+	mnuPwdChange = translate(mnuPwdChange);
+	mnuTranslation = translate(mnuTranslation);
+	mnuModelConfig = translate(mnuModelConfig);
+}
+
+@if (sessionWrapper.LoginSession != null)
+{
+	using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
+	{
+		@Html.AntiForgeryToken()
+
+		<ul class="nav navbar-nav navbar-right">
+			<li class="dropdown">
+				<a href="#" class="dropdown-toggle" data-toggle="dropdown">@string.Format("{0} {1}", welcome, mnuUser)</a>
+				<ul class="dropdown-menu">
+					@if (sessionWrapper.HasRole("SysAdmin") == true)
+					{
+						<li>@Html.ActionLink(mnuUserMngr, "Index", "LoginUserRole", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuRoleMngr, "Index", "LoginRole", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuTranslation, "Index", "Translation", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuModelConfig, "Index", "ModelConfiguration", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+						<li class="divider"></li>
+					}
+					else if (sessionWrapper.HasRole("AppAdmin") == true)
+					{
+						<li>@Html.ActionLink(mnuUserMngr, "Index", "LoginUserRole", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuRoleMngr, "Index", "LoginRole", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuTranslation, "Index", "Translation", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuModelConfig, "Index", "ModelConfiguration", routeValues: null, htmlAttributes: null)</li>
+						<li>@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+						<li class="divider"></li>
+					}
+					else
+					{
+						<li>@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+					}
+					<li><a href="javascript:document.getElementById('logoutForm').submit()">@mnuLogout</a></li>
+				</ul>
+			</li>
+			<li>
+				<a href="javascript:document.getElementById('logoutForm').submit()" style="margin-left: 1em;"><i class="fas fa-sign-out-alt"></i></a>
+			</li>
+		</ul>
+	}
+}
+else
+{
+	<ul class="nav navbar-nav navbar-right">
+		<li>@Html.ActionLink(mnoLogon, "Logon", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
+	</ul>
+}
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+	string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+	@Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

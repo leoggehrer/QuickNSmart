@@ -1,0 +1,24 @@
+@*@QnSBaseCode*@
+@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+
+@{
+    ViewData["Title"] = "Details";
+}
+
+<h1>AppAccess</h1>
+
+<div style="margin-top: 1em;">
+    <h4>Identity</h4>
+    <hr />
+    @await Html.PartialAsync("IdentityDetails", Model.Identity)
+</div>
+<div>
+    <h4>Rolen</h4>
+    <hr />
+    @await Html.PartialAsync("RoleListDetails", Model.Roles)
+</div>
+
+<div>
+    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
+    <a asp-action="Index">Back to List</a>
+</div>
