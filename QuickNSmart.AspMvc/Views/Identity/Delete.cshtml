@@ -1,0 +1,36 @@
+﻿@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+
+@{
+    ViewData["Title"] = "Delete";
+}
+
+<h1>Delete</h1>
+
+@if (Model.HasError)
+{
+    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+}
+else
+{
+    <h3>Are you sure you want to delete this?</h3>
+}
+
+<div style="margin-top: 1em;">
+    <h4>Identity</h4>
+    <hr />
+    @await Html.PartialAsync("IdentityDetails", Model.Identity)
+</div>
+
+<form asp-action="Delete" method="post">
+    <div class="row">
+        <div class="col-md-4">
+            <input type="submit" value="Delete" class="btn btn-danger" style="min-width: 8em;" />
+            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
+        </div>
+    </div>
+</form>
+
+<div style="margin-top: 1em;">
+    <h4>Rolen</h4>
+    @await Html.PartialAsync("RoleListDetails", Model.Roles)
+</div>

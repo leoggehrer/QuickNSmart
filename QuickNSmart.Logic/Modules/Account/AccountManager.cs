@@ -185,7 +185,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
             using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
             {
-                SessionToken = sessionToken
+                SessionToken = Authorization.SystemAuthorizationToken
             };
             var identity = identityCtrl.QueryById(login.IdentityId);
 

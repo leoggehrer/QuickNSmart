@@ -28,6 +28,10 @@ namespace QuickNSmart.Transfer.Business.Account
             _roles = RoleEntities;
         }
 
+        public void ClearRoles()
+        {
+            RoleEntities.Clear();
+        }
         public IRole CreateRole()
         {
             return new Role();

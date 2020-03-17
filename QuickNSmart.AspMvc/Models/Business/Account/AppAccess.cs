@@ -22,6 +22,10 @@ namespace QuickNSmart.AspMvc.Models.Business.Account
             _roles = RoleEntities;
         }
 
+        public void ClearRoles()
+        {
+            RoleEntities.Clear();
+        }
         public IRole CreateRole()
         {
             var result = new Role();

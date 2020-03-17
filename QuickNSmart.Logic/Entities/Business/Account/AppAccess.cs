@@ -10,7 +10,7 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 {
     partial class AppAccess
     {
-        internal Identity IdentityEntity { get; } = new Identity();
+        internal Identity IdentityEntity { get; } = new Identity() { State = Contracts.State.Active };
         partial void OnIdentityReading()
         {
             _identity = IdentityEntity;
@@ -24,6 +24,10 @@ namespace QuickNSmart.Logic.Entities.Business.Account
         public override int Id { get => IdentityEntity.Id; set => IdentityEntity.Id = value; }
         public override byte[] Timestamp { get => IdentityEntity.Timestamp; set => IdentityEntity.Timestamp = value; }
 
+        public void ClearRoles()
+        {
+            RoleEntities.Clear();
+        }
         public IRole CreateRole()
         {
             return new Role();

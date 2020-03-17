@@ -11,20 +11,25 @@
 {
     <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
 }
+<form asp-action="IdentityEdit">
+    <div style="margin-top: 1em;">
+        <h4>Identity</h4>
+        <hr />
+        @await Html.PartialAsync("IdentityEdit", Model.Identity)
+    </div>
 
-<div style="margin-top: 1em;">
-    <h4>Identity</h4>
-    <hr />
-    @await Html.PartialAsync("IdentityEdit", Model.Identity)
-</div>
-<div>
-    <h4>Rolen</h4>
-    @await Html.PartialAsync("RoleListDetails", Model.Roles)
-</div>
+    <div class="row">
+        <div class="col-md-4">
+            <input type="submit" value="Save" class="btn btn-primary" style="min-width: 8em;" />
+            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
+        </div>
+    </div>
 
-<div>
-    <a asp-action="Index">Back to List</a>
-</div>
+    <div style="margin-top: 1em;">
+        <h4>Rolen</h4>
+        @await Html.PartialAsync("RoleListEdit", Model.Roles)
+    </div>
+</form>
 
 @section Scripts {
     @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}

@@ -12,13 +12,15 @@
     <hr />
     @await Html.PartialAsync("IdentityDetails", Model.Identity)
 </div>
-<div>
-    <h4>Rolen</h4>
-    <hr />
-    @await Html.PartialAsync("RoleListDetails", Model.Roles)
+
+<div class="row">
+    <div class="col-md-4">
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
+        <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
+    </div>
 </div>
 
-<div>
-    @Html.ActionLink("Edit", "Edit", new { id = Model.Id }) |
-    <a asp-action="Index">Back to List</a>
+<div style="margin-top: 1em;">
+    <h4>Rolen</h4>
+    @await Html.PartialAsync("RoleListDetails", Model.Roles)
 </div>

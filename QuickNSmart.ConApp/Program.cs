@@ -16,7 +16,7 @@ namespace QuickNSmart.ConApp
         static string AaUser => "AppAdmin";
         static string AaEmail => "AppAdmin@QuickNSmart.gmx.at";
         static string AaPwd => "App2189!Admin";
-        static string AaRole => "AppAdmin";
+        static string AaRole => "AppAdmin";Passme1234!
         static bool AaEnableJwt => true;
 
         static async Task Main(string[] args)
@@ -40,12 +40,12 @@ namespace QuickNSmart.ConApp
 
             try
             {
-                //await InitAppAccessAsync();
-                //await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
+                await InitAppAccessAsync();
+                await AddAppAccess(AaUser, AaEmail, AaPwd, AaEnableJwt, AaRole);
 
-                //await AddAppAccess("ggehrer", "ggehrer@hotmail.com", "Passme1234!", AaEnableJwt);
-                //await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
-                //await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
+                await AddAppAccess("ggehrer", "ggehrer@hotmail.com", "Passme1234!", AaEnableJwt);
+                await AddAppAccess("nhaslberger", "nhaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
+                await AddAppAccess("thaslberger", "thaslberger@hotmail.com", "Passme1234!", AaEnableJwt);
 
                 var rmLogin = await rmAccountManager.LogonAsync("ggehrer@hotmail.com", "Passme123!");
                 var appLogin = await appAccountManager.LogonAsync(rmLogin.JsonWebToken);

@@ -9,7 +9,7 @@ namespace QuickNSmart.Logic.Exceptions
         NotLogedIn = InvalidAccount * 2,
         NotAuthorized = NotLogedIn * 2,
         InvalidToken = NotAuthorized * 2,
-        InvalidId = NotLogedIn * 2,
+        InvalidId = InvalidToken * 2,
         InvalidPageSize = InvalidId * 2,
         InvalidSessionToken = InvalidPageSize * 2,
         InvalidJsonWebToken = InvalidSessionToken * 2,

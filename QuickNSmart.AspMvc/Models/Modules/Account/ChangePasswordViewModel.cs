@@ -9,6 +9,9 @@ namespace QuickNSmart.AspMvc.Models.Modules.Account
         [ScaffoldColumn(false)]
         public string UserName { get; set; }
 
+        [DataType(DataType.EmailAddress)]
+        public string Email { get; set; }
+
         [Required]
         [DataType(DataType.Password)]
         [Display(Name = "Current password")]

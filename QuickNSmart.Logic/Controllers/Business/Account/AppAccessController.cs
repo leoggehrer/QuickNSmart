@@ -89,7 +89,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
                 foreach (var item in (await identityController.GetAllAsync().ConfigureAwait(false)).ToList())
                 {
-                    result.Add(await GetByIdAsync(item.Id));
+                    result.Add(await GetByIdAsync(item.Id).ConfigureAwait(false));
                 }
                 return result.AsQueryable();
             });
@@ -102,7 +102,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
                 foreach (var item in (await identityController.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
-                    result.Add(await GetByIdAsync(item.Id));
+                    result.Add(await GetByIdAsync(item.Id).ConfigureAwait(false));
                 }
                 return result.AsQueryable();
             });
@@ -115,7 +115,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
                 foreach (var item in (await identityController.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
-                    result.Add(await GetByIdAsync(item.Id));
+                    result.Add(await GetByIdAsync(item.Id).ConfigureAwait(false));
                 }
                 return result.AsQueryable();
             });
@@ -131,7 +131,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
             result.IdentityEntity.CopyProperties(entity.Identity);
             result.IdentityEntity.PasswordHash = AccountManager.CalculateHash(result.IdentityEntity.Password);
-            await identityController.InsertAsync(result.IdentityEntity);
+            await identityController.InsertAsync(result.IdentityEntity).ConfigureAwait(false);
             foreach (var item in entity.Roles)
             {
                 var role = new Role();
@@ -152,20 +152,21 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                     else
                     {
                         role.CopyProperties(item);
-                        await roleController.InsertAsync(role);
+                        await roleController.InsertAsync(role).ConfigureAwait(false);
                         joinRole.Role = role;
                     }
                 }
                 else
                 {
-                    var qryItem = await roleController.GetByIdAsync(item.Id);
+                    var qryItem = await roleController.GetByIdAsync(item.Id).ConfigureAwait(false);
 
                     if (qryItem != null)
                     {
                         role.CopyProperties(qryItem);
                     }
+                    joinRole.RoleId = role.Id;
                 }
-                await identityXroleController.InsertAsync(joinRole);
+                await identityXroleController.InsertAsync(joinRole).ConfigureAwait(false);
                 result.RoleEntities.Add(role);
             }
             return result;
@@ -184,12 +185,12 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
                 if (tmpItem == null)
                 {
-                    await identityXroleController.DeleteAsync(item.RoleId);
+                    await identityXroleController.DeleteAsync(item.Id).ConfigureAwait(false);
                 }
             }
 
             var result = new AppAccess();
-            var identity = await identityController.UpdateAsync(entity.Identity);
+            var identity = await identityController.UpdateAsync(entity.Identity).ConfigureAwait(false);
 
             foreach (var item in entity.Roles)
             {
@@ -212,7 +213,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                     else
                     {
                         role.CopyProperties(item);
-                        await roleController.InsertAsync(role);
+                        await roleController.InsertAsync(role).ConfigureAwait(false);
                         joinRole.Role = role;
                     }
                 }
@@ -230,13 +231,23 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 
                 if (tmpItem == null)
                 {
-                    await identityXroleController.InsertAsync(joinRole);
+                    await identityXroleController.InsertAsync(joinRole).ConfigureAwait(false);
                 }
                 result.RoleEntities.Add(role);
             }
             return result;
         }
+        public override async Task DeleteAsync(int id)
+        {
+            //Delete all costs that are no longer included in the list.
+            var identXRoles = identityXroleController.Query(e => e.IdentityId == id).ToList();
 
+            foreach (var item in identXRoles)
+            {
+                await identityXroleController.DeleteAsync(item.Id).ConfigureAwait(false);
+            }
+            await identityController.DeleteAsync(id).ConfigureAwait(false);
+        }
         public override Task SaveChangesAsync()
         {
             CheckAuthorization(MethodBase.GetCurrentMethod());

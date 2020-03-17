@@ -10,6 +10,7 @@ namespace QuickNSmart.Contracts.Business.Account
         IIdentity Identity { get; }
         IEnumerable<IRole> Roles { get; }
 
+        void ClearRoles();
         IRole CreateRole();
         void AddRole(IRole role);
         void RemoveRole(IRole role);

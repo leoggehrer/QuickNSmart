@@ -73,7 +73,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 return Redirect(returnUrl);
             }
-            return RedirectToAction("Index", "Identity");
+            return RedirectToAction("Index", "Home");
         }
 
         partial void BeforeLogon();
@@ -95,6 +95,95 @@ namespace QuickNSmart.AspMvc.Controllers
 
         partial void BeforeLogout();
         partial void AfterLogout();
+
+        public IActionResult ChangePassword()
+        {
+            if (SessionWrapper.LoginSession == null
+                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            {
+                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+            }
+
+            var model = new ChangePasswordViewModel()
+            {
+                UserName = SessionWrapper.LoginSession.Name,
+                Email = SessionWrapper.LoginSession.Email,
+            };
+            return View("ChangePassword", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("ChangePassword")]
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View(model);
+            }
+
+            if (SessionWrapper.LoginSession == null
+                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            {
+                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+            }
+
+            try
+            {
+                var accMngr = new AccountManager();
+
+                await accMngr.ChangePasswordAsync(SessionWrapper.LoginSession.SessionToken, model.OldPassword, model.NewPassword).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                model.ActionError = GetExceptionError(ex);
+                return View("ChangePassword", model);
+            }
+            return View("ConfirmationChangePassword");
+        }
+
+        public IActionResult ResetPassword()
+        {
+            if (SessionWrapper.LoginSession == null
+                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            {
+                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+            }
+
+            var model = new ResetPasswordViewModel();
+
+            return View("ResetPassword", model);
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("ResetPassword")]
+        public async Task<IActionResult> ChangePasswordAsync(ResetPasswordViewModel model)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View(model);
+            }
+
+            if (SessionWrapper.LoginSession == null
+                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            {
+                return RedirectToAction("Logon", new { returnUrl = "ResetPassword" });
+            }
+
+            try
+            {
+                var accMngr = new AccountManager();
+
+                await accMngr.ChangePasswordForAsync(SessionWrapper.LoginSession.SessionToken, model.Email, model.ConfirmPassword).ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                model.ActionError = GetExceptionError(ex);
+                return View("ResetPassword", model);
+            }
+            return View("ConfirmationChangePassword");
+        }
     }
 }
 //MdEnd
