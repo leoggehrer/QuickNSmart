@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using CommonBase.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using QuickNSmart.AspMvc.Modules.Session;
@@ -69,6 +68,7 @@ namespace QuickNSmart.AspMvc.Controllers
 			}
 			return list.ToArray();
 		}
+
 		protected static string GetExceptionError(Exception source)
 		{
 			source.CheckArgument(nameof(source));

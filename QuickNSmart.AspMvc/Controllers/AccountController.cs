@@ -4,6 +4,7 @@ using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
+using CommonBase.Extensions;
 using QuickNSmart.AspMvc.Models.Modules.Account;
 using QuickNSmart.AspMvc.Models.Persistence.Account;
 using Model = QuickNSmart.AspMvc.Models.Persistence.Account.LoginSession;
@@ -33,138 +34,187 @@ namespace QuickNSmart.AspMvc.Controllers
         partial void Constructing();
         partial void Constructed();
 
-        public IActionResult Logon(string returnUrl = null, string message = null)
+        public IActionResult Logon(string returnUrl = null, string error = null)
         {
-            var model = new LogonViewModel();
+            var handled = false;
+            var viewName = nameof(Logon);
+            var viewModel = new LogonViewModel()
+            {
+                ReturnUrl = returnUrl,
+                ActionError = error,
+            };
 
-            SessionWrapper.ReturnUrl = returnUrl;
-            SessionWrapper.Hint = message;
-
-            return View(model);
+            BeforeLogon(viewModel, ref handled);
+            if (handled == false)
+            {
+                SessionWrapper.ReturnUrl = viewModel.ReturnUrl;
+                SessionWrapper.Error = viewModel.ActionError;
+            }
+            AfterLogon(viewModel, ref viewName);
+            return View(viewName, viewModel);
         }
+        partial void BeforeLogon(LogonViewModel model, ref bool handled);
+        partial void AfterLogon(LogonViewModel model, ref string viewName);
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Logon")]
-        public async Task<IActionResult> LogonAsync(LogonViewModel model, string returnUrl)
+        public async Task<IActionResult> LogonAsync(LogonViewModel viewModel)
         {
             if (ModelState.IsValid == false)
             {
-                return View(model);
+                return View(viewModel);
             }
-            BeforeLogon();
-            try
-            {
-                var accMngr = new AccountManager();
-                var loginResult = await accMngr.LogonAsync(model.Email, model.Password).ConfigureAwait(false);
-                var loginSession = new LoginSession();
+            bool handled = false;
+            var action = "Index";
+            var controller = "Home";
 
-                loginSession.CopyProperties(loginResult);
-                SessionWrapper.LoginSession = loginSession;
-            }
-            catch (Exception ex)
+            BeforeDoLogon(viewModel, ref handled);
+            if (handled == false)
             {
-                model.ActionError = ex.Message;
-                return View(model);
-            }
-            AfterLogon();
+                try
+                {
+                    var accMngr = new AccountManager();
+                    var loginResult = await accMngr.LogonAsync(viewModel.Email, viewModel.Password).ConfigureAwait(false);
+                    var loginSession = new LoginSession();
 
-            if (string.IsNullOrEmpty(returnUrl) == false)
-            {
-                return Redirect(returnUrl);
+                    loginSession.CopyProperties(loginResult);
+                    SessionWrapper.LoginSession = loginSession;
+                }
+                catch (Exception ex)
+                {
+                    viewModel.ActionError = ex.Message;
+                    return View(viewModel);
+                }
             }
-            return RedirectToAction("Index", "Home");
+            AfterDoLogon(viewModel, ref action, ref controller);
+            if (viewModel.ReturnUrl.HasContent())
+            {
+                return Redirect(viewModel.ReturnUrl);
+            }
+            return RedirectToAction(action, controller);
         }
-
-        partial void BeforeLogon();
-        partial void AfterLogon();
+        partial void BeforeDoLogon(LogonViewModel model, ref bool handled);
+        partial void AfterDoLogon(LogonViewModel model, ref string action, ref string controller);
 
         [ActionName("Logout")]
         public async Task<IActionResult> LogoutAsync()
         {
             if (SessionWrapper.LoginSession != null)
             {
-                BeforeLogout();
-                var accMngr = new AccountManager();
-                await accMngr.LogoutAsync(SessionWrapper.LoginSession.SessionToken).ConfigureAwait(false);
-                SessionWrapper.LoginSession = null;
+                bool handled = false;
+
+                BeforeLogout(ref handled);
+                if (handled == false)
+                {
+                    var accMngr = new AccountManager();
+
+                    await accMngr.LogoutAsync(SessionWrapper.LoginSession.SessionToken).ConfigureAwait(false);
+                    SessionWrapper.LoginSession = null;
+                }
                 AfterLogout();
             }
             return RedirectToAction("Index", "Home");
         }
-
-        partial void BeforeLogout();
+        partial void BeforeLogout(ref bool handled);
         partial void AfterLogout();
 
         public IActionResult ChangePassword()
         {
-            if (SessionWrapper.LoginSession == null
-                || SessionWrapper.LoginSession.LogoutTime.HasValue)
-            {
-                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
-            }
+            var handled = false;
+            var viewModel = new ChangePasswordViewModel();
+            var viewName = "ChangePassword";
 
-            var model = new ChangePasswordViewModel()
+            BeforeChangePassword(viewModel, ref handled);
+            if (handled == false)
             {
-                UserName = SessionWrapper.LoginSession.Name,
-                Email = SessionWrapper.LoginSession.Email,
-            };
-            return View("ChangePassword", model);
+                if (SessionWrapper.LoginSession == null
+                    || SessionWrapper.LoginSession.LogoutTime.HasValue)
+                {
+                    return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+                }
+                viewModel.UserName = SessionWrapper.LoginSession.Name;
+                viewModel.Email = SessionWrapper.LoginSession.Email;
+            }
+            AfterChangePassword(viewModel, ref viewName);
+            return View(viewName, viewModel);
         }
+        partial void BeforeChangePassword(ChangePasswordViewModel model, ref bool handled);
+        partial void AfterChangePassword(ChangePasswordViewModel model, ref string viewName);
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("ChangePassword")]
-        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel model)
+        public async Task<IActionResult> ChangePasswordAsync(ChangePasswordViewModel viewModel)
         {
             if (ModelState.IsValid == false)
             {
-                return View(model);
+                return View(viewModel);
             }
+            bool handled = false;
+            var viewName = "ConfirmationChangePassword";
 
-            if (SessionWrapper.LoginSession == null
-                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            BeforeDoChangePassword(viewModel, ref handled);
+            if (handled == false)
             {
-                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
-            }
+                if (SessionWrapper.LoginSession == null
+                    || SessionWrapper.LoginSession.LogoutTime.HasValue)
+                {
+                    return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+                }
 
-            try
-            {
-                var accMngr = new AccountManager();
+                try
+                {
+                    var accMngr = new AccountManager();
 
-                await accMngr.ChangePasswordAsync(SessionWrapper.LoginSession.SessionToken, model.OldPassword, model.NewPassword).ConfigureAwait(false);
+                    await accMngr.ChangePasswordAsync(SessionWrapper.LoginSession.SessionToken, viewModel.OldPassword, viewModel.NewPassword).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    viewModel.ActionError = GetExceptionError(ex);
+                    return View("ChangePassword", viewModel);
+                }
             }
-            catch (Exception ex)
-            {
-                model.ActionError = GetExceptionError(ex);
-                return View("ChangePassword", model);
-            }
-            return View("ConfirmationChangePassword");
+            AfterDoChangePassword(viewModel, ref viewName);
+            return View(viewName);
         }
+        partial void BeforeDoChangePassword(ChangePasswordViewModel model, ref bool handled);
+        partial void AfterDoChangePassword(ChangePasswordViewModel model, ref string viewName);
 
         public IActionResult ResetPassword()
         {
-            if (SessionWrapper.LoginSession == null
-                || SessionWrapper.LoginSession.LogoutTime.HasValue)
+            var handled = false;
+            var viewModel = new ResetPasswordViewModel();
+            var viewName = "ResetPassword";
+
+            BeforeResetPassword(viewModel, ref handled);
+            if (handled == false)
             {
-                return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+                if (SessionWrapper.LoginSession == null
+                    || SessionWrapper.LoginSession.LogoutTime.HasValue)
+                {
+                    return RedirectToAction("Logon", new { returnUrl = "ChangePassword" });
+                }
             }
-
-            var model = new ResetPasswordViewModel();
-
-            return View("ResetPassword", model);
+            AfterResetPassword(viewModel, ref viewName);
+            return View(viewName, viewModel);
         }
+        partial void BeforeResetPassword(ResetPasswordViewModel model, ref bool handled);
+        partial void AfterResetPassword(ResetPasswordViewModel model, ref string viewName);
 
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("ResetPassword")]
-        public async Task<IActionResult> ChangePasswordAsync(ResetPasswordViewModel model)
+        public async Task<IActionResult> ResetPasswordAsync(ResetPasswordViewModel viewModel)
         {
             if (ModelState.IsValid == false)
             {
-                return View(model);
+                return View(viewModel);
             }
+            bool handled = false;
+            var viewName = "ConfirmationResetPassword";
 
+            BeforeDoResetPassword(viewModel, ref handled);
             if (SessionWrapper.LoginSession == null
                 || SessionWrapper.LoginSession.LogoutTime.HasValue)
             {
@@ -175,15 +225,18 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 var accMngr = new AccountManager();
 
-                await accMngr.ChangePasswordForAsync(SessionWrapper.LoginSession.SessionToken, model.Email, model.ConfirmPassword).ConfigureAwait(false);
+                await accMngr.ChangePasswordForAsync(SessionWrapper.LoginSession.SessionToken, viewModel.Email, viewModel.ConfirmPassword).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
-                model.ActionError = GetExceptionError(ex);
-                return View("ResetPassword", model);
+                viewModel.ActionError = GetExceptionError(ex);
+                return View("ResetPassword", viewModel);
             }
-            return View("ConfirmationChangePassword");
+            AfterDoResetPassword(viewModel, ref viewName);
+            return View(viewName);
         }
+        partial void BeforeDoResetPassword(ResetPasswordViewModel model, ref bool handled);
+        partial void AfterDoResetPassword(ResetPasswordViewModel model, ref string viewName);
     }
 }
 //MdEnd

@@ -33,7 +33,7 @@
 	mnuTranslation = translate(mnuTranslation);
 }
 
-@if (sessionWrapper.LoginSession != null)
+@if (sessionWrapper.LoginSession != null && sessionWrapper.LoginSession.LogoutTime.HasValue == false)
 {
 	using (Html.BeginForm("Logout", "Account", FormMethod.Post, new { id = "logoutForm", @class = "navbar-right" }))
 	{

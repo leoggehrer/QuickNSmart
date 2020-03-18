@@ -13,7 +13,7 @@ using QuickNSmart.AspMvc.Models.Persistence.Account;
 
 namespace QuickNSmart.AspMvc.Controllers
 {
-    public partial class IdentityController : MvcController
+    public partial class IdentityController : AccessController
     {
         private readonly ILogger<IdentityController> _logger;
         public IdentityController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)

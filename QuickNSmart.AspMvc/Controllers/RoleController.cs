@@ -10,7 +10,7 @@ using Contract = QuickNSmart.Contracts.Persistence.Account.IRole;
 
 namespace QuickNSmart.AspMvc.Controllers
 {
-    public partial class RoleController : MvcController
+    public partial class RoleController : AccessController
     {
         private readonly ILogger<IdentityController> _logger;
         public RoleController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)

@@ -52,6 +52,12 @@ namespace QuickNSmart.WebApi.Controllers
         {
             return Logic.Modules.Account.AccountManager.HasRoleAsync(sessionToken, role);
         }
+
+        [HttpGet("/api/[controller]/QueryLogin/{sessionToken}")]
+        public async Task<ILoginSession> QueryLoginAsync(string sessionToken)
+        {
+            return ConvertTo(await Logic.Modules.Account.AccountManager.QueryLoginAsync(sessionToken).ConfigureAwait(false));
+        }
     }
 }
 //MdEnd

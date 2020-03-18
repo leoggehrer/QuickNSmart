@@ -130,6 +130,22 @@ namespace QuickNSmart.Adapters.Modules.Account
             }
             return result;
         }
+        public async Task<ILoginSession> QueryLoginAsync(string sessionToken)
+        {
+            var result = default(ILoginSession);
+
+            if (Adapter == AdapterType.Controller)
+            {
+                result = await Logic.Modules.Account.AccountManager.QueryLoginAsync(sessionToken).ConfigureAwait(false);
+            }
+            else if (Adapter == AdapterType.Service)
+            {
+                var serviceInvoker = new Service.InvokeServiceAdapter(BaseUri);
+
+                result = await serviceInvoker.QueryLoginAsync(sessionToken).ConfigureAwait(false);
+            }
+            return result;
+        }
     }
 }
 //MdEnd

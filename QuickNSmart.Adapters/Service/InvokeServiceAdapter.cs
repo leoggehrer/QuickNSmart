@@ -163,6 +163,29 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
+
+        public async Task<LoginSession> QueryLoginAsync(string sessionToken)
+        {
+            using (var client = GetClient(BaseUri))
+            {
+                HttpResponseMessage response = await client.GetAsync($"Account/QueryLogin/{sessionToken}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var contentData = await response.Content.ReadAsStreamAsync();
+
+                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions);
+                }
+                else
+                {
+                    string stringData = await response.Content.ReadAsStringAsync();
+                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
     }
 }
 //MdEnd

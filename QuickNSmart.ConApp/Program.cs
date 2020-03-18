@@ -16,7 +16,7 @@ namespace QuickNSmart.ConApp
         static string AaUser => "AppAdmin";
         static string AaEmail => "AppAdmin@QuickNSmart.gmx.at";
         static string AaPwd => "App2189!Admin";
-        static string AaRole => "AppAdmin";Passme1234!
+        static string AaRole => "AppAdmin";
         static bool AaEnableJwt => true;
 
         static async Task Main(string[] args)

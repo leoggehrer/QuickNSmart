@@ -434,45 +434,57 @@ namespace QuickNSmart.Logic.Modules.Account
                             SessionToken = Authorization.SystemAuthorizationToken,
                         };
                         bool saveChanges = false;
-                        var qry = sessionCtrl.Query(e => e.LogoutTime.HasValue == false);
+                        var dbSessions = sessionCtrl.Query(e => e.LogoutTime.HasValue == false).ToList();
+                        var uncheckSessions = LoginSessions.Where(i => dbSessions.Any() == false 
+                                                                    || dbSessions.Any(e => e.Id != i.Id));
 
-                        foreach (var item in qry.ToList())
+                        foreach (var dbItem in dbSessions)
                         {
                             var itemUpdate = false;
-                            var curItemRemove = false;
-                            var curItem = LoginSessions.FirstOrDefault(e => e.Id == item.Id);
+                            var memItemRemove= false;
+                            var memItem = LoginSessions.FirstOrDefault(e => e.Id == dbItem.Id);
 
-                            if (curItem != null && curItem.HasChanged)
+                            if (memItem != null && memItem.HasChanged)
                             {
                                 itemUpdate = true;
-                                curItem.HasChanged = false;
-                                item.LastAccess = curItem.LastAccess;
+                                memItem.HasChanged = false;
+                                dbItem.LastAccess = memItem.LastAccess;
                             }
-                            if (item.IsTimeout)
+                            if (dbItem.IsTimeout)
                             {
                                 itemUpdate = true;
-                                if (curItem != null)
+                                if (memItem != null)
                                 {
-                                    curItemRemove = true;
+                                    memItemRemove = true;
                                 }
-                                if (item.LogoutTime.HasValue == false)
+                                if (dbItem.LogoutTime.HasValue == false)
                                 {
-                                    item.LogoutTime = DateTime.Now;
+                                    dbItem.LogoutTime = DateTime.Now;
                                 }
                             }
                             if (itemUpdate)
                             {
                                 saveChanges = true;
-                                await sessionCtrl.UpdateAsync(item).ConfigureAwait(false);
+                                await sessionCtrl.UpdateAsync(dbItem).ConfigureAwait(false);
                             }
-                            if (curItemRemove)
+                            if (memItemRemove)
                             {
-                                LoginSessions.Remove(curItem);
+                                LoginSessions.Remove(memItem);
                             }
                         }
                         if (saveChanges)
                         {
                             await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
+                        }
+                        foreach (var memItem in uncheckSessions)
+                        {
+                            var dbItem = sessionCtrl.QueryById(memItem.Id);
+
+                            if (dbItem != null)
+                            {
+                                memItem.LastAccess = dbItem.LastAccess;
+                                memItem.LogoutTime = dbItem.LogoutTime;
+                            }
                         }
                     }
                     catch (Exception ex)
