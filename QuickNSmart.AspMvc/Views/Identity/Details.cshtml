@@ -24,12 +24,12 @@
 
 <h1>@title</h1>
 <div class="row">
-    <div class="col-md-8">
+    <div class="col-sm-8">
         <h4>Identity</h4>
     </div>
-    <div class="col-md-4">
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
+    <div class="col-sm-4">
         <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
+        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
     </div>
 </div>
 <hr />
