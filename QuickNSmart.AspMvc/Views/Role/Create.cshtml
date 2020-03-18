@@ -25,13 +25,9 @@
 <h1>@title</h1>
 
 <form asp-action="Create">
-    <div class="row">
-        <div class="col-sm-8">
+    <div class="d-flex bg-transparent">
+        <div class="p-sm-2 mr-auto">
             <h4>Role</h4>
-        </div>
-        <div class="col-sm-4">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
-            <input type="submit" value="Save" class="btn btn-primary" style="min-width: 8em;" />
         </div>
     </div>
     <hr />
@@ -41,7 +37,7 @@
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
     }
     <div class="row">
-        <div class="col-md-4">
+        <div class="col-md-8">
             <div asp-validation-summary="ModelOnly" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Designation" class="control-label"></label>
@@ -53,6 +49,14 @@
                 <input asp-for="Description" class="form-control" />
                 <span asp-validation-for="Description" class="text-danger"></span>
             </div>
+        </div>
+    </div>
+    <div class="d-flex bg-transparent">
+        <div class="p-sm-2">
+            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
+        </div>
+        <div class="p-sm-2">
+            <input type="submit" value="@translate("Save")" class="btn btn-primary" style="min-width: 8em;" />
         </div>
     </div>
 </form>

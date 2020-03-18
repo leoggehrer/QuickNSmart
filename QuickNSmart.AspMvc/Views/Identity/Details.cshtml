@@ -23,13 +23,15 @@
 }
 
 <h1>@title</h1>
-<div class="row">
-    <div class="col-sm-8">
+<div class="d-flex bg-transparent">
+    <div class="p-sm-2 mr-auto">
         <h4>Identity</h4>
     </div>
-    <div class="col-sm-4">
-        <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
-        @Html.ActionLink("Edit", "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
+    <div class="p-sm-2">
+        <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
+    </div>
+    <div class="p-sm-2">
+        @Html.ActionLink(translate("Edit"), "Edit", new { id = Model.Id }, new { @class = "btn btn-secondary", style = "min-width: 8em;" })
     </div>
 </div>
 <hr />

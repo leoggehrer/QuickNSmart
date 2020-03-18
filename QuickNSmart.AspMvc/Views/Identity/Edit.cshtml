@@ -25,13 +25,15 @@
 <h1>@title</h1>
 
 <form asp-action="IdentityEdit">
-    <div class="row">
-        <div class="col-sm-8">
+    <div class="d-flex bg-transparent">
+        <div class="p-sm-2 mr-auto">
             <h4>Identity</h4>
         </div>
-        <div class="col-sm-4">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">Back to List</a>
-            <input type="submit" value="Save" class="btn btn-primary" style="min-width: 8em;" />
+        <div class="p-sm-2">
+            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
+        </div>
+        <div class="p-sm-2">
+            <input type="submit" value="@translate("Save")" class="btn btn-primary" style="min-width: 8em;" />
         </div>
     </div>
     <hr />
