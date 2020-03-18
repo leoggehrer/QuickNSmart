@@ -29,6 +29,8 @@ namespace QuickNSmart.AspMvc
 
             services.AddSession(options =>
             {
+                options.Cookie.IsEssential = true;
+                options.Cookie.Name = $".{nameof(QuickNSmart)}.Session";
                 // Set a short timeout for easy testing.
                 options.IdleTimeout = TimeSpan.FromMinutes(20);
             });
