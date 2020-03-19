@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using CommonBase.Extensions;
+using CommonBase.Helpers;
 using QuickNSmart.AspMvc.Models.Modules.Account;
 using QuickNSmart.AspMvc.Models.Persistence.Account;
 using Model = QuickNSmart.AspMvc.Models.Persistence.Account.LoginSession;
@@ -237,6 +238,26 @@ namespace QuickNSmart.AspMvc.Controllers
         }
         partial void BeforeDoResetPassword(ResetPasswordViewModel model, ref bool handled);
         partial void AfterDoResetPassword(ResetPasswordViewModel model, ref string viewName);
+
+        private void LogonExtern(LogonViewModel viewModel, string baseUri)
+        {
+            var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller }; 
+            var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = baseUri };
+            try
+            {
+                var externLogin = AsyncHelper.RunSync(() => extAccMngr.LogonAsync(viewModel.Email, viewModel.Password));
+                var internLogin = AsyncHelper.RunSync(() => intAccMngr.LogonAsync(externLogin.JsonWebToken));
+                var loginSession = new LoginSession();
+
+                loginSession.CopyProperties(internLogin);
+                SessionWrapper.LoginSession = loginSession;
+                AsyncHelper.RunSync(() => extAccMngr.LogoutAsync(externLogin.SessionToken));
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
     }
 }
 //MdEnd
