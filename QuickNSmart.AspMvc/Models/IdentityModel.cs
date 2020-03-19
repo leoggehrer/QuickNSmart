@@ -1,6 +1,8 @@
 //@QnSBaseCode
 //MdStart
 
+using System.ComponentModel.DataAnnotations;
+
 namespace QuickNSmart.AspMvc.Models
 {
 	public partial class IdentityModel : ModelObject, Contracts.IIdentifiable
@@ -29,6 +31,7 @@ namespace QuickNSmart.AspMvc.Models
 		partial void OnIdChanged();
 
 		private byte[] _timestamp;
+		[ScaffoldColumn(false)]
 		public virtual byte[] Timestamp
 		{
 			get

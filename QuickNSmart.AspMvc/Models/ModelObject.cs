@@ -2,13 +2,16 @@
 //MdStart
 using System;
 using System.Collections;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace QuickNSmart.AspMvc.Models
 {
 	public partial class ModelObject
     {
+		[ScaffoldColumn(false)]
 		public bool HasError => string.IsNullOrEmpty(ActionError) == false;
+		[ScaffoldColumn(false)]
 		public string ActionError { get; set; }
 		protected static bool IsEqualsWith(object obj1, object obj2)
 		{

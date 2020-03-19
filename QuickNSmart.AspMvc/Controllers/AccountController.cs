@@ -226,7 +226,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 var accMngr = new AccountManager();
 
-                await accMngr.ChangePasswordForAsync(SessionWrapper.LoginSession.SessionToken, viewModel.Email, viewModel.ConfirmPassword).ConfigureAwait(false);
+                await accMngr.ChangePasswordForAsync(SessionWrapper.SessionToken, viewModel.Email, viewModel.ConfirmPassword).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -256,6 +256,26 @@ namespace QuickNSmart.AspMvc.Controllers
             catch (Exception ex)
             {
                 throw ex;
+            }
+        }
+        private void ChangePasswordSync(ChangePasswordViewModel viewModel, string baseUri)
+        {
+            if (SessionWrapper.LoginSession == null
+                || SessionWrapper.LoginSession.LogoutTime.HasValue == false)
+            {
+                var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller };
+                var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = baseUri };
+                try
+                {
+                    AsyncHelper.RunSync(() => intAccMngr.ChangePasswordAsync(SessionWrapper.SessionToken, viewModel.OldPassword, viewModel.NewPassword));
+                    var externLogin = AsyncHelper.RunSync(() => extAccMngr.LogonAsync(viewModel.Email, viewModel.OldPassword));
+                    AsyncHelper.RunSync(() => extAccMngr.ChangePasswordAsync(externLogin.SessionToken, viewModel.OldPassword, viewModel.NewPassword));
+                    AsyncHelper.RunSync(() => extAccMngr.LogoutAsync(externLogin.SessionToken));
+                }
+                catch (Exception ex)
+                {
+                    throw ex;
+                }
             }
         }
     }

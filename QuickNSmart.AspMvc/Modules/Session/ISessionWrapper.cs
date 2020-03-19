@@ -38,7 +38,7 @@ namespace QuickNSmart.AspMvc.Modules.Session
 
         #region Authentication
         Models.Persistence.Account.LoginSession LoginSession { get; set; }
-        string SessionToken { get; }
+        string SessionToken => LoginSession != null ? LoginSession.SessionToken : null;
         #endregion Authentication
     }
 }
