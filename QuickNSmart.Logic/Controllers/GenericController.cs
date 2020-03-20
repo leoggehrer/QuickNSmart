@@ -53,49 +53,81 @@ namespace QuickNSmart.Logic.Controllers
         partial void Constructing();
         partial void Constructed();
 
+        protected E ConvertTo(I entity)
+        {
+            entity.CheckArgument(nameof(entity));
+
+            E result = new E();
+
+            result.CopyProperties(entity);
+            return result;
+        }
         #region Async-Methods
         public Task<int> CountAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteCountAsync();
+        }
+        internal Task<int> ExecuteCountAsync()
+        {
             return Context.CountAsync<I, E>();
         }
+
         public virtual Task<I> GetByIdAsync(int id)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteGetByIdAsync(id);
+        }
+        internal virtual Task<I> ExecuteGetByIdAsync(int id)
+        {
             return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
         }
-        public async virtual Task<IQueryable<I>> GetAllAsync()
+
+        public virtual Task<IQueryable<I>> GetAllAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
-            int idx = 0;
-            int qryCount = 0;
+            return ExecuteGetAllAsync();
+        }
+        internal async virtual Task<IQueryable<I>> ExecuteGetAllAsync()
+        {
+            int idx = 0, qryCount = 0;
             List<I> result = new List<I>();
 
             do
             {
-                var qry = await GetPageListAsync(idx++, MaxPageSize).ConfigureAwait(false);
-                
+                var qry = await ExecuteGetPageListAsync(idx++, MaxPageSize).ConfigureAwait(false);
+
                 qryCount = qry.Count();
                 result.AddRange(qry);
             } while (qryCount == MaxPageSize);
             return result.AsQueryable();
         }
+
         public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteGetPageListAsync(pageIndex, pageSize);
+        }
+        internal virtual Task<IQueryable<I>> ExecuteGetPageListAsync(int pageIndex, int pageSize)
+        {
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
             return Task.FromResult<IQueryable<I>>(Set().Skip(pageIndex * pageSize).Take(pageSize));
         }
+
         public virtual Task<IQueryable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteQueryPageListAsync(predicate, pageIndex, pageSize);
+        }
+        internal virtual Task<IQueryable<I>> ExecuteQueryPageListAsync(string predicate, int pageIndex, int pageSize)
+        {
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
@@ -104,10 +136,15 @@ namespace QuickNSmart.Logic.Controllers
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
         }
+
         public virtual Task<I> CreateAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteCreateAsync();
+        }
+        internal virtual Task<I> ExecuteCreateAsync()
+        {
             return Task.Run<I>(() => new E());
         }
 
@@ -115,32 +152,26 @@ namespace QuickNSmart.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        protected virtual Task AfterInsertedUpdatedAsync(E entiy)
-        {
-            return Task.FromResult(0);
-        }
         protected virtual Task BeforeInsertingAsync(E entity)
         {
             return Task.FromResult(0);
         }
-        public virtual async Task<I> InsertAsync(I entity)
+
+        public virtual Task<I> InsertAsync(I entity)
+        {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
+            return ExecuteInsertAsync(ConvertTo(entity));
+        }
+        internal virtual Task<I> InsertAsync(E entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
             entity.CheckArgument(nameof(entity));
 
-            var entityModel = new E();
-
-            entityModel.CopyProperties(entity);
-            await BeforeInsertingUpdateingAsync(entityModel).ConfigureAwait(false);
-            await BeforeInsertingAsync(entityModel).ConfigureAwait(false);
-            var result = await Context.InsertAsync<I, E>(entityModel).ConfigureAwait(false);
-            await AfterInsertedAsync(result).ConfigureAwait(false);
-            await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
-            return result;
+            return ExecuteInsertAsync(entity);
         }
-        internal virtual async Task<I> InsertAsync(E entity)
+        internal virtual async Task<I> ExecuteInsertAsync(E entity)
         {
-            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
             entity.CheckArgument(nameof(entity));
 
             await BeforeInsertingUpdateingAsync(entity).ConfigureAwait(false);
@@ -159,7 +190,7 @@ namespace QuickNSmart.Logic.Controllers
         {
             return Task.FromResult(0);
         }
-        public virtual async Task<I> UpdateAsync(I entity)
+        public virtual Task<I> UpdateAsync(I entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
             entity.CheckArgument(nameof(entity));
@@ -169,21 +200,22 @@ namespace QuickNSmart.Logic.Controllers
             if (entityModel != null)
             {
                 entityModel.CopyProperties(entity);
-                await BeforeInsertingUpdateingAsync(entityModel).ConfigureAwait(false);
-                await BeforeUpdatingAsync(entityModel).ConfigureAwait(false);
-                var result = await Context.UpdateAsync<I, E>(entityModel).ConfigureAwait(false);
-                await AfterUpdatedAsync(result).ConfigureAwait(false);
-                await AfterInsertedUpdatedAsync(result).ConfigureAwait(false);
-                return result;
+                return ExecuteUpdateAsync(entityModel);
             }
             else
             {
                 throw new LogicException(ErrorType.InvalidId);
             }
         }
-        internal virtual async Task<I> UpdateAsync(E entity)
+        internal virtual Task<I> UpdateAsync(E entity)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+            entity.CheckArgument(nameof(entity));
+
+            return ExecuteUpdateAsync(entity);
+        }
+        internal virtual async Task<I> ExecuteUpdateAsync(E entity)
+        {
             entity.CheckArgument(nameof(entity));
 
             await BeforeInsertingUpdateingAsync(entity).ConfigureAwait(false);
@@ -197,15 +229,23 @@ namespace QuickNSmart.Logic.Controllers
         {
             return Task.FromResult(0);
         }
+        protected virtual Task AfterInsertedUpdatedAsync(E entiy)
+        {
+            return Task.FromResult(0);
+        }
 
         protected virtual Task BeforeDeletingAsync(int id)
         {
             return Task.FromResult(0);
         }
-        public async Task DeleteAsync(int id)
+        public Task DeleteAsync(int id)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
+            return ExecuteDeleteAsync(id);
+        }
+        internal async Task ExecuteDeleteAsync(int id)
+        {
             await BeforeDeletingAsync(id).ConfigureAwait(false);
             var item = await Context.DeleteAsync<I, E>(id).ConfigureAwait(false);
 
@@ -219,24 +259,38 @@ namespace QuickNSmart.Logic.Controllers
             return Task.FromResult(0);
         }
 
+        protected virtual Task BeforeSaveChangesAsync()
+        {
+            return Task.FromResult(0);
+        }
         public Task SaveChangesAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
-            return Context.SaveAsync();
+            return ExecuteSaveChangesAsync();
+        }
+        internal async Task ExecuteSaveChangesAsync()
+        {
+            await BeforeSaveChangesAsync().ConfigureAwait(false);
+            await Context.SaveAsync().ConfigureAwait(false);
+            await AfterSaveChangesAsync().ConfigureAwait(false);
+        }
+        protected virtual Task AfterSaveChangesAsync()
+        {
+            return Task.FromResult(0);
         }
         #endregion Async-Methods
 
         #region Internal-Methods
-        internal virtual E QueryById(int id)
+        internal virtual E ExecuteQueryById(int id)
         {
             return Set().SingleOrDefault(i => i.Id == id);
         }
-        internal virtual IQueryable<E> Query(Expression<Func<E, bool>> predicate)
+        internal virtual IQueryable<E> ExecuteQuery(Expression<Func<E, bool>> predicate)
         {
             return Set().Where(predicate);
         }
-        internal virtual IQueryable<E> Query(string predicate, int pageIndex, int pageSize)
+        internal virtual IQueryable<E> ExecuteQuery(string predicate, int pageIndex, int pageSize)
         {
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);

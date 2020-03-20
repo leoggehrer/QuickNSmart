@@ -62,7 +62,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             {
                 result = new AppAccess();
                 result.Identity.CopyProperties(identity);
-                foreach (var item in identityXroleController.Query(p => p.IdentityId == identity.Id).ToList())
+                foreach (var item in identityXroleController.ExecuteQuery(p => p.IdentityId == identity.Id).ToList())
                 {
                     var role = await roleController.GetByIdAsync(item.RoleId).ConfigureAwait(false);
 
@@ -142,7 +142,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 {
                     item.Designation = RoleController.ClearRoleDesignation(item.Designation);
 
-                    var qryItem = roleController.Query(e => e.Designation.Equals(item.Designation)).FirstOrDefault();
+                    var qryItem = roleController.ExecuteQuery(e => e.Designation.Equals(item.Designation)).FirstOrDefault();
 
                     if (qryItem != null)
                     {
@@ -178,7 +178,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             entity.Roles.CheckArgument(nameof(entity.Roles));
 
             //Delete all costs that are no longer included in the list.
-            var identXRoles = identityXroleController.Query(e => e.IdentityId == entity.Identity.Id).ToList();
+            var identXRoles = identityXroleController.ExecuteQuery(e => e.IdentityId == entity.Identity.Id).ToList();
             foreach (var item in identXRoles)
             {
                 var tmpItem = entity.Roles.SingleOrDefault(i => i.Id == item.RoleId);
@@ -202,7 +202,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
                 if (item.Id == 0)
                 {
                     item.Designation = RoleController.ClearRoleDesignation(role.Designation);
-                    var qryItem = roleController.Query(e => e.Designation.Equals(item.Designation))
+                    var qryItem = roleController.ExecuteQuery(e => e.Designation.Equals(item.Designation))
                                                 .FirstOrDefault();
 
                     if (qryItem != null)
@@ -240,7 +240,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
         public override async Task DeleteAsync(int id)
         {
             //Delete all costs that are no longer included in the list.
-            var identXRoles = identityXroleController.Query(e => e.IdentityId == id).ToList();
+            var identXRoles = identityXroleController.ExecuteQuery(e => e.IdentityId == id).ToList();
 
             foreach (var item in identXRoles)
             {

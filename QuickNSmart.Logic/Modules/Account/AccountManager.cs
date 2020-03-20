@@ -91,7 +91,7 @@ namespace QuickNSmart.Logic.Modules.Account
                         {
                             SessionToken = Authorization.SystemAuthorizationToken
                         };
-                        var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                        var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
                                                             && e.EnableJwtAuth == true
                                                             && e.Email.ToLower() == email.Value.ToString().ToLower())
                                                    .ToList()
@@ -140,7 +140,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken
                 };
-                var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
+                var session = sessionCtrl.ExecuteQuery(e => e.SessionToken.Equals(sessionToken))
                                          .ToList()
                                          .FirstOrDefault(e => e.IsActive);
 
@@ -187,7 +187,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 SessionToken = Authorization.SystemAuthorizationToken
             };
-            var identity = identityCtrl.QueryById(login.IdentityId);
+            var identity = identityCtrl.ExecuteQueryById(login.IdentityId);
 
             if (identity != null)
             {
@@ -215,7 +215,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 SessionToken = sessionToken
             };
-            var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
                                                 && e.AccessFailedCount < 4
                                                 && e.Email.ToLower() == email.ToLower())
                                        .FirstOrDefault();
@@ -245,7 +245,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 SessionToken = sessionToken
             };
-            var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
                                                 && e.Email.ToLower() == email.ToLower())
                                        .FirstOrDefault();
 
@@ -270,14 +270,14 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken
                 };
-                var session = sessionCtrl.Query(e => e.SessionToken.Equals(sessionToken))
+                var session = sessionCtrl.ExecuteQuery(e => e.SessionToken.Equals(sessionToken))
                                          .ToList()
                                          .FirstOrDefault(e => e.IsActive);
 
                 if (session != null)
                 {
                     using var identityCtrl = new Controllers.Persistence.Account.IdentityController(sessionCtrl);
-                    var identity = identityCtrl.Query(e => e.Id == session.IdentityId).FirstOrDefault();
+                    var identity = identityCtrl.ExecuteQuery(e => e.Id == session.IdentityId).FirstOrDefault();
 
                     if (identity != null)
                     {
@@ -311,7 +311,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
                                                 && e.AccessFailedCount < 4
                                                 && e.Email.ToLower() == email.ToLower()
                                                 && e.PasswordHash == calculatedHash).FirstOrDefault();
@@ -326,12 +326,12 @@ namespace QuickNSmart.Logic.Modules.Account
                     session.Name = identity.Name;
                     session.Email = identity.Email;
                     session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
-                    var entity = await sessionCtrl.InsertAsync(session).ConfigureAwait(false);
+                    var entity = await sessionCtrl.ExecuteInsertAsync(session).ConfigureAwait(false);
 
                     if (identity.AccessFailedCount > 0)
                     {
                         identity.AccessFailedCount = 0;
-                        await identityCtrl.UpdateAsync(identity).ConfigureAwait(false);
+                        await identityCtrl.ExecuteUpdateAsync(identity).ConfigureAwait(false);
                     }
                     await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
 
@@ -364,7 +364,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = identityCtrl.Query(e => e.State == Contracts.State.Active
+                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
                                                     && e.AccessFailedCount < 4
                                                     && e.Email.ToLower() == email.ToLower()
                                                     && e.PasswordHash == calculatedHash).FirstOrDefault();
@@ -372,7 +372,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 if (identity != null)
                 {
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
-                    var session = sessionCtrl.Query(e => e.LogoutTime == null
+                    var session = sessionCtrl.ExecuteQuery(e => e.LogoutTime == null
                                                       && e.IdentityId == identity.Id)
                                              .ToList()
                                              .FirstOrDefault(e => e.IsActive);
@@ -404,9 +404,9 @@ namespace QuickNSmart.Logic.Modules.Account
             using var identityXRoleCtrl = new Controllers.Persistence.Account.IdentityXRoleController(controllerObject);
             using var roleCtrl = new Controllers.Persistence.Account.RoleController(controllerObject);
 
-            foreach (var item in identityXRoleCtrl.Query(e => e.IdentityId == identityId).ToList())
+            foreach (var item in identityXRoleCtrl.ExecuteQuery(e => e.IdentityId == identityId).ToList())
             {
-                var entity = await roleCtrl.GetByIdAsync(item.RoleId).ConfigureAwait(false);
+                var entity = await roleCtrl.ExecuteGetByIdAsync(item.RoleId).ConfigureAwait(false);
 
                 if (entity != null)
                 {
@@ -434,7 +434,7 @@ namespace QuickNSmart.Logic.Modules.Account
                             SessionToken = Authorization.SystemAuthorizationToken,
                         };
                         bool saveChanges = false;
-                        var dbSessions = sessionCtrl.Query(e => e.LogoutTime.HasValue == false).ToList();
+                        var dbSessions = sessionCtrl.ExecuteQuery(e => e.LogoutTime.HasValue == false).ToList();
                         var uncheckSessions = LoginSessions.Where(i => dbSessions.Any() == false 
                                                                     || dbSessions.Any(e => e.Id != i.Id));
 
@@ -465,7 +465,7 @@ namespace QuickNSmart.Logic.Modules.Account
                             if (itemUpdate)
                             {
                                 saveChanges = true;
-                                await sessionCtrl.UpdateAsync(dbItem).ConfigureAwait(false);
+                                await sessionCtrl.ExecuteUpdateAsync(dbItem).ConfigureAwait(false);
                             }
                             if (memItemRemove)
                             {
@@ -478,7 +478,7 @@ namespace QuickNSmart.Logic.Modules.Account
                         }
                         foreach (var memItem in uncheckSessions)
                         {
-                            var dbItem = sessionCtrl.QueryById(memItem.Id);
+                            var dbItem = sessionCtrl.ExecuteQueryById(memItem.Id);
 
                             if (dbItem != null)
                             {
