@@ -1,5 +1,11 @@
 @*@QnSBaseCode*@
+@using CommonBase.Extensions
+@using QuickNSmart.AspMvc.Extensions
 @model QuickNSmart.AspMvc.Models.Persistence.Account.Identity
+
+@{
+    var options = EnumExtensions.ToList<QuickNSmart.Contracts.State>();
+}
 
 <div class="row">
     <div class="col-md-8">
@@ -40,8 +46,7 @@
         </div>
         <div class="form-group">
             <label asp-for="State" class="control-label"></label>
-            <input asp-for="State" class="form-control" />
-            <span asp-validation-for="State" class="text-danger"></span>
+            @Html.ToSelect("form-control", string.Empty, "State", options, Model.State)
         </div>
     </div>
 </div>
