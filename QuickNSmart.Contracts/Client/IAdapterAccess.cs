@@ -1,4 +1,6 @@
-﻿using System;
+﻿//@QnSBaseCode
+//MdStart
+using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 
@@ -81,3 +83,4 @@ namespace QuickNSmart.Contracts.Client
         #endregion Async-Methods
     }
 }
+//MdEnd
