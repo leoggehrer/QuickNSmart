@@ -28,6 +28,20 @@ namespace QuickNSmart.Contracts.Client
         /// </summary>
         /// <returns>Number of entities in the collection.</returns>
         Task<int> CountAsync();
+
+        /// <summary>
+        /// Returns the element of type T with the identification of id.
+        /// </summary>
+        /// <param name="id">The identification.</param>
+        /// <returns>The element of the type T with the corresponding identification.</returns>
+        Task<T> GetByIdAsync(int id);
+        /// <summary>
+        /// Gets a subset of items from the repository.
+        /// </summary>
+        /// <param name="pageIndex">0 based page index.</param>
+        /// <param name="pageSize">The pagesize.</param>
+        /// <returns>Subset in accordance with the parameters.</returns>
+        Task<IQueryable<T>> GetPageListAsync(int pageIndex, int pageSize);
         /// <summary>
         /// Returns all interfaces of the entities in the collection.
         /// </summary>
@@ -42,18 +56,12 @@ namespace QuickNSmart.Contracts.Client
         /// <returns>The filter result.</returns>
         Task<IQueryable<T>> QueryPageListAsync(string predicate, int pageIndex, int pageSize);
         /// <summary>
-        /// Gets a subset of items from the repository.
+        /// Filters a sequence of values based on a predicate.
         /// </summary>
-        /// <param name="pageIndex">0 based page index.</param>
-        /// <param name="pageSize">The pagesize.</param>
-        /// <returns>Subset in accordance with the parameters.</returns>
-        Task<IQueryable<T>> GetPageListAsync(int pageIndex, int pageSize);
-        /// <summary>
-        /// Returns the element of type T with the identification of id.
-        /// </summary>
-        /// <param name="id">The identification.</param>
-        /// <returns>The element of the type T with the corresponding identification.</returns>
-        Task<T> GetByIdAsync(int id);
+        /// <param name="predicate">A function to test each element for a condition.</param>
+        /// <returns>The filter result.</returns>
+        Task<IQueryable<T>> QueryAllAsync(string predicate);
+
         /// <summary>
         /// Creates a new element of type T.
         /// </summary>

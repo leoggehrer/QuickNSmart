@@ -97,6 +97,20 @@ namespace QuickNSmart.Logic.Controllers
             return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
         }
 
+        public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
+        {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
+            return ExecuteGetPageListAsync(pageIndex, pageSize);
+        }
+        internal virtual Task<IQueryable<I>> ExecuteGetPageListAsync(int pageIndex, int pageSize)
+        {
+            if (pageSize < 1 && pageSize > MaxPageSize)
+                throw new LogicException(ErrorType.InvalidPageSize);
+
+            return Task.FromResult<IQueryable<I>>(Set().Skip(pageIndex * pageSize).Take(pageSize));
+        }
+
         public virtual Task<IQueryable<I>> GetAllAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
@@ -118,20 +132,6 @@ namespace QuickNSmart.Logic.Controllers
             return result.AsQueryable();
         }
 
-        public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
-        {
-            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
-
-            return ExecuteGetPageListAsync(pageIndex, pageSize);
-        }
-        internal virtual Task<IQueryable<I>> ExecuteGetPageListAsync(int pageIndex, int pageSize)
-        {
-            if (pageSize < 1 && pageSize > MaxPageSize)
-                throw new LogicException(ErrorType.InvalidPageSize);
-
-            return Task.FromResult<IQueryable<I>>(Set().Skip(pageIndex * pageSize).Take(pageSize));
-        }
-
         public virtual Task<IQueryable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
@@ -147,6 +147,27 @@ namespace QuickNSmart.Logic.Controllers
                      .Where(predicate)
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
+        }
+
+        public virtual Task<IQueryable<I>> QueryAllAsync(string predicate)
+        {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
+            return ExecuteQueryAllAsync(predicate);
+        }
+        internal virtual async Task<IQueryable<I>> ExecuteQueryAllAsync(string predicate)
+        {
+            int idx = 0, qryCount = 0;
+            List<I> result = new List<I>();
+
+            do
+            {
+                var qry = await ExecuteQueryPageListAsync(predicate, idx++, MaxPageSize).ConfigureAwait(false);
+
+                qryCount = qry.Count();
+                result.AddRange(qry);
+            } while (qryCount == MaxPageSize);
+            return result.AsQueryable();
         }
 
         public virtual Task<I> CreateAsync()

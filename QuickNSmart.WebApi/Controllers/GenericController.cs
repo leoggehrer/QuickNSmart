@@ -37,24 +37,7 @@ namespace QuickNSmart.WebApi.Controllers
 
             return await ctrl.CountAsync();
         }
-        protected async Task<IEnumerable<M>> GetModelsAsync()
-        {
-            using var ctrl = CreateController();
 
-            return (await ctrl.GetAllAsync()).ToList().Select(i => ToModel(i));
-        }
-        protected async Task<IEnumerable<M>> GetPageModelsAsync(int index, int size)
-        {
-            using var ctrl = CreateController();
-
-            return (await ctrl.GetPageListAsync(index, size)).ToList().Select(i => ToModel(i));
-        }
-        protected async Task<IEnumerable<M>> QueryPageModelsAsync(string predicate, int index, int size)
-        {
-            using var ctrl = CreateController();
-
-            return (await ctrl.QueryPageListAsync(predicate, index, size)).ToList().Select(i => ToModel(i));
-        }
         protected async Task<M> GetModelByIdAsync(int id)
         {
             using var ctrl = CreateController();
@@ -62,6 +45,32 @@ namespace QuickNSmart.WebApi.Controllers
             var entity = (await ctrl.GetByIdAsync(id));
             return ToModel(entity);
         }
+        protected async Task<IEnumerable<M>> GetPageModelsAsync(int index, int size)
+        {
+            using var ctrl = CreateController();
+
+            return (await ctrl.GetPageListAsync(index, size)).ToList().Select(i => ToModel(i));
+        }
+        protected async Task<IEnumerable<M>> GetAllModelsAsync()
+        {
+            using var ctrl = CreateController();
+
+            return (await ctrl.GetAllAsync()).ToList().Select(i => ToModel(i));
+        }
+
+        protected async Task<IEnumerable<M>> QueryPageModelsAsync(string predicate, int index, int size)
+        {
+            using var ctrl = CreateController();
+
+            return (await ctrl.QueryPageListAsync(predicate, index, size)).ToList().Select(i => ToModel(i));
+        }
+        protected async Task<IEnumerable<M>> QueryAllModelsAsync(string predicate)
+        {
+            using var ctrl = CreateController();
+
+            return (await ctrl.QueryAllAsync(predicate)).ToList().Select(i => ToModel(i));
+        }
+
         protected async Task<M> CreateModelAsync()
         {
             using var ctrl = CreateController();

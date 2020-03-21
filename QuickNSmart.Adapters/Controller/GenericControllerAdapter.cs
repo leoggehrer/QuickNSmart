@@ -43,6 +43,14 @@ namespace QuickNSmart.Adapters.Controller
             return controller.CountAsync();
         }
 
+        public Task<TContract> GetByIdAsync(int id)
+        {
+            return controller.GetByIdAsync(id);
+        }
+        public async Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
+        {
+            return (await controller.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToArray();
+        }
         public async Task<IEnumerable<TContract>> GetAllAsync()
         {
             return (await controller.GetAllAsync().ConfigureAwait(false)).ToArray();
@@ -52,15 +60,9 @@ namespace QuickNSmart.Adapters.Controller
         {
             return (await controller.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToArray();
         }
-
-        public async Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
+        public async Task<IEnumerable<TContract>> QueryAllAsync(string predicate)
         {
-            return (await controller.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToArray();
-        }
-
-        public Task<TContract> GetByIdAsync(int id)
-        {
-            return controller.GetByIdAsync(id);
+            return (await controller.QueryAllAsync(predicate).ConfigureAwait(false)).ToArray();
         }
 
         public Task<TContract> CreateAsync()
