@@ -11,7 +11,7 @@ namespace QuickNSmart.AspMvc.Controllers
 {
 	public abstract partial class MvcController : Controller
 	{
-		protected IFactoryWrapper Factory { get; set; }
+		protected IFactoryWrapper Factory { get; private set; }
 		static MvcController()
 		{
 			ClassConstructing();
@@ -35,7 +35,8 @@ namespace QuickNSmart.AspMvc.Controllers
 		internal ISessionWrapper SessionWrapper => sessionWrapper ?? (sessionWrapper = new SessionWrapper(HttpContext.Session));
 		#endregion
 
-		protected static M ConvertTo<M, I>(I contract) where M : Models.ModelObject, Contracts.ICopyable<I>, new()
+		protected static M ConvertTo<M, I>(I contract) 
+			where M : Models.ModelObject, Contracts.ICopyable<I>, new()
 		{
 			contract.CheckArgument(nameof(contract));
 
@@ -44,6 +45,7 @@ namespace QuickNSmart.AspMvc.Controllers
 			result.CopyProperties(contract);
 			return result;
 		}
+
 		protected string ControllerName => GetType().Name.Replace("Controller", string.Empty);
 
 		#region Error-helpers

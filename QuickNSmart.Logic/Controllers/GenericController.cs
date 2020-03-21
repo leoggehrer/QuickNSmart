@@ -53,13 +53,25 @@ namespace QuickNSmart.Logic.Controllers
         partial void Constructing();
         partial void Constructed();
 
-        protected E ConvertTo(I entity)
+        protected E ConvertTo(I contract)
         {
-            entity.CheckArgument(nameof(entity));
+            contract.CheckArgument(nameof(contract));
 
             E result = new E();
 
-            result.CopyProperties(entity);
+            result.CopyProperties(contract);
+            return result;
+        }
+        protected IEnumerable<E> ConvertTo(IEnumerable<I> contracts)
+        {
+            contracts.CheckArgument(nameof(contracts));
+
+            List<E> result = new List<E>();
+
+            foreach (var item in contracts)
+            {
+                result.Add(ConvertTo(item));
+            }
             return result;
         }
         #region Async-Methods

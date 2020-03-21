@@ -23,7 +23,6 @@ namespace QuickNSmart.AspMvc.Controllers
             : base(factoryWrapper)
         {
             Constructing();
-            Factory = factoryWrapper;
             Constructed();
         }
         partial void Constructing();

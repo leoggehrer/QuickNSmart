@@ -63,7 +63,7 @@
 					}
 					else
 					{
-						<li>@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
+						<li class="dropdown-item">@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
 					}
 					<li class="dropdown-item"><a href="javascript:document.getElementById('logoutForm').submit()" >@mnuLogout<i style="margin-left: 1em;" class="fas fa-sign-out-alt"></i></a></li>
 				</ul>

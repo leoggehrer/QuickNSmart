@@ -70,7 +70,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             string controllerName = $"{entityName}Controller";
 
             CreateLogicControllerAttributes(type, result);
-            result.Add($"sealed partial class {controllerName} : BusinessControllerAdapter<{type.FullName}>");
+            result.Add($"sealed partial class {controllerName} : BusinessControllerAdapter<{type.FullName}, {entityType}>");
             result.Add("{");
 
             result.AddRange(CreatePartialStaticConstrutor(controllerName));

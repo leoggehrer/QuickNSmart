@@ -1,5 +1,6 @@
 ﻿//@QnSBaseCode
 //MdStart
+using CommonBase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,8 +9,9 @@ using System.Threading.Tasks;
 
 namespace QuickNSmart.Logic.Controllers.Business
 {
-    abstract partial class BusinessControllerAdapter<I> : ControllerObject, Contracts.Client.IControllerAccess<I>
+    abstract partial class BusinessControllerAdapter<I, E> : ControllerObject, Contracts.Client.IControllerAccess<I>
 		where I : Contracts.IIdentifiable
+		where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
 	{
 		public virtual int MaxPageSize => throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 
@@ -31,6 +33,27 @@ namespace QuickNSmart.Logic.Controllers.Business
 		{
 			Constructing();
 			Constructed();
+		}
+		protected E ConvertTo(I contract)
+		{
+			contract.CheckArgument(nameof(contract));
+
+			E result = new E();
+
+			result.CopyProperties(contract);
+			return result;
+		}
+		protected IEnumerable<E> ConvertTo(IEnumerable<I> contracts)
+		{
+			contracts.CheckArgument(nameof(contracts));
+
+			List<E> result = new List<E>();
+
+			foreach (var item in contracts)
+			{
+				result.Add(ConvertTo(item));
+			}
+			return result;
 		}
 
 		public virtual Task<int> CountAsync()
