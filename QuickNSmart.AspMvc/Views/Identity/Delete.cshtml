@@ -27,12 +27,6 @@
         <div class="p-sm-2 mr-auto">
             <h4>Identity</h4>
         </div>
-        <div class="p-sm-2">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
-        </div>
-        <div class="p-sm-2">
-            <input type="submit" value="@translate("Delete")" class="btn btn-danger" style="min-width: 8em;" />
-        </div>
     </div>
     <hr />
 
@@ -45,13 +39,15 @@
         <h3>@translate("Are you sure you want to delete this?")</h3>
     }
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("IdentityDetails", Model.Identity)
+        @await Html.PartialAsync("_IdentityDetails", Model.Identity)
     </div>
+
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss = "btn btn-danger" })
 </form>
 
 <div style="margin-top: 1em;">
-    < h4 > Rolen </ h4 >
-    @await Html.PartialAsync("RoleListDetails", Model.Roles)
+    <h4>Rolen</h4 >
+    @await Html.PartialAsync("_RoleListDetails", Model.Roles)
 </div>
 @*Begin:Footer*@
 @{

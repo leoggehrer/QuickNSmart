@@ -52,14 +52,7 @@
             </div>
         </div>
     </div>
-    <div class="d-flex bg-transparent">
-        <div class="p-sm-2">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
-        </div>
-        <div class="p-sm-2">
-            <input type="submit" value="@translate("Save")" class="btn btn-primary" style="min-width: 8em;" />
-        </div>
-    </div>
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 </form>
 @*Begin:Footer*@
 @{

@@ -29,12 +29,6 @@
         <div class="p-sm-2 mr-auto">
             <h4>Identity</h4>
         </div>
-        <div class="p-sm-2">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
-        </div>
-        <div class="p-sm-2">
-            <input type="submit" value="@translate("Save")" class="btn btn-primary" style="min-width: 8em;" />
-        </div>
     </div>
     <hr />
 
@@ -43,12 +37,14 @@
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
     }
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("IdentityEdit", Model.Identity)
+        @await Html.PartialAsync("_IdentityEdit", Model.Identity)
     </div>
+
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 
     <div style="margin-top: 1em;">
         <h4>Rolen</h4>
-        @await Html.PartialAsync("RoleListEdit", Model.Roles)
+        @await Html.PartialAsync("_RoleListEdit", Model.Roles)
     </div>
 </form>
 @*Begin:Footer*@

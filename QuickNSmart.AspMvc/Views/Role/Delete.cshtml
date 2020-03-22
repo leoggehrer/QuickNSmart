@@ -53,14 +53,7 @@
             @Html.DisplayFor(model => model.Description)
         </dd>
     </dl>
-    <div class="d-flex bg-transparent">
-        <div class="p-sm-2">
-            <a asp-action="Index" class="btn btn-outline-dark" style="min-width: 8em;">@translate("Back to List")</a>
-        </div>
-        <div class="p-sm-2">
-            <input type="submit" value="@translate("Delete")" class="btn btn-danger" style="min-width: 8em;" />
-        </div>
-    </div>
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss="btn btn-danger" })
 </form>
 @*Begin:Footer*@
 @{

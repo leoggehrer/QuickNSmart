@@ -39,12 +39,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
@@ -112,12 +112,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
@@ -185,12 +185,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
@@ -258,12 +258,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
@@ -331,12 +331,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
@@ -404,12 +404,12 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return GetAllModelsAsync();
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}/{index}/{size}")]
+		[HttpGet("/api/[controller]/Query/{predicate}/{index}/{size}")]
 		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
 		{
 			return QueryPageModelsAsync(predicate, index, size);
 		}
-		[HttpGet("/api/[controller]/Get/{predicate}")]
+		[HttpGet("/api/[controller]/Query/{predicate}")]
 		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
 		{
 			return QueryAllModelsAsync(predicate);
