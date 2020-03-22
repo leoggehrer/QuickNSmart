@@ -42,6 +42,10 @@ namespace QuickNSmart.Adapters.Controller
         {
             return controller.CountAsync();
         }
+        public Task<int> CountByAsync(string predicate)
+        {
+            return controller.CountByAsync(predicate);
+        }
 
         public Task<TContract> GetByIdAsync(int id)
         {

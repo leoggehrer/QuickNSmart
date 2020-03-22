@@ -92,6 +92,26 @@ namespace QuickNSmart.Adapters.Service
                 throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
+        public async Task<int> CountByAsync(string predicate)
+        {
+            using var client = GetClient(BaseUri);
+            HttpResponseMessage response = await client.GetAsync($"{ExtUri}/CountBy/{predicate}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                string stringData = await response.Content.ReadAsStringAsync();
+
+                return Convert.ToInt32(stringData);
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync();
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
+
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
+            }
+        }
 
         public async Task<TContract> GetByIdAsync(int id)
         {
@@ -141,7 +161,7 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync(ExtUri + "/Get");
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -164,7 +184,7 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get/{predicate}/{pageIndex}/{pageSize}");
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Query/{predicate}/{pageIndex}/{pageSize}");
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -186,7 +206,7 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Get/{predicate}");
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Query/{predicate}");
 
                 if (response.IsSuccessStatusCode)
                 {

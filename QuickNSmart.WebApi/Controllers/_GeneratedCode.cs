@@ -19,6 +19,11 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return CountAsync();
 		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
+		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)
 		{
@@ -86,6 +91,11 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task<int> GetCountAsync()
 		{
 			return CountAsync();
+		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)
@@ -155,6 +165,11 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return CountAsync();
 		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
+		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)
 		{
@@ -222,6 +237,11 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task<int> GetCountAsync()
 		{
 			return CountAsync();
+		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)
@@ -291,6 +311,11 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return CountAsync();
 		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
+		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)
 		{
@@ -358,6 +383,11 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task<int> GetCountAsync()
 		{
 			return CountAsync();
+		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountByAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Get/{id}")]
 		public Task<Model> GetAsync(int id)

@@ -1,8 +1,8 @@
 //@QnSBaseCode
 //MdStart
 using System.Collections.Generic;
-using System.Threading.Tasks;
 using System.Linq;
+using System.Threading.Tasks;
 using CommonBase.Extensions;
 
 namespace QuickNSmart.WebApi.Controllers
@@ -36,6 +36,12 @@ namespace QuickNSmart.WebApi.Controllers
             using var ctrl = CreateController();
 
             return await ctrl.CountAsync();
+        }
+        protected async Task<int> CountByAsync(string predicate)
+        {
+            using var ctrl = CreateController();
+
+            return await ctrl.CountByAsync(predicate);
         }
 
         protected async Task<M> GetModelByIdAsync(int id)

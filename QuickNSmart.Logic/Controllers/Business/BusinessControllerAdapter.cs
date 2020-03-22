@@ -60,7 +60,10 @@ namespace QuickNSmart.Logic.Controllers.Business
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
 		}
-
+		public virtual Task<int> CountByAsync(string predicate)
+		{
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+		}
 
 		public virtual Task<I> GetByIdAsync(int id)
 		{

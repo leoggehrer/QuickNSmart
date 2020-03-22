@@ -19,6 +19,10 @@ namespace QuickNSmart.Logic.DataContext
             where I : IIdentifiable
             where E : IdentityObject, I;
 
+        Task<int> CountByAsync<I, E>(string predicate)
+            where I : IIdentifiable
+            where E : IdentityObject, I;
+
         Task<E> CreateAsync<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new();

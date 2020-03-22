@@ -23,6 +23,12 @@ namespace QuickNSmart.Contracts.Client
         /// </summary>
         /// <returns>Number of entities in the collection.</returns>
         Task<int> CountAsync();
+        /// <summary>
+        /// Returns the number of quantity in the collection based on a predicate.
+        /// </summary>
+        /// <param name="predicate">A string to test each element for a condition.</param>
+        /// <returns>Number of entities in the collection.</returns>
+        Task<int> CountByAsync(string predicate);
 
         /// <summary>
         /// Returns the element of type T with the identification of id.

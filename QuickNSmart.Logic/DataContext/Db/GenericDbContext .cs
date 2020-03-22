@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using QuickNSmart.Contracts;
 using QuickNSmart.Logic.Entities;
-using System.Collections.Generic;
+using System.Linq.Dynamic.Core;
 
 namespace QuickNSmart.Logic.DataContext.Db
 {
@@ -40,6 +40,13 @@ namespace QuickNSmart.Logic.DataContext.Db
         {
             return Set<I, E>().CountAsync();
         }
+        public Task<int> CountByAsync<I, E>(string predicate)
+            where I : IIdentifiable
+            where E : IdentityObject, I
+        {
+            return Set<I, E>().Where(predicate).CountAsync();
+        }
+
         public Task<E> CreateAsync<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, ICopyable<I>, I, new()

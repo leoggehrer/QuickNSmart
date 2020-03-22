@@ -75,7 +75,7 @@ namespace QuickNSmart.Logic.Controllers
             return result;
         }
         #region Async-Methods
-        public Task<int> CountAsync()
+        public virtual Task<int> CountAsync()
         {
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
 
@@ -84,6 +84,16 @@ namespace QuickNSmart.Logic.Controllers
         internal Task<int> ExecuteCountAsync()
         {
             return Context.CountAsync<I, E>();
+        }
+        public virtual Task<int> CountByAsync(string predicat)
+        {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
+            return ExecuteCountByAsync(predicat);
+        }
+        internal Task<int> ExecuteCountByAsync(string predicate)
+        {
+            return Context.CountByAsync<I, E>(predicate);
         }
 
         public virtual Task<I> GetByIdAsync(int id)
