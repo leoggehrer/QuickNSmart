@@ -1,8 +1,5 @@
 ﻿//@QnSBaseCode
 //MdStart
-using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace QuickNSmart.Adapters
 {

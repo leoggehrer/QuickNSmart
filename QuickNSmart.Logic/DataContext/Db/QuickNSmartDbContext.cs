@@ -32,8 +32,10 @@ namespace QuickNSmart.Logic.DataContext.Db
                     && level == LogLevel.Information)
                 .AddDebug();
         });
-#endif
         private static string ConnectionString { get; set; } = "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;";
+#else
+        private static string ConnectionString { get; set; } = "Data Source=dbserver;Database=QuickNSmartDb;User Id=sa;Password=Passme123!";
+#endif
 
         public QuickNSmartDbContext()
         {
