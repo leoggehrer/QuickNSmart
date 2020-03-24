@@ -7,6 +7,7 @@ namespace QuickNSmart.AspMvc.Models.Modules.Account
     public partial class LogonViewModel : ModelObject
     {
         public string ReturnUrl { get; set; }
+        public string IdentityUrl { get; set; }
 
         [Required]
         [Display(Name = "Email")]

@@ -105,6 +105,7 @@ namespace QuickNSmart.Logic.Modules.Account
                             {
                                 result = new LoginSession();
                                 result.CopyProperties(login);
+                                result.IsRemoteAuth = true;
                             }
                         }
                     }
@@ -343,6 +344,7 @@ namespace QuickNSmart.Logic.Modules.Account
                     result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
                     {
                         new Claim(ClaimTypes.Email, identity.Email),
+                        new Claim(ClaimTypes.System, nameof(QuickNSmart)),
                     }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
                     LoginSessions.Add(result);
                 }

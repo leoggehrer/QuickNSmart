@@ -75,12 +75,14 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 try
                 {
-                    var accMngr = new AccountManager();
-                    var loginResult = await accMngr.LogonAsync(viewModel.Email, viewModel.Password).ConfigureAwait(false);
-                    var loginSession = new LoginSession();
-
-                    loginSession.CopyProperties(loginResult);
-                    SessionWrapper.LoginSession = loginSession;
+                    if (string.IsNullOrEmpty(viewModel.IdentityUrl))
+                    {
+                        await ExecuteLogonAsync(viewModel).ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        await ExecuteLogonRemoteAsync(viewModel).ConfigureAwait(false);
+                    }
                 }
                 catch (Exception ex)
                 {
@@ -97,6 +99,64 @@ namespace QuickNSmart.AspMvc.Controllers
         }
         partial void BeforeDoLogon(LogonViewModel model, ref bool handled);
         partial void AfterDoLogon(LogonViewModel model, ref string action, ref string controller);
+
+        public IActionResult LogonRemote(string returnUrl = null, string error = null)
+        {
+            var handled = false;
+            var viewName = nameof(LogonRemote);
+            var viewModel = new LogonViewModel()
+            {
+                ReturnUrl = returnUrl,
+                ActionError = error,
+            };
+
+            BeforeLogonRemote(viewModel, ref handled);
+            if (handled == false)
+            {
+                SessionWrapper.ReturnUrl = viewModel.ReturnUrl;
+                SessionWrapper.Error = viewModel.ActionError;
+            }
+            AfterLogonRemote(viewModel, ref viewName);
+            return View(viewName, viewModel);
+        }
+        partial void BeforeLogonRemote(LogonViewModel model, ref bool handled);
+        partial void AfterLogonRemote(LogonViewModel model, ref string viewName);
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("LogonRemote")]
+        public async Task<IActionResult> LogonRemoteAsync(LogonViewModel viewModel)
+        {
+            if (ModelState.IsValid == false)
+            {
+                return View(viewModel);
+            }
+            bool handled = false;
+            var action = "Index";
+            var controller = "Home";
+
+            BeforeDoLogonRemote(viewModel, ref handled);
+            if (handled == false)
+            {
+                try
+                {
+                    await ExecuteLogonRemoteAsync(viewModel).ConfigureAwait(false);
+                }
+                catch (Exception ex)
+                {
+                    viewModel.ActionError = ex.Message;
+                    return View(viewModel);
+                }
+            }
+            AfterDoLogonRemote(viewModel, ref action, ref controller);
+            if (viewModel.ReturnUrl.HasContent())
+            {
+                return Redirect(viewModel.ReturnUrl);
+            }
+            return RedirectToAction(action, controller);
+        }
+        partial void BeforeDoLogonRemote(LogonViewModel model, ref bool handled);
+        partial void AfterDoLogonRemote(LogonViewModel model, ref string action, ref string controller);
 
         [ActionName("Logout")]
         public async Task<IActionResult> LogoutAsync()
@@ -239,10 +299,45 @@ namespace QuickNSmart.AspMvc.Controllers
         partial void BeforeDoResetPassword(ResetPasswordViewModel model, ref bool handled);
         partial void AfterDoResetPassword(ResetPasswordViewModel model, ref string viewName);
 
-        private void LogonExtern(LogonViewModel viewModel, string baseUri)
+        private async Task ExecuteLogonAsync(LogonViewModel viewModel)
         {
-            var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller }; 
-            var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = baseUri };
+            var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller };
+            try
+            {
+                var internLogin = await intAccMngr.LogonAsync(viewModel.Email, viewModel.Password);
+                var loginSession = new LoginSession();
+
+                loginSession.CopyProperties(internLogin);
+                SessionWrapper.LoginSession = loginSession;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private async Task ExecuteLogonRemoteAsync(LogonViewModel viewModel)
+        {
+            var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller };
+            var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = viewModel.IdentityUrl };
+            try
+            {
+                var externLogin = await extAccMngr.LogonAsync(viewModel.Email, viewModel.Password);
+                var internLogin = await intAccMngr.LogonAsync(externLogin.JsonWebToken);
+                var loginSession = new LoginSession();
+
+                loginSession.CopyProperties(internLogin);
+                SessionWrapper.LoginSession = loginSession;
+                await extAccMngr.LogoutAsync(externLogin.SessionToken);
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        private void LogonRemote(LogonViewModel viewModel)
+        {
+            var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller };
+            var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = viewModel.IdentityUrl };
             try
             {
                 var externLogin = AsyncHelper.RunSync(() => extAccMngr.LogonAsync(viewModel.Email, viewModel.Password));

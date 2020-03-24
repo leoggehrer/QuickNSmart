@@ -14,23 +14,32 @@
 @*End:Header*@
 
 @{
-	string welcome = "";
-	string mnoLogon = "Logon";
-	string mnuLogout = "Logout";
-	string mnuIdentityMngr = "Identity-Manage";
-	string mnuRoleMngr = "Role-Manage";
-	string mnuPwdChange = "Change password";
-	string mnuPwdReset = "Reset password";
-	string mnuTranslation = "Translation Settings";
-	string mnuUser = sessionWrapper.LoginSession?.Name;
+    string welcome = "";
+    string mnoLogon = "Logon";
+    string mnuLogout = "Logout";
+    string mnuIdentityMngr = "Identity-Manage";
+    string mnuRoleMngr = "Role-Manage";
+    string mnuPwdChange = "Change password";
+    string mnuPwdReset = "Reset password";
+    string mnuTranslation = "Translation Settings";
+    string mnuUser = string.Empty;
 
-	welcome = translate(welcome);
-	mnoLogon = translate(mnoLogon);
-	mnuLogout = translate(mnuLogout);
-	mnuIdentityMngr = translate(mnuIdentityMngr);
-	mnuPwdChange = translate(mnuPwdChange);
-	mnuPwdReset = translate(mnuPwdReset);
-	mnuTranslation = translate(mnuTranslation);
+    if (sessionWrapper.LoginSession != null)
+    {
+        mnuUser = sessionWrapper.LoginSession.Name;
+        if (sessionWrapper.LoginSession.IsRemoteAuth)
+        {
+			mnuUser = $"{mnuUser} [rm]";
+        }
+    }
+
+    welcome = translate(welcome);
+    mnoLogon = translate(mnoLogon);
+    mnuLogout = translate(mnuLogout);
+    mnuIdentityMngr = translate(mnuIdentityMngr);
+    mnuPwdChange = translate(mnuPwdChange);
+    mnuPwdReset = translate(mnuPwdReset);
+    mnuTranslation = translate(mnuTranslation);
 }
 
 @if (sessionWrapper.LoginSession != null && sessionWrapper.LoginSession.LogoutTime.HasValue == false)

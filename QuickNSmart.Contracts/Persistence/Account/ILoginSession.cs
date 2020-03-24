@@ -7,6 +7,7 @@ namespace QuickNSmart.Contracts.Persistence.Account
     public partial interface ILoginSession : IIdentifiable, ICopyable<ILoginSession>
     {
         int IdentityId { get; }
+        bool IsRemoteAuth { get; }
         string Origin { get; }
         string Name { get; }
         string Email { get; }

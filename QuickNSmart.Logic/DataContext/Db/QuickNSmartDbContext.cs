@@ -124,6 +124,8 @@ namespace QuickNSmart.Logic.DataContext.Db
                 .HasMaxLength(256);
 
             entityTypeBuilder
+                .Ignore(p => p.IsRemoteAuth);
+            entityTypeBuilder
                 .Ignore(p => p.Origin);
             entityTypeBuilder
                 .Ignore(p => p.Name);
