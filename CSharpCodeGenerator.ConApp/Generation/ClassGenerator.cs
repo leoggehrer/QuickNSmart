@@ -70,22 +70,22 @@ namespace CSharpCodeGenerator.ConApp.Generation
             };
 
             if (string.IsNullOrEmpty(baseConstructor) == false)
-                lines.Add($":{baseConstructor}".SetIndent(1));
+                lines.Add($":{baseConstructor}");
 
             lines.Add("{");
-            lines.Add("Constructing();".SetIndent(1));
+            lines.Add("Constructing();");
             if (initStatements != null)
             {
                 foreach (var item in initStatements)
                 {
-                    lines.Add($"{item}".SetIndent(1));
+                    lines.Add($"{item}");
                 }
             }
             else
             {
                 lines.Add(string.Empty);
             }
-            lines.Add($"Constructed();".SetIndent(1));
+            lines.Add($"Constructed();");
             lines.Add("}");
             if (withPartials)
             {
@@ -149,11 +149,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
             var fieldName = CreateFieldName(propertyInfo, "_");
 
             SetPropertyGetAttributes(propertyInfo.DeclaringType, propertyInfo, result);
-            result.Add("get".SetIndent(1));
-            result.Add("{".SetIndent(1));
-            result.Add($"On{propertyInfo.Name}Reading();".SetIndent(2));
-            result.Add($"return {fieldName};".SetIndent(2));
-            result.Add("}".SetIndent(1));
+            result.Add("get");
+            result.Add("{");
+            result.Add($"On{propertyInfo.Name}Reading();");
+            result.Add($"return {fieldName};");
+            result.Add("}");
             return result;
         }
         /// <summary>
@@ -171,16 +171,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             SetPropertySetAttributes(propertyInfo.DeclaringType, propertyInfo, result);
 
-            result.Add("set".SetIndent(1));
-            result.Add("{".SetIndent(1));
-            result.Add("bool handled = false;".SetIndent(2));
-            result.Add($"On{propName}Changing(ref handled, ref {fieldName});".SetIndent(2));
-            result.Add("if (handled == false)".SetIndent(2));
-            result.Add("{".SetIndent(2));
-            result.Add($"this.{fieldName} = value;".SetIndent(3));
-            result.Add("}".SetIndent(2));
-            result.Add($"On{propName}Changed();".SetIndent(2));
-            result.Add("}".SetIndent(1));
+            result.Add("set");
+            result.Add("{");
+            result.Add("bool handled = false;");
+            result.Add($"On{propName}Changing(ref handled, ref {fieldName});");
+            result.Add("if (handled == false)");
+            result.Add("{");
+            result.Add($"this.{fieldName} = value;");
+            result.Add("}");
+            result.Add($"On{propName}Changed();");
+            result.Add("}");
             return result.ToArray();
         }
         #endregion Create partial properties
@@ -208,7 +208,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 if (item.CanRead)
                 {
-                    result.Add($"{item.Name} = other.{item.Name};".SetIndent(2));
+                    result.Add($"{item.Name} = other.{item.Name};");
                 }
             }
             result.Add("}");
@@ -234,19 +234,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 $"public override bool Equals(object obj)",
                 "{",
-                $"if (!(obj is {type.FullName} instance))".SetIndent(1),
-                "{".SetIndent(1),
-                "return false;".SetIndent(2),
-                "}".SetIndent(1),
-                "return base.Equals(instance) && Equals(instance);".SetIndent(1),
+                $"if (!(obj is {type.FullName} instance))",
+                "{",
+                "return false;",
+                "}",
+                "return base.Equals(instance) && Equals(instance);",
                 "}",
                 string.Empty,
                 $"protected bool Equals({type.FullName} other)",
                 "{",
-                "if (other == null)".SetIndent(1),
-                "{".SetIndent(1),
-                "return false;".SetIndent(2),
-                "}".SetIndent(1)
+                "if (other == null)",
+                "{",
+                "return false;",
+                "}"
             };
 
             var counter = 0;
@@ -255,7 +255,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             {
                 if (pi.CanRead)
                 {
-                    var codeLine = counter == 0 ? "return ".SetIndent(1) : "       && ".SetIndent(1);
+                    var codeLine = counter == 0 ? "return " : "       && ";
 
                     if (pi.PropertyType.GetTypeInfo().IsValueType)
                     {
@@ -275,7 +275,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             else
             {
-                result.Add("return true;".SetIndent(1));
+                result.Add("return true;");
             }
             result.Add("}");
             return result.ToArray();
@@ -328,11 +328,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             if (counter > 0)
             {
-                result.Add($"return {codeLine};".SetIndent(1));
+                result.Add($"return {codeLine};");
             }
             else
             {
-                result.Add($"return base.GetHashCode();".SetIndent(1));
+                result.Add($"return base.GetHashCode();");
             }
             result.Add("}");
             return result.ToArray();

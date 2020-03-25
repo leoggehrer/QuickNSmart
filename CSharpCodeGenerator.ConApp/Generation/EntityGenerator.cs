@@ -183,7 +183,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         var otherFullName = Generator.CreateEntityFullNameFromInterface(other);
                         var propertyName = mapPropertyName != null ? mapPropertyName(otherName + "s") : otherName + "s";
 
-                        result.Add(($"public System.Collections.Generic.ICollection<{otherFullName}> {propertyName} " + "{ get; set; }").SetIndent(1));
+                        result.Add(($"public System.Collections.Generic.ICollection<{otherFullName}> {propertyName} " + "{ get; set; }"));
                     }
                 }
             }
@@ -198,7 +198,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         var otherFullName = Generator.CreateEntityFullNameFromInterface(other);
                         var propertyName = mapPropertyName != null ? mapPropertyName(otherName) : otherName;
 
-                        result.Add(($"public {otherFullName} {propertyName} " + "{ get; set; }").SetIndent(1));
+                        result.Add(($"public {otherFullName} {propertyName} " + "{ get; set; }"));
                     }
                 }
             }
