@@ -1,24 +1,24 @@
-using CommonBase.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
+using CommonBase.Extensions;
 
 namespace CSharpCodeGenerator.ConApp.Extensions
 {
     public static class CSharpFormatterExtensions
     {
-        public static string[] FormatCSharpCode(this string[] lines)
+        public static IEnumerable<string> FormatCSharpCode(this IEnumerable<string> lines)
         {
             return lines.FormatCSharpCode(0);
         }
-        public static string[] FormatCSharpCode(this string[] lines, int indent)
+        public static IEnumerable<string> FormatCSharpCode(this IEnumerable<string> lines, int indent)
         {
-            if (lines == null)
-                throw new ArgumentNullException(nameof(lines));
+            lines.CheckArgument(nameof(lines));
 
-            var text = lines.ToText();
             var result = new List<string>();
+            var text = lines.ToText().RemoveComments();
 
             if (text.HasFullCodeBlock())
             {
@@ -28,10 +28,90 @@ namespace CSharpCodeGenerator.ConApp.Extensions
             {
                 result.AddRange(lines);
             }
-            return result.ToArray();
+            return result;
         }
 
         #region Helpers
+        private static string RemoveComments(this string source)
+        {
+            var result = source;
+
+            if (source.HasContent())
+            {
+                result = source.RemoveBlockComments();
+                result = result.RemoveLineComments();
+            }
+            return result;
+        }
+        private static string RemoveLineComments(this string source)
+        {
+            source.CheckArgument(nameof(source));
+
+            StringBuilder sb = new StringBuilder();
+            int idx = 0, sIdx = 0, eIdx = -1;
+
+            do
+            {
+                sIdx = source.IndexOf("//", sIdx);
+                if (sIdx >= 0 && IsSourceString(source, sIdx) == false)
+                {
+                    eIdx = sIdx;
+                    do
+                    {
+                        eIdx = source.IndexOf(Environment.NewLine, eIdx + 1);
+                    } while (eIdx != -1 && IsSourceString(source, eIdx));
+                }
+                if (sIdx > -1 && eIdx > -1)
+                {
+                    while (idx < sIdx)
+                    {
+                        sb.Append(source[idx++]);
+                    }
+                    sIdx = eIdx + Environment.NewLine.Length;
+                    idx = sIdx;
+                }
+            } while (sIdx != -1 && IsSourceString(source, sIdx) == false);
+            while (idx < source.Length)
+            {
+                sb.Append(source[idx++]);
+            }
+            return sb.ToString();
+        }
+        private static string RemoveBlockComments(this string source)
+        {
+            source.CheckArgument(nameof(source));
+
+            StringBuilder sb = new StringBuilder();
+            int idx = 0, sIdx = 0, eIdx = -1;
+
+            do
+            {
+                sIdx = source.IndexOf("/*", sIdx);
+                if (sIdx >= 0 && IsSourceString(source, sIdx) == false)
+                {
+                    eIdx = sIdx;
+                    do
+                    {
+                        eIdx = source.IndexOf("*/", eIdx + 1);
+                    } while (eIdx != -1 && IsSourceString(source, eIdx));
+                }
+                if (sIdx > -1 && eIdx > -1)
+                {
+                    while (idx < sIdx)
+                    {
+                        sb.Append(source[idx++]);
+                    }
+                    sIdx = eIdx + Environment.NewLine.Length;
+                    idx = sIdx;
+                }
+            } while (sIdx != -1 && IsSourceString(source, sIdx) == false);
+            while (idx < source.Length)
+            {
+                sb.Append(source[idx++]);
+            }
+            return sb.ToString();
+        }
+
         private static bool HasFullCodeBlock(this string text)
         {
             if (text == null)
@@ -101,21 +181,20 @@ namespace CSharpCodeGenerator.ConApp.Extensions
             }
             return blockBegin > 0 && blockEnd > 0 && blockBegin == blockEnd;
         }
-        private static string[] SplitCSharpAssignments(this string line)
+        private static IEnumerable<string> SplitCSharpAssignments(this string line)
         {
-            if (line == null)
-                throw new ArgumentNullException(nameof(line));
+            line.CheckArgument(nameof(line));
 
             var startIdx = -1;
             var partialStartIdx = -1;
             var partialEndIdx = 0;
-            var lines = new List<string>();
+            var result = new List<string>();
 
             while ((partialEndIdx = line.IndexOf(';', startIdx + 1)) >= 0)
             {
                 if (IsAssignmentSemicolon(line, partialEndIdx))
                 {
-                    lines.Add(line.Partialstring(partialStartIdx + 1, partialEndIdx).TrimCSharpLine());
+                    result.Add(line.Partialstring(partialStartIdx + 1, partialEndIdx).TrimCSharpLine());
                     partialStartIdx = partialEndIdx;
                     startIdx = partialStartIdx;
                 }
@@ -128,16 +207,16 @@ namespace CSharpCodeGenerator.ConApp.Extensions
 
             if (endPartial.Length > 0)
             {
-                lines.Add(endPartial);
+                result.Add(endPartial);
             }
-            return lines.ToArray();
+            return result;
         }
 
         private static bool IsAssignmentSemicolon(string text, int pos)
         {
             text.CheckArgument(nameof(text));
 
-            return IsLiteralCharacter(text, pos) == false && IsStringCharacter(text, pos) == false;
+            return IsLiteralCharacter(text, pos) == false && IsSourceString(text, pos) == false;
         }
         private static bool IsLiteralCharacter(string text, int pos)
         {
@@ -145,7 +224,7 @@ namespace CSharpCodeGenerator.ConApp.Extensions
 
             return pos > 0 && pos + 1 < text.Length && text[pos - 1] == '\'' && text[pos + 1] == '\'';
         }
-        private static bool IsStringCharacter(string text, int pos)
+        private static bool IsSourceString(string text, int pos)
         {
             text.CheckArgument(nameof(text));
 
@@ -159,16 +238,12 @@ namespace CSharpCodeGenerator.ConApp.Extensions
             return limiterCount % 2 > 0;
         }
 
-        private static string[] SplitCSharpLine(this string line)
+        private static IEnumerable<string> SplitCSharpLine(this string line)
         {
-            if (line == null)
-                throw new ArgumentNullException(nameof(line));
-
-            var lines = new List<string>();
-
-            lines.AddRange(line.SplitCSharpAssignments());
+            line.CheckArgument(nameof(line));
 
             var result = new List<string>();
+            var lines = new List<string>(line.SplitCSharpAssignments());
 
             for (var i = 0; i < lines.Count; i++)
             {
@@ -176,7 +251,13 @@ namespace CSharpCodeGenerator.ConApp.Extensions
                 {
                     int idx;
 
-                    if ((idx = lines[i].IndexOf("/*", StringComparison.Ordinal)) >= 0
+                    if ((idx = lines[i].IndexOf("//", StringComparison.Ordinal)) >= 0
+                        &&
+                        (idx = lines[i].IndexOf("\\r\\n", idx + 1, StringComparison.Ordinal)) >= 0)
+                    {
+                        result.Add(lines[i]);
+                    }
+                    else if ((idx = lines[i].IndexOf("/*", StringComparison.Ordinal)) >= 0
                         &&
                         (idx = lines[i].IndexOf("*/", idx + 1, StringComparison.Ordinal)) >= 0)
                     {
@@ -226,16 +307,15 @@ namespace CSharpCodeGenerator.ConApp.Extensions
                     }
                 }
             }
-            return result.ToArray();
+            return result;
         }
-        private static string[] SplitCSharpLine(this string line, char left, char right)
+        private static IEnumerable<string> SplitCSharpLine(this string line, char left, char right)
         {
-            if (line == null)
-                throw new ArgumentNullException(nameof(line));
+            line.CheckArgument(nameof(line));
 
             var lastIdx = -1;
             var startIdx = -1;
-            var lines = new List<string>();
+            var result = new List<string>();
 
             static int IndexOf(string text, int start, char chr)
             {
@@ -257,31 +337,28 @@ namespace CSharpCodeGenerator.ConApp.Extensions
                    && (endIdx = IndexOf(line, startIdx + 1, right)) > startIdx
                    && endIdx - startIdx > 1)
             {
-                lines.Add(line.Partialstring(startIdx, endIdx).TrimCSharpLine());
+                result.Add(line.Partialstring(startIdx, endIdx).TrimCSharpLine());
                 lastIdx = startIdx = endIdx;
             }
             string endPartial = line.Partialstring(lastIdx + 1, line.Length - 1).TrimCSharpLine();
 
             if (endPartial.Length > 0)
             {
-                lines.Add(endPartial);
+                result.Add(endPartial);
             }
-            return lines.ToArray();
+            return result;
         }
         private static void FormatCSharpCodeBlock(this string text, int indent, List<string> lines)
         {
-            if (text == null)
-                throw new ArgumentNullException(nameof(text));
-
-            if (lines == null)
-                throw new ArgumentNullException(nameof(lines));
+            text.CheckArgument(nameof(text));
+            lines.CheckArgument(nameof(lines));
 
             var beginPos = 0;
             var endPos = 0;
 
             void AddCodeLines(string txt, int idt, List<string> list)
             {
-                string[] items = txt.SplitCSharpLine();
+                var items = txt.SplitCSharpLine();
 
                 list.AddRange(items.Where(l => l.Length > 0)
                     .Select(l => l.SetIndent(idt))

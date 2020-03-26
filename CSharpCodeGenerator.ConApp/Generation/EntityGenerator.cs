@@ -135,6 +135,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 {
                     string nameSpace = CreateNameSpace(type);
 
+                    result.Add($"//Entity for: {type.Name}");
                     result.AddRange(EnvelopeWithANamespace(CreateEntityFromInterface(type), nameSpace, "using System;"));
                     result.AddRange(EnvelopeWithANamespace(CreatePersistenceEntity(type), nameSpace));
                     result.AddRange(EnvelopeWithANamespace(CreateEntityToEntityFromContracts(type, persistenceTypes, null), nameSpace));

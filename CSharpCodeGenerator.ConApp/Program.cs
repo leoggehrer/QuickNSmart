@@ -96,18 +96,17 @@ namespace CSharpCodeGenerator.ConApp
             lines.Clear();
             lines.AddRange(aspMvcGenerator.CreatePersistenceModels());
             WriteAllLines(solutionProperties.AspMvcPersistenceFilePath, FormatCSharp(lines));
-
         }
 
-        private static string[] FormatCSharp(IEnumerable<string> source)
+        private static IEnumerable<string> FormatCSharp(IEnumerable<string> source)
         {
-            return Extensions.CSharpFormatterExtensions.FormatCSharpCode(source.ToArray());
+            return Extensions.CSharpFormatterExtensions.FormatCSharpCode(source);
         }
-        private static void WriteAllLines(string filePath, string[] lines)
+        private static void WriteAllLines(string filePath, IEnumerable<string> lines)
         {
             string directory = Path.GetDirectoryName(filePath);
 
-            if (lines.Length == 0)
+            if (lines.Any() == false)
             {
                 if (File.Exists(filePath))
                 {
@@ -119,7 +118,7 @@ namespace CSharpCodeGenerator.ConApp
                 Directory.CreateDirectory(directory);
             }
 
-            if (lines.Length > 0)
+            if (lines.Any())
             {
                 File.WriteAllLines(filePath, lines);
             }

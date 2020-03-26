@@ -200,7 +200,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 "}",
                 string.Empty,
                 "bool handled = false;",
-                $"BeforeCopyProperties(other, ref handled);",
+                "BeforeCopyProperties(other, ref handled);",
                 "if (handled == false)",
                 "{",
             };
