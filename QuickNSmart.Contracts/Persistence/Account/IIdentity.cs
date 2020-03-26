@@ -1,5 +1,7 @@
 ﻿//@QnSBaseCode
 //MdStart
+using QuickNSmart.Contracts.Modules.Common;
+
 namespace QuickNSmart.Contracts.Persistence.Account
 {
     public partial interface IIdentity : IIdentifiable, ICopyable<IIdentity>

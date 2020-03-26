@@ -1,4 +1,4 @@
-﻿namespace QuickNSmart.Contracts
+﻿namespace QuickNSmart.Contracts.Modules.Common
 {
 	public enum State : int
 	{

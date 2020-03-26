@@ -306,7 +306,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 		partial void OnAccessFailedCountReading();
 		partial void OnAccessFailedCountChanging(ref bool handled, ref System.Int32 _accessFailedCount);
 		partial void OnAccessFailedCountChanged();
-		public QuickNSmart.Contracts.State State
+		public QuickNSmart.Contracts.Modules.Common.State State
 		{
 			get
 			{
@@ -324,9 +324,9 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 				OnStateChanged();
 			}
 		}
-		private QuickNSmart.Contracts.State _state;
+		private QuickNSmart.Contracts.Modules.Common.State _state;
 		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.State _state);
+		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.Modules.Common.State _state);
 		partial void OnStateChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IIdentity other)
 		{

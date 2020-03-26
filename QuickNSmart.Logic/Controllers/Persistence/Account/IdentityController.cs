@@ -40,7 +40,7 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
         {
             CheckInsertEntity(entity);
             entity.Guid = System.Guid.NewGuid().ToString();
-            entity.State = Contracts.State.Active;
+            entity.State = Contracts.Modules.Common.State.Active;
             entity.PasswordHash = AccountManager.CalculateHash(entity.Password);
 
             return base.BeforeInsertingAsync(entity);

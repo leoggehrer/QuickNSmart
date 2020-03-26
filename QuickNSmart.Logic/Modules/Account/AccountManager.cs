@@ -91,7 +91,7 @@ namespace QuickNSmart.Logic.Modules.Account
                         {
                             SessionToken = Authorization.SystemAuthorizationToken
                         };
-                        var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
+                        var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                             && e.EnableJwtAuth == true
                                                             && e.Email.ToLower() == email.Value.ToString().ToLower())
                                                    .ToList()
@@ -216,7 +216,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 SessionToken = sessionToken
             };
-            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
+            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                 && e.AccessFailedCount < 4
                                                 && e.Email.ToLower() == email.ToLower())
                                        .FirstOrDefault();
@@ -246,7 +246,7 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 SessionToken = sessionToken
             };
-            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
+            var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                 && e.Email.ToLower() == email.ToLower())
                                        .FirstOrDefault();
 
@@ -312,7 +312,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
+                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                 && e.AccessFailedCount < 4
                                                 && e.Email.ToLower() == email.ToLower()
                                                 && e.PasswordHash == calculatedHash).FirstOrDefault();
@@ -366,7 +366,7 @@ namespace QuickNSmart.Logic.Modules.Account
                 {
                     SessionToken = Authorization.SystemAuthorizationToken,
                 };
-                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.State.Active
+                var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                     && e.AccessFailedCount < 4
                                                     && e.Email.ToLower() == email.ToLower()
                                                     && e.PasswordHash == calculatedHash).FirstOrDefault();

@@ -10,7 +10,7 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 {
     partial class AppAccess
     {
-        internal Identity IdentityEntity { get; } = new Identity() { State = Contracts.State.Active };
+        internal Identity IdentityEntity { get; } = new Identity() { State = Contracts.Modules.Common.State.Active };
         partial void OnIdentityReading()
         {
             _identity = IdentityEntity;
