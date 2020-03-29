@@ -13,8 +13,6 @@ namespace QuickNSmart.Logic.Controllers.Business
 		where I : Contracts.IIdentifiable
 		where E : Entities.IdentityObject, I, Contracts.ICopyable<I>, new()
 	{
-		public virtual int MaxPageSize => throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
-
 		static BusinessControllerAdapter()
 		{
 			ClassConstructing();
@@ -22,6 +20,9 @@ namespace QuickNSmart.Logic.Controllers.Business
 		}
 		static partial void ClassConstructing();
 		static partial void ClassConstructed();
+
+		public virtual int MaxPageSize => throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
+
 		public BusinessControllerAdapter(DataContext.IContext context) : base(context)
 		{
 			Constructing();
@@ -58,59 +59,59 @@ namespace QuickNSmart.Logic.Controllers.Business
 
 		public virtual Task<int> CountAsync()
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 		public virtual Task<int> CountByAsync(string predicate)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task<I> GetByIdAsync(int id)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 		public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 		public virtual Task<IQueryable<I>> GetAllAsync()
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task<IQueryable<I>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 		public virtual Task<IQueryable<I>> QueryAllAsync(string predicate)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 
 		public virtual Task<I> CreateAsync()
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task<I> InsertAsync(I entity)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task<I> UpdateAsync(I entity)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task DeleteAsync(int id)
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 
 		public virtual Task SaveChangesAsync()
 		{
-			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().Name}!");
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
 	}
 }

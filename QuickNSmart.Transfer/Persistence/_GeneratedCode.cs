@@ -153,7 +153,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class ActionLog : TransferObject
+	partial class ActionLog : IdentityModel
 	{
 	}
 }
@@ -358,7 +358,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class Identity : TransferObject
+	partial class Identity : IdentityModel
 	{
 	}
 }
@@ -448,7 +448,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class IdentityXRole : TransferObject
+	partial class IdentityXRole : IdentityModel
 	{
 	}
 }
@@ -722,7 +722,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class LoginSession : TransferObject
+	partial class LoginSession : IdentityModel
 	{
 	}
 }
@@ -812,7 +812,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 }
 namespace QuickNSmart.Transfer.Persistence.Account
 {
-	partial class Role : TransferObject
+	partial class Role : IdentityModel
 	{
 	}
 }

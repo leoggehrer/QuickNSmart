@@ -27,7 +27,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> IndexAsync()
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entities = await ctrl.GetAllAsync();
+            var entities = await ctrl.GetAllAsync().ConfigureAwait(false);
 
             return View(entities.Select(e => ConvertTo<Model, Contract>(e))); 
         }
@@ -35,7 +35,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> CreateAsync()
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entity = await ctrl.CreateAsync();
+            var entity = await ctrl.CreateAsync().ConfigureAwait(false);
 
             return View(ConvertTo<Model, Contract>(entity));
         }
@@ -53,7 +53,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
 
-                await ctrl.InsertAsync(model);
+                await ctrl.InsertAsync(model).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -66,7 +66,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> EditAsync(int id)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entity = await ctrl.GetByIdAsync(id);
+            var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
 
             return View(ConvertTo<Model, Contract>(entity));
         }
@@ -84,7 +84,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
 
-                await ctrl.UpdateAsync(model);
+                await ctrl.UpdateAsync(model).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
@@ -97,7 +97,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> DeleteAsync(int id, string error = null)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entity = await ctrl.GetByIdAsync(id);
+            var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
             var model = ConvertTo<Model, Contract>(entity);
 
             model.ActionError = error;
@@ -116,7 +116,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
 
-                await ctrl.DeleteAsync(id);
+                await ctrl.DeleteAsync(id).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

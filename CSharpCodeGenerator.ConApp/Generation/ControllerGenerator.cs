@@ -54,8 +54,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
 
             result.AddRange(CreatePartialStaticConstrutor(controllerName));
-            result.AddRange(CreatePartialConstrutor("public", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
-            result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
+            result.AddRange(CreatePartialConstrutor("internal", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
+            result.AddRange(CreatePartialConstrutor("internal", controllerName, "ControllerObject controller", "base(controller)", null, false));
             result.Add("}");
             return result;
         }
@@ -125,13 +125,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             List<string> result = new List<string>();
             string entityName = CreateEntityNameFromInterface(type);
             string subNameSpace = GetSubNamespaceFromInterface(type);
+            string contractType = $"Contracts.{subNameSpace}.{type.Name}";
             string modelType = $"Transfer.{subNameSpace}.{entityName}";
             string routeBase = $"/api/[controller]";
 
             result.Add("using Microsoft.AspNetCore.Mvc;");
             result.Add("using System.Collections.Generic;");
             result.Add("using System.Threading.Tasks;");
-            result.Add($"using Contract = {type.FullName};");
+            result.Add($"using Contract = {contractType};");
             result.Add($"using Model = {modelType};");
 
             result.Add("[ApiController]");
@@ -140,8 +141,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add($"public partial class {entityName}Controller : GenericController<Contract, Model>");
             result.Add("{");
 
-            result.Add($"[HttpGet(\"{routeBase}/MaxPage\")]");
-            CreateWebApiActionAttributes(type, "getmaxpage", result);
+            result.Add($"[HttpGet(\"{routeBase}/MaxPageSize\")]");
+            CreateWebApiActionAttributes(type, "getmaxpagesize", result);
             result.Add("public Task<int> GetMaxPageAsync()");
             result.Add("{");
             result.Add("return GetMaxPageAsync();");
@@ -151,45 +152,45 @@ namespace CSharpCodeGenerator.ConApp.Generation
             CreateWebApiActionAttributes(type, "getcount", result);
             result.Add("public Task<int> GetCountAsync()");
             result.Add("{");
-            result.Add("return CountAsync();");
+            result.Add("return CountModelsAsync();");
             result.Add("}");
 
             result.Add($"[HttpGet(\"{routeBase}/CountBy" + "/{predicate}\")]");
             CreateWebApiActionAttributes(type, "getcountby", result);
             result.Add("public Task<int> GetCountByAsync(string predicate)");
             result.Add("{");
-            result.Add("return CountByAsync(predicate);");
+            result.Add("return CountModelsByAsync(predicate);");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{id}\")]");
+            result.Add($"[HttpGet(\"{routeBase}/GetById" + "/{id}\")]");
             CreateWebApiActionAttributes(type, "getbyid", result);
-            result.Add($"public Task<Model> GetAsync(int id)");
+            result.Add($"public Task<Model> GetByIdAsync(int id)");
             result.Add("{");
             result.Add("return GetModelByIdAsync(id);");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Get" + "/{index}/{size}\")]");
-            CreateWebApiActionAttributes(type, "getpage", result);
+            result.Add($"[HttpGet(\"{routeBase}/GetPageList" + "/{index}/{size}\")]");
+            CreateWebApiActionAttributes(type, "getpagelist", result);
             result.Add($"public Task<IEnumerable<Model>> GetPageListAsync(int index, int size)");
             result.Add("{");
-            result.Add("return GetPageModelsAsync(index, size);");
+            result.Add("return GetModelPageListAsync(index, size);");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Get\")]");
+            result.Add($"[HttpGet(\"{routeBase}/GetAll\")]");
             CreateWebApiActionAttributes(type, "getall", result);
-            result.Add($"public Task<IEnumerable<Model>> GetAsync()");
+            result.Add($"public Task<IEnumerable<Model>> GetAllAsync()");
             result.Add("{");
             result.Add("return GetAllModelsAsync();");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Query" + "/{predicate}/{index}/{size}\")]");
+            result.Add($"[HttpGet(\"{routeBase}/QueryPageList" + "/{predicate}/{index}/{size}\")]");
             CreateWebApiActionAttributes(type, "querypage", result);
             result.Add($"public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)");
             result.Add("{");
-            result.Add("return QueryPageModelsAsync(predicate, index, size);");
+            result.Add("return QueryModelPageListAsync(predicate, index, size);");
             result.Add("}");
 
-            result.Add($"[HttpGet(\"{routeBase}/Query" + "/{predicate}\")]");
+            result.Add($"[HttpGet(\"{routeBase}/QueryAll" + "/{predicate}\")]");
             CreateWebApiActionAttributes(type, "queryall", result);
             result.Add($"public Task<IEnumerable<Model>> QueryAllAsync(string predicate)");
             result.Add("{");

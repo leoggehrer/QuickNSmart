@@ -30,7 +30,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> IndexAsync()
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entities = await ctrl.GetAllAsync();
+            var entities = await ctrl.GetAllAsync().ConfigureAwait(false);
 
             return View(entities.Select(e => ConvertTo<Model, Contract>(e)));
         }
@@ -38,11 +38,11 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> CreateAsync(string error = null)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entity = await ctrl.CreateAsync();
+            var entity = await ctrl.CreateAsync().ConfigureAwait(false);
             var model = ConvertTo<Model, Contract>(entity);
 
             model.ActionError = error;
-            await LoadRolesAsync(model);
+            await LoadRolesAsync(model).ConfigureAwait(false);
             return View("Edit", model);
         }
 
@@ -51,11 +51,11 @@ namespace QuickNSmart.AspMvc.Controllers
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             using var ctrlRole = Factory.Create<Contracts.Persistence.Account.IRole>(SessionWrapper.SessionToken);
-            var entity = await ctrl.GetByIdAsync(id);
+            var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
             var model = ConvertTo<Model, Contract>(entity);
 
             model.ActionError = error;
-            await LoadRolesAsync(model);
+            await LoadRolesAsync(model).ConfigureAwait(false);
             return View(model);
         }
 
@@ -67,32 +67,32 @@ namespace QuickNSmart.AspMvc.Controllers
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             async Task<IActionResult> CreateFailedAsync(Identity identity, string error)
             {
-                var entity = await ctrl.CreateAsync();
+                var entity = await ctrl.CreateAsync().ConfigureAwait(false);
 
                 entity.Identity.CopyProperties(identity);
 
                 var model = ConvertTo<Model, Contract>(entity);
 
                 model.ActionError = error;
-                await LoadRolesAsync(model);
+                await LoadRolesAsync(model).ConfigureAwait(false);
                 return View("Edit", model);
             }
             async Task<IActionResult> EditFailedAsync(Identity identity, string error)
             {
-                var entity = await ctrl.GetByIdAsync(identity.Id);
+                var entity = await ctrl.GetByIdAsync(identity.Id).ConfigureAwait(false);
 
                 entity.Identity.CopyProperties(identity);
 
                 var model = ConvertTo<Model, Contract>(entity);
 
                 model.ActionError = error;
-                await LoadRolesAsync(model);
+                await LoadRolesAsync(model).ConfigureAwait(false);
                 return View("Edit", model);
             }
             async Task UpdateRolesAsync(Model model)
             {
                 using var ctrlRole = Factory.Create<Contracts.Persistence.Account.IRole>(SessionWrapper.SessionToken);
-                var roles = await ctrlRole.GetAllAsync();
+                var roles = await ctrlRole.GetAllAsync().ConfigureAwait(false);
 
                 model.ClearRoles();
                 foreach (var item in collection.Where(l => l.Key.StartsWith("Assigned")))
@@ -111,46 +111,46 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 if (identityModel.Id == 0)
                 {
-                    return await CreateFailedAsync(identityModel, GetModelStateError());
+                    return await CreateFailedAsync(identityModel, GetModelStateError()).ConfigureAwait(false);
                 }
                 else
                 {
-                    return await EditFailedAsync(identityModel, GetModelStateError());
+                    return await EditFailedAsync(identityModel, GetModelStateError()).ConfigureAwait(false);
                 }
             }
             try
             {
                 if (identityModel.Id == 0)
                 {
-                    var entity = await ctrl.CreateAsync();
+                    var entity = await ctrl.CreateAsync().ConfigureAwait(false);
 
                     entity.Identity.CopyProperties(identityModel);
                     var model = ConvertTo<Model, Contract>(entity);
 
-                    await UpdateRolesAsync(model);
-                    var result = await ctrl.InsertAsync(model);
+                    await UpdateRolesAsync(model).ConfigureAwait(false);
+                    var result = await ctrl.InsertAsync(model).ConfigureAwait(false);
 
                     id = result.Id;
                 }
                 else
                 {
-                    var entity = await ctrl.GetByIdAsync(id);
+                    var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
 
                     var model = ConvertTo<Model, Contract>(entity);
                     model.Identity.CopyProperties(identityModel);
-                    await UpdateRolesAsync(model);
-                    await ctrl.UpdateAsync(model);
+                    await UpdateRolesAsync(model).ConfigureAwait(false);
+                    await ctrl.UpdateAsync(model).ConfigureAwait(false);
                 }
             }
             catch (Exception ex)
             {
                 if (identityModel.Id == 0)
                 {
-                    return await CreateFailedAsync(identityModel, GetExceptionError(ex));
+                    return await CreateFailedAsync(identityModel, GetExceptionError(ex)).ConfigureAwait(false);
                 }
                 else
                 {
-                    return await EditFailedAsync(identityModel, GetExceptionError(ex));
+                    return await EditFailedAsync(identityModel, GetExceptionError(ex)).ConfigureAwait(false);
                 }
             }
             return RedirectToAction("Edit", new { id });
@@ -160,7 +160,7 @@ namespace QuickNSmart.AspMvc.Controllers
         public async Task<IActionResult> DetailsAsync(int id)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
-            var entity = await ctrl.GetByIdAsync(id);
+            var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
 
             return View(entity != null ? ConvertTo<Model, Contract>(entity) : entity);
         }
@@ -171,7 +171,7 @@ namespace QuickNSmart.AspMvc.Controllers
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             using var ctrlRole = Factory.Create<Contracts.Persistence.Account.IRole>(SessionWrapper.SessionToken);
-            var entity = await ctrl.GetByIdAsync(id);
+            var entity = await ctrl.GetByIdAsync(id).ConfigureAwait(false);
             var model = ConvertTo<Model, Contract>(entity);
 
             model.ActionError = error;
@@ -188,7 +188,7 @@ namespace QuickNSmart.AspMvc.Controllers
             {
                 using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
 
-                await ctrl.DeleteAsync(id);
+                await ctrl.DeleteAsync(id).ConfigureAwait(false);
                 return RedirectToAction(nameof(Index));
             }
             catch (Exception ex)
@@ -203,7 +203,7 @@ namespace QuickNSmart.AspMvc.Controllers
             model.CheckArgument(nameof(model));
 
             using var ctrlRole = Factory.Create<Contracts.Persistence.Account.IRole>(SessionWrapper.SessionToken);
-            var roles = await ctrlRole.GetAllAsync();
+            var roles = await ctrlRole.GetAllAsync().ConfigureAwait(false);
 
             foreach (var item in roles)
             {

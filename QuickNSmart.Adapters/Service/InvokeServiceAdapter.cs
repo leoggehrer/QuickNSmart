@@ -37,17 +37,17 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/Logon/{jsonWebToken}");
+                HttpResponseMessage response = await client.GetAsync($"Account/Logon/{jsonWebToken}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var contentData = await response.Content.ReadAsStreamAsync();
+                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions);
+                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions).ConfigureAwait(false);
                 }
                 else
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -59,17 +59,17 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/Logon/{email}/{password}");
+                HttpResponseMessage response = await client.GetAsync($"Account/Logon/{email}/{password}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var contentData = await response.Content.ReadAsStreamAsync();
+                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions);
+                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions).ConfigureAwait(false);
                 }
                 else
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -81,11 +81,11 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/Logout/{sessionToken}");
+                HttpResponseMessage response = await client.GetAsync($"Account/Logout/{sessionToken}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -97,11 +97,11 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/ChangePassword/{sessionToken}/{oldPwd}/{newPwd}");
+                HttpResponseMessage response = await client.GetAsync($"Account/ChangePassword/{sessionToken}/{oldPwd}/{newPwd}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -113,11 +113,11 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/ChangePasswordFor/{sessionToken}/{email}/{newPwd}");
+                HttpResponseMessage response = await client.GetAsync($"Account/ChangePasswordFor/{sessionToken}/{email}/{newPwd}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -129,11 +129,11 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/ResetFor/{sessionToken}/{email}");
+                HttpResponseMessage response = await client.GetAsync($"Account/ResetFor/{sessionToken}/{email}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode == false)
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -145,17 +145,17 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/HasRole/{sessionToken}/{role}");
+                HttpResponseMessage response = await client.GetAsync($"Account/HasRole/{sessionToken}/{role}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var contentData = await response.Content.ReadAsStreamAsync();
+                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                    return await JsonSerializer.DeserializeAsync<bool>(contentData, DeserializerOptions);
+                    return await JsonSerializer.DeserializeAsync<bool>(contentData, DeserializerOptions).ConfigureAwait(false);
                 }
                 else
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
@@ -168,17 +168,17 @@ namespace QuickNSmart.Adapters.Service
         {
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"Account/QueryLogin/{sessionToken}");
+                HttpResponseMessage response = await client.GetAsync($"Account/QueryLogin/{sessionToken}").ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode)
                 {
-                    var contentData = await response.Content.ReadAsStreamAsync();
+                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions);
+                    return await JsonSerializer.DeserializeAsync<LoginSession>(contentData, DeserializerOptions).ConfigureAwait(false);
                 }
                 else
                 {
-                    string stringData = await response.Content.ReadAsStringAsync();
+                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
                     string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);

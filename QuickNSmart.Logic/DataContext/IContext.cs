@@ -39,7 +39,7 @@ namespace QuickNSmart.Logic.DataContext
             where I : IIdentifiable
             where E : IdentityObject, I;
 
-        Task SaveAsync();
+        Task<int> SaveChangesAsync();
         #endregion Async-Methods
     }
 }

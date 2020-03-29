@@ -25,10 +25,10 @@ namespace QuickNSmart.Adapters.Controller
             controller = Logic.Factory.Create<TContract>();
             Constructed();
         }
-        public GenericControllerAdapter(string authenticationToken)
+        public GenericControllerAdapter(string sessionToken)
         {
             Constructing();
-            controller = Logic.Factory.Create<TContract>(authenticationToken);
+            controller = Logic.Factory.Create<TContract>(sessionToken);
             Constructed();
         }
         partial void Constructing();
@@ -76,24 +76,24 @@ namespace QuickNSmart.Adapters.Controller
 
         public async Task<TContract> InsertAsync(TContract entity)
         {
-            var result = await controller.InsertAsync(entity);
+            var result = await controller.InsertAsync(entity).ConfigureAwait(false);
 
-            await controller.SaveChangesAsync();
+            await controller.SaveChangesAsync().ConfigureAwait(false);
             return result;
         }
 
         public async Task<TContract> UpdateAsync(TContract entity)
         {
-            var result = await controller.UpdateAsync(entity);
+            var result = await controller.UpdateAsync(entity).ConfigureAwait(false);
 
-            await controller.SaveChangesAsync();
+            await controller.SaveChangesAsync().ConfigureAwait(false);
             return result;
         }
 
         public async Task DeleteAsync(int id)
         {
-            await controller.DeleteAsync(id);
-            await controller.SaveChangesAsync();
+            await controller.DeleteAsync(id).ConfigureAwait(false);
+            await controller.SaveChangesAsync().ConfigureAwait(false);
         }
         #endregion Async-Methods
 

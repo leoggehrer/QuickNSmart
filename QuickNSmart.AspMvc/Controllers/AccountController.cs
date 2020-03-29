@@ -304,7 +304,7 @@ namespace QuickNSmart.AspMvc.Controllers
             var intAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Controller };
             try
             {
-                var internLogin = await intAccMngr.LogonAsync(viewModel.Email, viewModel.Password);
+                var internLogin = await intAccMngr.LogonAsync(viewModel.Email, viewModel.Password).ConfigureAwait(false);
                 var loginSession = new LoginSession();
 
                 loginSession.CopyProperties(internLogin);
@@ -321,13 +321,13 @@ namespace QuickNSmart.AspMvc.Controllers
             var extAccMngr = new AccountManager() { Adapter = Adapters.AdapterType.Service, BaseUri = viewModel.IdentityUrl };
             try
             {
-                var externLogin = await extAccMngr.LogonAsync(viewModel.Email, viewModel.Password);
-                var internLogin = await intAccMngr.LogonAsync(externLogin.JsonWebToken);
+                var externLogin = await extAccMngr.LogonAsync(viewModel.Email, viewModel.Password).ConfigureAwait(false);
+                var internLogin = await intAccMngr.LogonAsync(externLogin.JsonWebToken).ConfigureAwait(false);
                 var loginSession = new LoginSession();
 
                 loginSession.CopyProperties(internLogin);
                 SessionWrapper.LoginSession = loginSession;
-                await extAccMngr.LogoutAsync(externLogin.SessionToken);
+                await extAccMngr.LogoutAsync(externLogin.SessionToken).ConfigureAwait(false);
             }
             catch (Exception ex)
             {

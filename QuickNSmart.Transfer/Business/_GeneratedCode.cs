@@ -86,7 +86,7 @@ namespace QuickNSmart.Transfer.Business.Account
 }
 namespace QuickNSmart.Transfer.Business.Account
 {
-	partial class AppAccess : TransferObject
+	partial class AppAccess : IdentityModel
 	{
 	}
 }

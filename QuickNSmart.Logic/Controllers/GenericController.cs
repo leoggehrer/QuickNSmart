@@ -315,7 +315,7 @@ namespace QuickNSmart.Logic.Controllers
         internal async Task ExecuteSaveChangesAsync()
         {
             await BeforeSaveChangesAsync().ConfigureAwait(false);
-            await Context.SaveAsync().ConfigureAwait(false);
+            await Context.SaveChangesAsync().ConfigureAwait(false);
             await AfterSaveChangesAsync().ConfigureAwait(false);
         }
         protected virtual Task AfterSaveChangesAsync()

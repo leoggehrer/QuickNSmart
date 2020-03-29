@@ -92,7 +92,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 if (CanCreate(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateTransferFromInterface(type), CreateNameSpace(type), "using System.Text.Json.Serialization;"));
-                    result.AddRange(EnvelopeWithANamespace(CreateTransferModel(type), CreateNameSpace(type)));
+                    result.AddRange(EnvelopeWithANamespace(CreateBusinessTransfer(type), CreateNameSpace(type)));
                 }
             }
             return result;
@@ -107,18 +107,29 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 if (CanCreate(type))
                 {
                     result.AddRange(EnvelopeWithANamespace(CreateTransferFromInterface(type), CreateNameSpace(type), "using System.Text.Json.Serialization;"));
-                    result.AddRange(EnvelopeWithANamespace(CreateTransferModel(type), CreateNameSpace(type)));
+                    result.AddRange(EnvelopeWithANamespace(CreatePersistenceTransfer(type), CreateNameSpace(type)));
                 }
             }
             return result;
         }
-        private IEnumerable<string> CreateTransferModel(Type type)
+        private IEnumerable<string> CreateBusinessTransfer(Type type)
         {
             type.CheckArgument(nameof(type));
 
             List<string> result = new List<string>();
 
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : TransferObject");
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityModel");
+            result.Add("{");
+            result.Add("}");
+            return result;
+        }
+        private IEnumerable<string> CreatePersistenceTransfer(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityModel");
             result.Add("{");
             result.Add("}");
             return result;
@@ -129,7 +140,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             List<string> result = new List<string>();
 
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : ModuleObject");
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : TransferModel");
             result.Add("{");
             result.Add("}");
             return result;

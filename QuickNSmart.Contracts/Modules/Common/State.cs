@@ -1,4 +1,6 @@
-﻿namespace QuickNSmart.Contracts.Modules.Common
+﻿//@QnSBaseCode
+//MdStart
+namespace QuickNSmart.Contracts.Modules.Common
 {
 	public enum State : int
 	{
@@ -6,3 +8,4 @@
 		Active = 1,
 	}
 }
+//MdEnd

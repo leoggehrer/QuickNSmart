@@ -3,11 +3,10 @@
 using System;
 using System.Collections;
 using System.Linq;
-using CommonBase.Extensions;
 
-namespace QuickNSmart.Transfer.Modules
+namespace QuickNSmart.Transfer
 {
-	public partial class ModuleObject
+	public abstract partial class TransferModel
     {
 		protected static bool IsEqualsWith(object obj1, object obj2)
 		{
