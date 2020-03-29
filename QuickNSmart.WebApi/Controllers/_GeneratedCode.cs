@@ -50,7 +50,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}
@@ -123,7 +123,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}
@@ -196,7 +196,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}
@@ -269,7 +269,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}
@@ -342,7 +342,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}
@@ -415,7 +415,7 @@ namespace QuickNSmart.WebApi.Controllers
 			return QueryAllModelsAsync(predicate);
 		}
 		[HttpGet("/api/[controller]/Create")]
-		public Task<Model> GetCreateAsync(int id)
+		public Task<Model> CreateAsync()
 		{
 			return CreateModelAsync();
 		}

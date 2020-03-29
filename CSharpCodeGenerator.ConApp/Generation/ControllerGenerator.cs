@@ -199,7 +199,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             result.Add($"[HttpGet(\"{routeBase}/Create\")]");
             CreateWebApiActionAttributes(type, "create", result);
-            result.Add($"public Task<Model> GetCreateAsync(int id)");
+            result.Add($"public Task<Model> CreateAsync()");
             result.Add("{");
             result.Add("return CreateModelAsync();");
             result.Add("}");
