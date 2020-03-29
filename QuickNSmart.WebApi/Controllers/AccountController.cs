@@ -35,7 +35,7 @@ namespace QuickNSmart.WebApi.Controllers
         [HttpGet("/api/[controller]/ChangePassword/{sessionToken}/{oldPwd}/{newPwd}")]
         public Task ChangePasswordAsync(string sessionToken, string oldPwd, string newPwd)
         {
-            return Logic.Modules.Account.AccountManager.ChangePassword(sessionToken, oldPwd, newPwd);
+            return Logic.Modules.Account.AccountManager.ChangePasswordAsync(sessionToken, oldPwd, newPwd);
         }
         [HttpGet("/api/[controller]/ChangePasswordFor/{sessionToken}/{email}/{newPwd}")]
         public Task ChangePasswordForAsync(string sessionToken, string email, string newPwd)

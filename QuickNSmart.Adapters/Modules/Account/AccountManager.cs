@@ -79,7 +79,7 @@ namespace QuickNSmart.Adapters.Modules.Account
         {
             if (Adapter == AdapterType.Controller)
             {
-                await Logic.Modules.Account.AccountManager.ChangePassword(sessionToken, oldPwd, newPwd).ConfigureAwait(false);
+                await Logic.Modules.Account.AccountManager.ChangePasswordAsync(sessionToken, oldPwd, newPwd).ConfigureAwait(false);
             }
             else if (Adapter == AdapterType.Service)
             {

@@ -39,7 +39,7 @@ namespace QuickNSmart.Logic.Modules.Account
         internal static readonly List<LoginSession> LoginSessions = new List<LoginSession>();
 
         #region Public logon
-        public static async Task InitAppAccess(string name, string email, string password, bool enableJwtAuth)
+        public static async Task InitAppAccessAsync(string name, string email, string password, bool enableJwtAuth)
         {
             using var appAccessCtrl = new Controllers.Business.Account.AppAccessController(Factory.CreateContext())
             {
@@ -177,7 +177,7 @@ namespace QuickNSmart.Logic.Modules.Account
             return await QueryAliveSessionAsync(sessionToken).ConfigureAwait(false);
         }
         [Authorize]
-        public static async Task ChangePassword(string sessionToken, string oldPassword, string newPassword)
+        public static async Task ChangePasswordAsync(string sessionToken, string oldPassword, string newPassword)
         {
             Authorization.CheckAuthorization(sessionToken, MethodBase.GetCurrentMethod());
 
