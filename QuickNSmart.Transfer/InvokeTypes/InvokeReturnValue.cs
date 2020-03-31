@@ -1,4 +1,4 @@
-﻿//@BaseCode
+﻿//@QnSBaseCode
 //MdStart
 
 namespace QuickNSmart.Transfer.InvokeTypes
