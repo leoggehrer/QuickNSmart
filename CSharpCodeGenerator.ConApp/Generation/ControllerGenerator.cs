@@ -225,6 +225,20 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return DeleteModelAsync(id);");
             result.Add("}");
 
+            result.Add($"[HttpPost(\"{routeBase}/CallAction\")]");
+            CreateWebApiActionAttributes(type, "delete", result);
+            result.Add($"public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)");
+            result.Add("{");
+            result.Add("return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());");
+            result.Add("}");
+
+            result.Add($"[HttpPost(\"{routeBase}/CallFunction\")]");
+            CreateWebApiActionAttributes(type, "delete", result);
+            result.Add($"public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)");
+            result.Add("{");
+            result.Add("return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());");
+            result.Add("}");
+
             result.Add("}");
             return result;
         }

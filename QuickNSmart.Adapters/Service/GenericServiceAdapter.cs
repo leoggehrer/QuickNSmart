@@ -2,6 +2,7 @@
 //MdStart
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Text.Json;
@@ -16,7 +17,6 @@ namespace QuickNSmart.Adapters.Service
         where TContract : Contracts.IIdentifiable
         where TModel : TContract, Contracts.ICopyable<TContract>, new()
     {
-        private static string Separator => ";";
         static GenericServiceAdapter()
         {
             ClassConstructing();
@@ -72,6 +72,14 @@ namespace QuickNSmart.Adapters.Service
                     }
                 }).Result;
             }
+        }
+
+        protected TModel ToModel(TContract entity)
+        {
+            var result = new TModel();
+
+            result.CopyProperties(entity);
+            return result;
         }
 
         public async Task<int> CountAsync()
@@ -254,7 +262,7 @@ namespace QuickNSmart.Adapters.Service
 
             using (var client = GetClient(BaseUri))
             {
-                string jsonData = JsonSerializer.Serialize<TContract>(entity);
+                string jsonData = JsonSerializer.Serialize(ToModel(entity));
                 StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
                 HttpResponseMessage response = await client.PostAsync(ExtUri, contentData).ConfigureAwait(false);
 
@@ -279,7 +287,7 @@ namespace QuickNSmart.Adapters.Service
 
             using (var client = GetClient(BaseUri))
             {
-                string jsonData = JsonSerializer.Serialize<TContract>(entity);
+                string jsonData = JsonSerializer.Serialize(ToModel(entity));
                 StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
                 HttpResponseMessage response = await client.PutAsync(ExtUri, contentData).ConfigureAwait(false);
 
@@ -313,16 +321,17 @@ namespace QuickNSmart.Adapters.Service
         {
             name.CheckArgument(nameof(name));
 
-            string strParams = string.Empty;
-
-            for (int i = 0; parameters != null && i < parameters.Length; i++)
+            var invokeParam = new InvokeParam()
             {
-                strParams += $"{(i > 0 ? Separator : string.Empty)}{parameters[i]}";
-            }
+                MethodName = name,
+            };
+            invokeParam.SetParameters(parameters);
 
             using (var client = GetClient(BaseUri))
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/CallAction/{name}/{parameters}/{Separator}").ConfigureAwait(false);
+                string jsonData = JsonSerializer.Serialize(invokeParam);
+                StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
+                HttpResponseMessage response = await client.PostAsync($"{ExtUri}/CallAction", contentData).ConfigureAwait(false);
 
                 if (response.IsSuccessStatusCode == false)
                 {
@@ -340,14 +349,8 @@ namespace QuickNSmart.Adapters.Service
             var invokeParam = new InvokeParam()
             {
                 MethodName = name,
-                Parameters = string.Empty,
-                Separator = Separator,
             };
-
-            for (int i = 0; parameters != null && i < parameters.Length; i++)
-            {
-                invokeParam.Parameters += $"{(i > 0 ? Separator : string.Empty)}{parameters[i]}";
-            }
+            invokeParam.SetParameters(parameters);
 
             using (var client = GetClient(BaseUri))
             {
@@ -358,8 +361,9 @@ namespace QuickNSmart.Adapters.Service
                 if (response.IsSuccessStatusCode)
                 {
                     var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                    var invokeResult = await JsonSerializer.DeserializeAsync<Transfer.InvokeTypes.InvokeReturnValue>(resultData, DeserializerOptions).ConfigureAwait(false);
 
-                    return await JsonSerializer.DeserializeAsync<TResult>(resultData, DeserializerOptions).ConfigureAwait(false);
+                    return JsonSerializer.Deserialize<TResult>(invokeResult.JsonData);
                 }
                 else
                 {

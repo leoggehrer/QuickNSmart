@@ -1,5 +1,6 @@
 ﻿//@QnSBaseCode
 //MdStart
+using CommonBase.Extensions;
 using System.Linq;
 
 namespace QuickNSmart.Transfer.InvokeTypes
@@ -7,9 +8,18 @@ namespace QuickNSmart.Transfer.InvokeTypes
     public partial class InvokeParam
     {
         public string MethodName { get; set; }
-        public string Separator { get; set; } = ";";
         public string Parameters { get; set; }
+        public string Separator { get; set; } = ";";
 
+        public void SetParameters(params object[] parameters)
+        {
+            parameters.CheckArgument(nameof(parameters));
+
+            for (int i = 0; parameters != null && i < parameters.Length; i++)
+            {
+                Parameters += $"{(i > 0 ? Separator : string.Empty)}{parameters[i]}";
+            }
+        }
         public string[] GetParameters()
         {
             string[] result;

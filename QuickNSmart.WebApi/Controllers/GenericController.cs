@@ -113,22 +113,19 @@ namespace QuickNSmart.WebApi.Controllers
         }
 
 
-        protected Task InvokeActionAsync(string name, string parameters, string separator)
+        protected Task InvokeActionAsync(string name, string[] parameters)
         {
             name.CheckArgument(nameof(name));
             parameters.CheckArgument(nameof(parameters));
-            separator.CheckArgument(nameof(separator));
 
             using var ctrl = CreateController();
-            object[] paramItems = parameters.Split(separator.ToCharArray());
 
-            return ctrl.InvokeActionAsync(name, paramItems);
+            return ctrl.InvokeActionAsync(name, parameters);
         }
-        protected async Task<InvokeReturnValue> InvokeFunctionAsync(string name, string parameters, string separator)
+        protected async Task<InvokeReturnValue> InvokeFunctionAsync(string name, string[] parameters)
         {
             name.CheckArgument(nameof(name));
             parameters.CheckArgument(nameof(parameters));
-            separator.CheckArgument(nameof(separator));
             static Type GetInterfaceType(Type t)
             {
                 if (t != null && t.IsInterface)
@@ -143,9 +140,8 @@ namespace QuickNSmart.WebApi.Controllers
             }
 
             using var ctrl = CreateController();
-            object[] paramItems = parameters.Split(separator.ToCharArray());
             var result = new InvokeReturnValue();
-            var retVal = await ctrl.InvokeFunctionAsync(name, paramItems).ConfigureAwait(false);
+            var retVal = await ctrl.InvokeFunctionAsync(name, parameters).ConfigureAwait(false);
 
             if (retVal != null)
             {

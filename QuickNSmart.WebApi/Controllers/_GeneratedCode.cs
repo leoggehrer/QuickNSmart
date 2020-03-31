@@ -69,6 +69,16 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return DeleteModelAsync(id);
 		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
 	}
 }
 namespace QuickNSmart.WebApi.Controllers
@@ -141,6 +151,16 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task DeleteAsync(int id)
 		{
 			return DeleteModelAsync(id);
+		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
 		}
 	}
 }
@@ -215,6 +235,16 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return DeleteModelAsync(id);
 		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
 	}
 }
 namespace QuickNSmart.WebApi.Controllers
@@ -287,6 +317,16 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task DeleteAsync(int id)
 		{
 			return DeleteModelAsync(id);
+		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
 		}
 	}
 }
@@ -361,6 +401,16 @@ namespace QuickNSmart.WebApi.Controllers
 		{
 			return DeleteModelAsync(id);
 		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
 	}
 }
 namespace QuickNSmart.WebApi.Controllers
@@ -433,6 +483,16 @@ namespace QuickNSmart.WebApi.Controllers
 		public Task DeleteAsync(int id)
 		{
 			return DeleteModelAsync(id);
+		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
 		}
 	}
 }
