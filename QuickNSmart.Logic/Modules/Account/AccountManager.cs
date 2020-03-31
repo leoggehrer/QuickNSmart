@@ -322,7 +322,6 @@ namespace QuickNSmart.Logic.Modules.Account
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
                     var session = new LoginSession();
 
-                    session.Identity = identity;
                     session.IdentityId = identity.Id;
                     session.Name = identity.Name;
                     session.Email = identity.Email;

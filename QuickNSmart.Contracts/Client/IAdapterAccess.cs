@@ -86,6 +86,22 @@ namespace QuickNSmart.Contracts.Client
         /// </summary>
         /// <param name="id">The identification.</param>
         Task DeleteAsync(int id);
+
+        /// <summary>
+        /// Invokes a custom action that represents a controller method.
+        /// </summary>
+        /// <param name="name">Action name</param>
+        /// <param name="parameters">Action parameters</param>
+        /// <returns>none</returns>
+        Task InvokeActionAsync(string name, params object[] parameters);
+
+        /// <summary>
+        /// Invokes a custom function that represents a controller method.
+        /// </summary>
+        /// <param name="name">Function name</param>
+        /// <param name="parameters">Function parameters</param>
+        /// <returns>The result of the controller method and the type information</returns>
+        Task<TResult> InvokeFunctionAsync<TResult>(string name, params object[] parameters);
         #endregion Async-Methods
     }
 }

@@ -8,6 +8,7 @@ using System.Text.Json;
 using System.Threading.Tasks;
 using CommonBase.Extensions;
 using QuickNSmart.Adapters.Exceptions;
+using QuickNSmart.Transfer.InvokeTypes;
 
 namespace QuickNSmart.Adapters.Service
 {
@@ -15,6 +16,7 @@ namespace QuickNSmart.Adapters.Service
         where TContract : Contracts.IIdentifiable
         where TModel : TContract, Contracts.ICopyable<TContract>, new()
     {
+        private static string Separator => ";";
         static GenericServiceAdapter()
         {
             ClassConstructing();
@@ -300,6 +302,68 @@ namespace QuickNSmart.Adapters.Service
                 if (response.IsSuccessStatusCode == false)
                 {
                     string errorMessage = $"{response.ReasonPhrase}: { await response.Content.ReadAsStringAsync().ConfigureAwait(false) }";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
+
+        public async Task InvokeActionAsync(string name, params object[] parameters)
+        {
+            name.CheckArgument(nameof(name));
+
+            string strParams = string.Empty;
+
+            for (int i = 0; parameters != null && i < parameters.Length; i++)
+            {
+                strParams += $"{(i > 0 ? Separator : string.Empty)}{parameters[i]}";
+            }
+
+            using (var client = GetClient(BaseUri))
+            {
+                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/CallAction/{name}/{parameters}/{Separator}").ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode == false)
+                {
+                    string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
+
+                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                    throw new AdapterException((int)response.StatusCode, errorMessage);
+                }
+            }
+        }
+        public async Task<TResult> InvokeFunctionAsync<TResult>(string name, params object[] parameters)
+        {
+            name.CheckArgument(nameof(name));
+
+            var invokeParam = new InvokeParam()
+            {
+                MethodName = name,
+                Parameters = string.Empty,
+                Separator = Separator,
+            };
+
+            for (int i = 0; parameters != null && i < parameters.Length; i++)
+            {
+                invokeParam.Parameters += $"{(i > 0 ? Separator : string.Empty)}{parameters[i]}";
+            }
+
+            using (var client = GetClient(BaseUri))
+            {
+                string jsonData = JsonSerializer.Serialize(invokeParam);
+                StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
+                HttpResponseMessage response = await client.PostAsync($"{ExtUri}/CallFunction", contentData).ConfigureAwait(false);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+
+                    return await JsonSerializer.DeserializeAsync<TResult>(resultData, DeserializerOptions).ConfigureAwait(false);
+                }
+                else
+                {
+                    string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
 
                     System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
                     throw new AdapterException((int)response.StatusCode, errorMessage);

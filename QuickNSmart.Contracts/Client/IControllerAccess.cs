@@ -94,6 +94,21 @@ namespace QuickNSmart.Contracts.Client
         /// Saves any changes in the underlying persistence.
         /// </summary>
         Task SaveChangesAsync();
+
+        /// <summary>
+        /// Invokes a custom action that represents a controller method.
+        /// </summary>
+        /// <param name="name">Action name</param>
+        /// <param name="parameters">Action parameters</param>
+        /// <returns>none</returns>
+        Task InvokeActionAsync(string name, params object[] parameters);
+        /// <summary>
+        /// Invokes a custom function that represents a controller method.
+        /// </summary>
+        /// <param name="name">Function name</param>
+        /// <param name="parameters">Function parameters</param>
+        /// <returns>The result of the controller method</returns>
+        Task<object> InvokeFunctionAsync(string name, params object[] parameters);
         #endregion Async-Methods
     }
 }

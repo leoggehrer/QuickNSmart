@@ -65,14 +65,14 @@ namespace QuickNSmart.Logic.DataContext.Db
             BeforeModelCreating(modelBuilder);
             DoModelCreating(modelBuilder);
             AfterModelCreating(modelBuilder);
-
+#if DEBUG
             var cascadeFKs = modelBuilder.Model.GetEntityTypes()
                 .SelectMany(t => t.GetForeignKeys())
                 .Where(fk => !fk.IsOwnership && fk.DeleteBehavior == DeleteBehavior.Cascade);
 
             foreach (var fk in cascadeFKs)
                 fk.DeleteBehavior = DeleteBehavior.Restrict;
-
+#endif
             base.OnModelCreating(modelBuilder);
         }
         partial void BeforeModelCreating(ModelBuilder modelBuilder);

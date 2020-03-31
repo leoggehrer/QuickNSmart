@@ -2,6 +2,7 @@
 //MdStart
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace QuickNSmart.Adapters.Controller
@@ -94,6 +95,25 @@ namespace QuickNSmart.Adapters.Controller
         {
             await controller.DeleteAsync(id).ConfigureAwait(false);
             await controller.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        public Task InvokeActionAsync(string name, params object[] parameters)
+        {
+            return controller.InvokeActionAsync(name, parameters);
+        }
+
+        public async Task<TResult> InvokeFunctionAsync<TResult>(string name, params object[] parameters)
+        {
+            var result = default(TResult);
+            var invokeResult = await controller.InvokeFunctionAsync(name, parameters).ConfigureAwait(false);
+
+            if (invokeResult != null)
+            {
+                var json = JsonSerializer.Serialize(invokeResult);
+
+                result = JsonSerializer.Deserialize<TResult>(json);
+            }
+            return result;
         }
         #endregion Async-Methods
 

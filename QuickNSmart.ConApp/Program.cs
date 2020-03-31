@@ -6,6 +6,7 @@ using AccountManager = QuickNSmart.Adapters.Modules.Account.AccountManager;
 
 namespace QuickNSmart.ConApp
 {
+    // Search pattern for async calls without ConfigAwait: (?=\bawait\b(?!.*\bConfigureAwait\b))
     class Program
     {
         static string SaUser => "SysAdmin";
@@ -55,7 +56,7 @@ namespace QuickNSmart.ConApp
             }
             catch (Exception ex)
             {
-                System.Diagnostics.Debug.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
+                Console.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
             Console.WriteLine("Press any key to end!");
             Console.ReadKey();

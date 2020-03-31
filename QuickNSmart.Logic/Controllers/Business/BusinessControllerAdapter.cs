@@ -1,6 +1,7 @@
 ﻿//@QnSBaseCode
 //MdStart
 using CommonBase.Extensions;
+using CommonBase.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -65,7 +66,7 @@ namespace QuickNSmart.Logic.Controllers.Business
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
-
+		#region Async-Methods
 		public virtual Task<I> GetByIdAsync(int id)
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
@@ -113,6 +114,22 @@ namespace QuickNSmart.Logic.Controllers.Business
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
+		#endregion Async-Methods
+
+		#region Invoke handler
+		public virtual Task InvokeActionAsync(string name, params object[] parameters)
+		{
+			var helper = new InvokeHelper();
+
+			return helper.InvokeActionAsync(this, name, parameters);
+		}
+		public virtual Task<object> InvokeFunctionAsync(string name, params object[] parameters)
+		{
+			var helper = new InvokeHelper();
+
+			return helper.InvokeFunctionAsync(this, name, parameters);
+		}
+		#endregion Invoke handler
 	}
 }
 //MdEnd

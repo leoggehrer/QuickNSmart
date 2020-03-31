@@ -1,9 +1,11 @@
 //@QnSBaseCode
 //MdStart
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using CommonBase.Extensions;
+using QuickNSmart.Transfer.InvokeTypes;
 
 namespace QuickNSmart.WebApi.Controllers
 {
@@ -108,6 +110,69 @@ namespace QuickNSmart.WebApi.Controllers
 
             await ctrl.DeleteAsync(id).ConfigureAwait(false);
             await ctrl.SaveChangesAsync().ConfigureAwait(false);
+        }
+
+
+        protected Task InvokeActionAsync(string name, string parameters, string separator)
+        {
+            name.CheckArgument(nameof(name));
+            parameters.CheckArgument(nameof(parameters));
+            separator.CheckArgument(nameof(separator));
+
+            using var ctrl = CreateController();
+            object[] paramItems = parameters.Split(separator.ToCharArray());
+
+            return ctrl.InvokeActionAsync(name, paramItems);
+        }
+        protected async Task<InvokeReturnValue> InvokeFunctionAsync(string name, string parameters, string separator)
+        {
+            name.CheckArgument(nameof(name));
+            parameters.CheckArgument(nameof(parameters));
+            separator.CheckArgument(nameof(separator));
+            static Type GetInterfaceType(Type t)
+            {
+                if (t != null && t.IsInterface)
+                {
+                    return t;
+                }
+                else if (t != null && t.GetInterfaces().Any())
+                {
+                    return t.GetInterfaces().Last();
+                }
+                return null;
+            }
+
+            using var ctrl = CreateController();
+            object[] paramItems = parameters.Split(separator.ToCharArray());
+            var result = new InvokeReturnValue();
+            var retVal = await ctrl.InvokeFunctionAsync(name, paramItems).ConfigureAwait(false);
+
+            if (retVal != null)
+            {
+                Type serializeType;
+
+                result.IsArray = retVal.GetType().IsArray;
+                if (result.IsArray == false)
+                {
+                    serializeType = retVal.GetType();
+                }
+                else
+                {
+                    serializeType = retVal.GetType().GetElementType();
+                }
+
+                if (serializeType.FullName.StartsWith("System.") == false)
+                {
+                    serializeType = GetInterfaceType(serializeType);
+                }
+
+                if (serializeType != null)
+                {
+                    result.Type = serializeType.FullName;
+                    result.JsonData = System.Text.Json.JsonSerializer.Serialize(retVal);
+                }
+            }
+            return result;
         }
     }
 }
