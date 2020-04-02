@@ -33,6 +33,7 @@ namespace QuickNSmart.Adapters.Service
         partial void Constructing();
         partial void Constructed();
 
+        #region account methods
         public async Task<LoginSession> LogonAsync(string jsonWebToken)
         {
             using (var client = GetClient(BaseUri))
@@ -163,7 +164,6 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
-
         public async Task<LoginSession> QueryLoginAsync(string sessionToken)
         {
             using (var client = GetClient(BaseUri))
@@ -186,6 +186,7 @@ namespace QuickNSmart.Adapters.Service
                 }
             }
         }
+        #endregion account methods
     }
 }
 //MdEnd
