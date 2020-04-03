@@ -149,8 +149,8 @@ namespace QuickNSmart.AspMvc.Controllers
                                 model.Id = id;
                                 model.Model = CreateModelFromCsv<T>(CsvHeader, data);
                             }
+                            result.Add(model);
                         }
-                        result.Add(model);
                     }
                 }
             }
