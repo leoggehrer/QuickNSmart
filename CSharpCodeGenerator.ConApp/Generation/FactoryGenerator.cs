@@ -164,7 +164,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             result.Add("public static partial class Factory");
             result.Add("{");
-            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>() where I : Contracts.IIdentifiable");
+            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>()");
             result.Add("{");
             result.Add("Contracts.Client.IAdapterAccess<I> result = null;");
             result.Add("if (Adapter == AdapterType.Controller)");
@@ -215,7 +215,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("return result;");
             result.Add("}");
 
-            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>(string sessionToken) where I : Contracts.IIdentifiable");
+            result.Add("public static Contracts.Client.IAdapterAccess<I> Create<I>(string sessionToken)");
             result.Add("{");
             result.Add("Contracts.Client.IAdapterAccess<I> result = null;");
             result.Add("if (Adapter == AdapterType.Controller)");

@@ -5,7 +5,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
     <ProjectReference Include="..\QuickNSmart.Logic\QuickNSmart.Logic.csproj" />
     <ProjectReference Include="..\QuickNSmart.Transfer\QuickNSmart.Transfer.csproj" />
   </ItemGroup>
