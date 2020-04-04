@@ -10,6 +10,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class ClassGenerator : Generator
     {
+        public const string DelegatePropertyName = "DelegateObject";
+
         protected ClassGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)
         {
@@ -61,7 +63,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             lines.Add(string.Empty);
             return lines;
         }
-
         public static IEnumerable<string> CreatePartialConstrutor(string visibility, string className, string argumentList = null, string baseConstructor = null, IEnumerable<string> initStatements = null, bool withPartials = true)
         {
             var lines = new List<string>
@@ -185,14 +186,96 @@ namespace CSharpCodeGenerator.ConApp.Generation
         }
         #endregion Create partial properties
 
-        #region CreateCopyProperties
+        #region Delegate property helpers
+        /// <summary>
+        /// Diese Methode erstellt den Programmcode einer Eigenschaft aus dem Eigenschaftsinfo-Objekt.
+        /// </summary>
+        /// <param name="propertyInfo">Das Eigenschaftsinfo-Objekt.</param>
+        /// <returns>Die Eigenschaft als Text.</returns>
+        internal static IEnumerable<string> CreatePartialDelegateProperty(PropertyInfo propertyInfo)
+        {
+            propertyInfo.CheckArgument(nameof(propertyInfo));
+
+            var result = new List<string>();
+            var propName = propertyInfo.Name;
+            var fieldType = Generator.GetPropertyType(propertyInfo);
+
+            result.Add($"public {fieldType} {propName}");
+            result.Add("{");
+            if (propertyInfo.CanRead)
+            {
+                result.AddRange(CreatePartialGetDelegateProperty(propertyInfo));
+            }
+            if (propertyInfo.CanWrite)
+            {
+                result.AddRange(CreatePartialSetDelegateProperty(propertyInfo));
+            }
+            result.Add("}");
+
+            if (propertyInfo.CanRead)
+            {
+                result.Add($"partial void On{propName}Reading();");
+            }
+            if (propertyInfo.CanWrite)
+            {
+                result.Add($"partial void On{propName}Changed();");
+            }
+            return result;
+        }
+        /// <summary>
+        /// Diese Methode erstellt den Programmcode einer Getter-Eigenschaft und leitet diese an das Delegate-Objekt weiter.
+        /// </summary>
+        /// <param name="propertyInfo">Das Eigenschaftsinfo-Objekt.</param>
+        /// <returns>Die Getter-Eigenschaft als Text.</returns>
+        internal static IEnumerable<string> CreatePartialGetDelegateProperty(PropertyInfo propertyInfo)
+        {
+            propertyInfo.CheckArgument(nameof(propertyInfo));
+
+            var result = new List<string>();
+
+            result.Add("get".SetIndent(1));
+
+            result.Add("{".SetIndent(1));
+            result.Add($"On{propertyInfo.Name}Reading();".SetIndent(2));
+            result.Add($"return {DelegatePropertyName}.{propertyInfo.Name};".SetIndent(2));
+            result.Add("}".SetIndent(1));
+            return result;
+        }
+        /// <summary>
+        /// Diese Methode erstellt den Programmcode einer Setter-Eigenschaft und leitet diese an das Delegate-Objekt weiter.
+        /// </summary>
+        /// <param name="propertyInfo">Das Eigenschaftsinfo-Objekt.</param>
+        /// <returns>Die Setter-Eigenschaft als Text.</returns>
+        internal static IEnumerable<string> CreatePartialSetDelegateProperty(PropertyInfo propertyInfo)
+        {
+            propertyInfo.CheckArgument(nameof(propertyInfo));
+
+            var result = new List<string>();
+
+            result.Add("set".SetIndent(1));
+
+            result.Add("{".SetIndent(1));
+            result.Add($"{DelegatePropertyName}.{propertyInfo.Name} = value;".SetIndent(2));
+            result.Add($"On{propertyInfo.Name}Changed();".SetIndent(2));
+            result.Add("}".SetIndent(1));
+            return result;
+        }
+        #endregion Delegate property helpers
+
+        #region CopyProperties
         internal static IEnumerable<string> CreateCopyProperties(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            return CreateCopyProperties(type, type.FullName);
+        }
+        internal static IEnumerable<string> CreateCopyProperties(Type type, string copyType)
         {
             type.CheckArgument(nameof(type));
 
             var result = new List<string>
             {
-                $"public void CopyProperties({type.FullName} other)",
+                $"public void CopyProperties({copyType} other)",
                 "{",
                 "if (other == null)",
                 "{",
@@ -215,12 +298,47 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("AfterCopyProperties(other);");
             result.Add("}");
 
-            result.Add($"partial void BeforeCopyProperties({type.FullName} other, ref bool handled);");
-            result.Add($"partial void AfterCopyProperties({type.FullName} other);");
+            result.Add($"partial void BeforeCopyProperties({copyType} other, ref bool handled);");
+            result.Add($"partial void AfterCopyProperties({copyType} other);");
 
             return result;
         }
-        #endregion CreateCopyProperties
+        internal static IEnumerable<string> CreateDelegateCopyProperties(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            return CreateDelegateCopyProperties(type, type.FullName);
+        }
+        internal static IEnumerable<string> CreateDelegateCopyProperties(Type type, string copyType)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>
+            {
+                $"public void CopyProperties({copyType} other)",
+                "{",
+                "if (other == null)",
+                "{",
+                "throw new System.ArgumentNullException(nameof(other));",
+                "}",
+                string.Empty,
+                "bool handled = false;",
+                "BeforeCopyProperties(other, ref handled);",
+                "if (handled == false)",
+                "{",
+            };
+            result.Add($"{ClassGenerator.DelegatePropertyName}.CopyProperties(other as {type.FullName});");
+            result.Add("}");
+            result.Add("AfterCopyProperties(other);");
+            result.Add("}");
+
+            result.Add($"partial void BeforeCopyProperties({copyType} other, ref bool handled);");
+            result.Add($"partial void AfterCopyProperties({copyType} other);");
+
+            return result;
+        }
+        #endregion CopyProperties
+
         /// <summary>
         /// Diese Methode erstellt den Programmcode fuer das Vergleichen der Eigenschaften.
         /// </summary>

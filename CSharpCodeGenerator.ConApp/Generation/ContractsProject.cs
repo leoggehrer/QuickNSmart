@@ -24,8 +24,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.SolutionProperties = solutionProperties;
             return result;
         }
+
         public SolutionProperties SolutionProperties { get; private set; }
-        public string ProjectName => $"{SolutionProperties.SolutionName}.Contracts";
+
+        public static string BusinessSubName => ".Business.";
+        public static string ModulesSubName => ".Modules.";
+        public static string PersistenceSubName => ".Persistence.";
+
+        public string ProjectName => $"{SolutionProperties.SolutionName}{SolutionProperties.ContractsPostfix}";
         public string ProjectPath => Path.Combine(SolutionProperties.SolutionPath, ProjectName);
 
         public string _contractsPath = null;
@@ -98,20 +104,20 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 return result;
             }
         }
-        public IEnumerable<Type> ModuleTypes
-        {
-            get
-            {
-                return InterfaceTypes.Where(t => t.IsInterface
-                                              && t.FullName.Contains(".Modules."));
-            }
-        }
         public IEnumerable<Type> BusinessTypes
         {
             get
             {
                 return InterfaceTypes.Where(t => t.IsInterface
-                                              && t.FullName.Contains(".Business."));
+                                              && t.FullName.Contains(BusinessSubName));
+            }
+        }
+        public IEnumerable<Type> ModuleTypes
+        {
+            get
+            {
+                return InterfaceTypes.Where(t => t.IsInterface
+                                              && t.FullName.Contains(ModulesSubName));
             }
         }
         public IEnumerable<Type> PersistenceTypes
@@ -119,7 +125,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             get
             {
                 return InterfaceTypes.Where(t => t.IsInterface
-                                              && t.FullName.Contains(".Persistence."));
+                                              && t.FullName.Contains(PersistenceSubName));
             }
         }
 

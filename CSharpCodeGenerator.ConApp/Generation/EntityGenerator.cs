@@ -45,30 +45,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
         partial void CanCreateProperty(Type type, string propertyName, ref bool create);
         partial void CreateEntityAttributes(Type type, List<string> codeLines);
 
-        private IEnumerable<string> CreateEntityFromInterface(Type type)
-        {
-            type.CheckArgument(nameof(type));
-
-            List<string> result = new List<string>();
-            var entityName = CreateEntityNameFromInterface(type);
-
-            CreateEntityAttributes(type, result);
-            result.Add($"partial class {entityName} : {type.FullName}");
-            result.Add("{");
-            result.AddRange(CreatePartialStaticConstrutor(entityName));
-            result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false
-                                                                   && CanCreateProperty(type, p.Name)))
-            {
-                result.AddRange(CreatePartialProperty(item));
-            }
-            result.AddRange(CreateCopyProperties(type));
-            result.AddRange(CreateEquals(type));
-            result.AddRange(CreateGetHashCode(type));
-            result.Add("}");
-            return result;
-        }
-
         public IEnumerable<string> CreateModulesEntities()
         {
             List<string> result = new List<string>();
@@ -84,13 +60,13 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             return result;
         }
-        private IEnumerable<string> CreateModuleEntity(Type type)
+        private static IEnumerable<string> CreateModuleEntity(Type type)
         {
             type.CheckArgument(nameof(type));
 
             List<string> result = new List<string>();
 
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : ModuleObject");
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
             result.Add("{");
             result.Add("}");
             return result;
@@ -111,13 +87,13 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             return result;
         }
-        private IEnumerable<string> CreateBusinessEntity(Type type)
+        private static IEnumerable<string> CreateBusinessEntity(Type type)
         {
             type.CheckArgument(nameof(type));
 
             List<string> result = new List<string>();
 
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityObject");
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
             result.Add("{");
             result.Add("}");
             return result;
@@ -143,18 +119,63 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             return result;
         }
-        private IEnumerable<string> CreatePersistenceEntity(Type type)
+        private static IEnumerable<string> CreatePersistenceEntity(Type type)
         {
             type.CheckArgument(nameof(type));
 
             List<string> result = new List<string>();
 
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : IdentityObject");
+            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
             result.Add("{");
             result.Add("}");
             return result;
         }
 
+        private IEnumerable<string> CreateEntityFromInterface(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+            var baseItfcs = GetBaseInterfaces(type).ToArray();
+            var entityName = CreateEntityNameFromInterface(type);
+            var properties = GetAllInterfaceProperties(type, baseItfcs);
+
+            CreateEntityAttributes(type, result);
+            result.Add($"partial class {entityName} : {type.FullName}");
+            result.Add("{");
+            result.AddRange(CreatePartialStaticConstrutor(entityName));
+            result.AddRange(CreatePartialConstrutor("public", entityName));
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false
+                                                    && CanCreateProperty(type, p.Name)))
+            {
+                result.AddRange(CreatePartialProperty(item));
+            }
+            result.AddRange(CreateCopyProperties(type));
+            result.AddRange(CreateEquals(type));
+            result.AddRange(CreateGetHashCode(type));
+            result.Add("}");
+            return result;
+        }
+        private static string GetBaseClassByInterface(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = string.Empty;
+
+            if (type.FullName.Contains(ContractsProject.BusinessSubName))
+                result = "IdentityObject";
+            else if (type.FullName.Contains(ContractsProject.ModulesSubName))
+                result = "ModuleObject";
+            else if (type.FullName.Contains(ContractsProject.PersistenceSubName))
+                result = "IdentityObject";
+
+            var baseItfc = GetBaseInterface(type);
+            if (baseItfc != null)
+            {
+                result = CreateEntityNameFromInterface(baseItfc);
+            }
+            return result;
+        }
         /// <summary>
         /// Diese Methode erstellt den Programmcode der Beziehungen zwischen den Entitaeten aus den Schnittstellen-Typen.
         /// </summary>
@@ -162,7 +183,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         /// <param name="types">Die Schnittstellen-Typen.</param>
         /// <param name="mapPropertyName">Ein Lambda-Ausdruck zum konvertieren des Eigenschaftsnamen.</param>
         /// <returns>Die Entitaet als Text.</returns>
-        public static IEnumerable<string> CreateEntityToEntityFromContracts(Type type, IEnumerable<Type> types, Func<string, string> mapPropertyName)
+        private static IEnumerable<string> CreateEntityToEntityFromContracts(Type type, IEnumerable<Type> types, Func<string, string> mapPropertyName)
         {
             type.CheckArgument(nameof(type));
             types.CheckArgument(nameof(types));

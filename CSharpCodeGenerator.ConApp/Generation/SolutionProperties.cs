@@ -21,13 +21,31 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string WebApiPostfix => ".WebApi";
         public static string AdaptersPostfix => ".Adapters";
         public static string AspMvcPostfix => ".AspMvc";
+        public static string ConnectorPostfix => ".Connector";
         #endregion Project-postfixes
 
+        #region ProjectPaths
+        public virtual string SolutionPath { get; }
+        public virtual string SolutionName => GetSolutionName(SolutionPath);
+        public virtual string[] ProjectPaths => GetProjectPaths(SolutionPath);
+        public virtual string[] ProjectNames => GetProjectNames(SolutionPath);
+        public virtual string ContractsPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(ContractsPostfix));
+        public virtual string LogicPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(LogicPostfix));
+        public virtual string TransferPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(TransferPostfix));
+        public virtual string WebApiPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(WebApiPostfix));
+        public virtual string AdaptersPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AdaptersPostfix));
+        public virtual string AspMvcPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AspMvcPostfix));
+        public virtual string ConnectorPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(ConnectorPostfix));
+        #endregion ProjectPaths
+
         #region Folders
+        public static string ContractsFolder => "Contracts";
+        public static string EntitiesFolder => "Entities";
+        public static string ControllersFolder => "Controllers";
+        public static string ModelsFolder => "Models";
         public static string ModulesFolder => "Modules";
         public static string BusinessFolder => "Business";
         public static string PersistenceFolder => "Persistence";
-        public static string WebApiControllersFolder => "Controllers";
         #endregion Folders
 
         #region ProjectNames
@@ -37,10 +55,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public string WebApiProjectName => $"{SolutionName}{WebApiPostfix}";
         public string AdaptersProjectName => $"{SolutionName}{AdaptersPostfix}";
         public string AspMvcProjectName => $"{SolutionName}{AspMvcPostfix}";
+        public string ConnectorProjectName => $"{SolutionName}{ConnectorPostfix}";
         #endregion ProjectNames
 
         #region Entities
-        public static string EntitiesFolder => "Entities";
         public string EntitiesSubPath => EntitiesFolder;
         public string EntitiesModulesPath => Path.Combine(LogicPath, EntitiesSubPath, ModulesFolder);
         public string EntitiesBusinessPath => Path.Combine(LogicPath, EntitiesSubPath, BusinessFolder);
@@ -59,7 +77,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
         #endregion DataContext
 
         #region Controllers
-        public static string ControllersFolder => "Controllers";
         public string ControllersSubPath => ControllersFolder;
         public string ControllersPersistencePath => Path.Combine(LogicPath, ControllersSubPath, PersistenceFolder);
         public string ControllersBusinessPath => Path.Combine(LogicPath, ControllersSubPath, BusinessFolder);
@@ -82,7 +99,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         #endregion Transfer
 
         #region WebApi
-        public string WebApiControllersSubPath => WebApiControllersFolder;
+        public string WebApiControllersSubPath => ControllersFolder;
         public string WebApiControllersPath => Path.Combine(WebApiPath, WebApiControllersSubPath);
         public string WebApiControllersFilePath => Path.Combine(WebApiControllersPath, GeneratedCodeFileName);
         #endregion WebApi
@@ -93,30 +110,32 @@ namespace CSharpCodeGenerator.ConApp.Generation
         #endregion Adapters-Factory
 
         #region AspMvc
-        public static string AspMvcModelsFolder => "Models";
-        public string AspMvcModulesPath => Path.Combine(AspMvcPath, AspMvcModelsFolder, ModulesFolder);
-        public string AspMvcBusinessPath => Path.Combine(AspMvcPath, AspMvcModelsFolder, BusinessFolder);
-        public string AspMvcPersistencePath => Path.Combine(AspMvcPath, AspMvcModelsFolder, PersistenceFolder);
+        public string AspMvcModulesPath => Path.Combine(AspMvcPath, ModelsFolder, ModulesFolder);
+        public string AspMvcBusinessPath => Path.Combine(AspMvcPath, ModelsFolder, BusinessFolder);
+        public string AspMvcPersistencePath => Path.Combine(AspMvcPath, ModelsFolder, PersistenceFolder);
         public string AspMvcModulesFilePath => Path.Combine(AspMvcModulesPath, GeneratedCodeFileName);
         public string AspMvcBusinessFilePath => Path.Combine(AspMvcBusinessPath, GeneratedCodeFileName);
         public string AspMvcPersistenceFilePath => Path.Combine(AspMvcPersistencePath, GeneratedCodeFileName);
         #endregion AspMvc
 
+        #region Connector
+        public string ConnectorContractsFilePath => Path.Combine(ConnectorPath, ContractsFolder, GeneratedCodeFileName);
+
+        public string ConnectorContractsPath => Path.Combine(ConnectorPath, ContractsFolder);
+        public string ConnectorModulesContractsFilePath => Path.Combine(ConnectorContractsPath, ModulesFolder, GeneratedCodeFileName);
+        public string ConnectorBusinessContractsFilePath => Path.Combine(ConnectorContractsPath, BusinessFolder, GeneratedCodeFileName);
+        public string ConnectorPersistenceContractsFilePath => Path.Combine(ConnectorContractsPath, PersistenceFolder, GeneratedCodeFileName);
+
+        public string ConnectorModelsPath => Path.Combine(ConnectorPath, ModelsFolder);
+        public string ConnectorModulesModelsFilePath => Path.Combine(ConnectorModelsPath, ModulesFolder, GeneratedCodeFileName);
+        public string ConnectorBusinessModelsFilePath => Path.Combine(ConnectorModelsPath, BusinessFolder, GeneratedCodeFileName);
+        public string ConnectorPersistenceModelsFilePath => Path.Combine(ConnectorModelsPath, PersistenceFolder, GeneratedCodeFileName);
+        #endregion Connector
+
         public static string[] BuildSubDirectories => new string[]
         {
             "//bin//", "//obj//", "\\bin\\", "\\obj\\", "//wwwroot//lib//", "\\wwwroot\\lib\\"
         };
-
-        public virtual string SolutionPath { get; }
-        public virtual string SolutionName => GetSolutionName(SolutionPath);
-        public virtual string[] ProjectPaths => GetProjectPaths(SolutionPath);
-        public virtual string[] ProjectNames => GetProjectNames(SolutionPath);
-        public virtual string ContractsPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(ContractsPostfix));
-        public virtual string LogicPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(LogicPostfix));
-        public virtual string TransferPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(TransferPostfix));
-        public virtual string WebApiPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(WebApiPostfix));
-        public virtual string AdaptersPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AdaptersPostfix));
-        public virtual string AspMvcPath => ProjectPaths.FirstOrDefault(i => i.EndsWith(AspMvcPostfix));
 
         protected SolutionProperties(string solutionPath)
         {

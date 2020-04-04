@@ -19,6 +19,7 @@ namespace CSharpCodeGenerator.ConApp
             FactoryGenerator factoryGenerator = FactoryGenerator.Create(solutionProperties);
             TransferGenerator transferGenerator = TransferGenerator.Create(solutionProperties);
             AspMvcGenerator aspMvcGenerator = AspMvcGenerator.Create(solutionProperties);
+            ConnectorGenerator connectorGenerator = ConnectorGenerator.Create(solutionProperties);
 
             List<string> lines = new List<string>();
 
@@ -96,6 +97,36 @@ namespace CSharpCodeGenerator.ConApp
             lines.Clear();
             lines.AddRange(aspMvcGenerator.CreatePersistenceModels());
             WriteAllLines(solutionProperties.AspMvcPersistenceFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Modules-Contracts...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreateModulesContracts());
+            WriteAllLines(solutionProperties.ConnectorModulesContractsFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Business-Contracts...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreateBusinessContracts());
+            WriteAllLines(solutionProperties.ConnectorBusinessContractsFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Persistence-Contracts...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreatePersistenceContracts());
+            WriteAllLines(solutionProperties.ConnectorPersistenceContractsFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Modules-Models...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreateModulesModels());
+            WriteAllLines(solutionProperties.ConnectorModulesModelsFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Business-Models...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreateBusinessModels());
+            WriteAllLines(solutionProperties.ConnectorBusinessModelsFilePath, FormatCSharp(lines));
+
+            Console.WriteLine("Create Connector-Persistence-Models...");
+            lines.Clear();
+            lines.AddRange(connectorGenerator.CreatePersistenceModels());
+            WriteAllLines(solutionProperties.ConnectorPersistenceModelsFilePath, FormatCSharp(lines));
         }
 
         private static IEnumerable<string> FormatCSharp(IEnumerable<string> source)

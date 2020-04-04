@@ -152,7 +152,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 }
 namespace QuickNSmart.AspMvc.Models.Persistence.Account
 {
-	partial class ActionLog : Models.IdentityModel
+	partial class ActionLog : IdentityModel
 	{
 	}
 }
@@ -356,7 +356,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 }
 namespace QuickNSmart.AspMvc.Models.Persistence.Account
 {
-	partial class Identity : Models.IdentityModel
+	partial class Identity : IdentityModel
 	{
 	}
 }
@@ -445,7 +445,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 }
 namespace QuickNSmart.AspMvc.Models.Persistence.Account
 {
-	partial class IdentityXRole : Models.IdentityModel
+	partial class IdentityXRole : IdentityModel
 	{
 	}
 }
@@ -718,7 +718,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 }
 namespace QuickNSmart.AspMvc.Models.Persistence.Account
 {
-	partial class LoginSession : Models.IdentityModel
+	partial class LoginSession : IdentityModel
 	{
 	}
 }
@@ -807,7 +807,7 @@ namespace QuickNSmart.AspMvc.Models.Persistence.Account
 }
 namespace QuickNSmart.AspMvc.Models.Persistence.Account
 {
-	partial class Role : Models.IdentityModel
+	partial class Role : IdentityModel
 	{
 	}
 }

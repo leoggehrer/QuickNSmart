@@ -83,7 +83,7 @@ namespace QuickNSmart.AspMvc.Models.Business.Account
 }
 namespace QuickNSmart.AspMvc.Models.Business.Account
 {
-	partial class AppAccess : Models.IdentityModel
+	partial class AppAccess : IdentityModel
 	{
 	}
 }

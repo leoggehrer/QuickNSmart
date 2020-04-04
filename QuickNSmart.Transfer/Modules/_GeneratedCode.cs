@@ -128,72 +128,6 @@ namespace QuickNSmart.Transfer.Modules.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public System.String Email
-		{
-			get
-			{
-				OnEmailReading();
-				return _email;
-			}
-			set
-			{
-				bool handled = false;
-				OnEmailChanging(ref handled, ref _email);
-				if (handled == false)
-				{
-					this._email = value;
-				}
-				OnEmailChanged();
-			}
-		}
-		private System.String _email;
-		partial void OnEmailReading();
-		partial void OnEmailChanging(ref bool handled, ref System.String _email);
-		partial void OnEmailChanged();
-		public System.DateTime LoginTime
-		{
-			get
-			{
-				OnLoginTimeReading();
-				return _loginTime;
-			}
-			set
-			{
-				bool handled = false;
-				OnLoginTimeChanging(ref handled, ref _loginTime);
-				if (handled == false)
-				{
-					this._loginTime = value;
-				}
-				OnLoginTimeChanged();
-			}
-		}
-		private System.DateTime _loginTime;
-		partial void OnLoginTimeReading();
-		partial void OnLoginTimeChanging(ref bool handled, ref System.DateTime _loginTime);
-		partial void OnLoginTimeChanged();
-		public System.DateTime? LogoutTime
-		{
-			get
-			{
-				OnLogoutTimeReading();
-				return _logoutTime;
-			}
-			set
-			{
-				bool handled = false;
-				OnLogoutTimeChanging(ref handled, ref _logoutTime);
-				if (handled == false)
-				{
-					this._logoutTime = value;
-				}
-				OnLogoutTimeChanged();
-			}
-		}
-		private System.DateTime? _logoutTime;
-		partial void OnLogoutTimeReading();
-		partial void OnLogoutTimeChanging(ref bool handled, ref System.DateTime? _logoutTime);
-		partial void OnLogoutTimeChanged();
 		public System.String Name
 		{
 			get
@@ -262,7 +196,7 @@ namespace QuickNSmart.Transfer.Modules.Account
 }
 namespace QuickNSmart.Transfer.Modules.Account
 {
-	partial class LoginUser : TransferModel
+	partial class LoginUser : Login
 	{
 	}
 }

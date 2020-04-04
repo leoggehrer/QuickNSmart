@@ -1,0 +1,16 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="QuickNSmart.Adapters">
+      <HintPath>..\QuickNSmart.Adapters\bin\Debug\netcoreapp3.1\QuickNSmart.Adapters.dll</HintPath>
+    </Reference>
+    <Reference Include="QuickNSmart.Contracts">
+      <HintPath>..\QuickNSmart.Contracts\bin\Debug\netcoreapp3.1\QuickNSmart.Contracts.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+</Project>
