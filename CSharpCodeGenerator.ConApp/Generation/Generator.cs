@@ -68,6 +68,18 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         .Where(t => t.IsInterface
                                  && t.FullName.Contains(".Business."));
         }
+        internal static bool HasIdentifiableBase(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = false;
+
+            if (type.IsInterface)
+            {
+                result = type.GetInterfaces().Any(i => i.Name.Equals("IIdentifiable"));
+            }
+            return result;
+        }
         internal static Type GetBaseInterface(Type type)
         {
             type.CheckArgument(nameof(type));

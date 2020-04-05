@@ -5,7 +5,7 @@ using Microsoft.Extensions.Hosting;
 
 namespace QuickNSmart.AspMvc
 {
-    public class Program
+    public partial class Program
     {
         public static void Main(string[] args)
         {

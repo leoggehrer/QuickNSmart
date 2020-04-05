@@ -168,7 +168,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             if (type.FullName.Contains(ContractsProject.BusinessSubName))
                 result = "IdentityObject";
             else if (type.FullName.Contains(ContractsProject.ModulesSubName))
-                result = "ModuleObject";
+                result = HasIdentifiableBase(type) ? "IdentityObject" : "ModuleObject";
             else if (type.FullName.Contains(ContractsProject.PersistenceSubName))
                 result = "IdentityObject";
 

@@ -161,7 +161,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             if (type.FullName.Contains(ContractsProject.BusinessSubName))
                 result = "IdentityModel";
             else if (type.FullName.Contains(ContractsProject.ModulesSubName))
-                result = "TransferModel";
+            result = HasIdentifiableBase(type) ? "IdentityModel" : "TransferModel";
             else if (type.FullName.Contains(ContractsProject.PersistenceSubName))
                 result = "IdentityModel";
 

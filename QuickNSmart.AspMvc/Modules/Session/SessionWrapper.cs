@@ -19,11 +19,11 @@ namespace QuickNSmart.AspMvc.Modules.Session
         #region Translator
         public string Translate(string text)
         {
-            return text;
+            return Language.Translator.Translate(text);
         }
         public string Translate(string text, string defaultValue)
         {
-            return defaultValue;
+            return Language.Translator.Translate(text, defaultValue);
         }
         #endregion Translator
 
