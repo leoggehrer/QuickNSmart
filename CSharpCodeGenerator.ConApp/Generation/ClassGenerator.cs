@@ -231,14 +231,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             propertyInfo.CheckArgument(nameof(propertyInfo));
 
-            var result = new List<string>();
-
-            result.Add("get".SetIndent(1));
-
-            result.Add("{".SetIndent(1));
-            result.Add($"On{propertyInfo.Name}Reading();".SetIndent(2));
-            result.Add($"return {DelegatePropertyName}.{propertyInfo.Name};".SetIndent(2));
-            result.Add("}".SetIndent(1));
+            var result = new List<string>
+            {
+                "get".SetIndent(1),
+                "{".SetIndent(1),
+                $"On{propertyInfo.Name}Reading();".SetIndent(2),
+                $"return {DelegatePropertyName}.{propertyInfo.Name};".SetIndent(2),
+                "}".SetIndent(1)
+            };
             return result;
         }
         /// <summary>
@@ -250,14 +250,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             propertyInfo.CheckArgument(nameof(propertyInfo));
 
-            var result = new List<string>();
-
-            result.Add("set".SetIndent(1));
-
-            result.Add("{".SetIndent(1));
-            result.Add($"{DelegatePropertyName}.{propertyInfo.Name} = value;".SetIndent(2));
-            result.Add($"On{propertyInfo.Name}Changed();".SetIndent(2));
-            result.Add("}".SetIndent(1));
+            var result = new List<string>
+            {
+                "set".SetIndent(1),
+                "{".SetIndent(1),
+                $"{DelegatePropertyName}.{propertyInfo.Name} = value;".SetIndent(2),
+                $"On{propertyInfo.Name}Changed();".SetIndent(2),
+                "}".SetIndent(1)
+            };
             return result;
         }
         #endregion Delegate property helpers
@@ -389,7 +389,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             if (counter > 0)
             {
-                result[result.Count - 1] = $"{result[result.Count - 1]};";
+                result[^1] = $"{result[^1]};";
             }
             else
             {

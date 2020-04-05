@@ -19,9 +19,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             solutionProperties.CheckArgument(nameof(solutionProperties));
 
-            ContractsProject result = new ContractsProject();
-
-            result.SolutionProperties = solutionProperties;
+            ContractsProject result = new ContractsProject
+            {
+                SolutionProperties = solutionProperties
+            };
             return result;
         }
 

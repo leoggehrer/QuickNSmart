@@ -64,11 +64,12 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
+                "{",
+                "}"
+            };
             return result;
         }
 
@@ -91,11 +92,12 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
+                "{",
+                "}"
+            };
             return result;
         }
 
@@ -123,11 +125,12 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : {GetBaseClassByInterface(type)}",
+                "{",
+                "}"
+            };
             return result;
         }
 

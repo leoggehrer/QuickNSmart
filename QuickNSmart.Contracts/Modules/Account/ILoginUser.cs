@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
+﻿//@QnSIgnore
 namespace QuickNSmart.Contracts.Modules.Account
 {
     public interface ILoginUser : ILogin, ICopyable<ILoginUser>

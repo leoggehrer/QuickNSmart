@@ -130,6 +130,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return new ConnectorGenerator(solutionProperties);
         }
 
+        private string CreateNamespace(Type type, string folderName)
+        {
+            string solutionName = GetSolutionNameFromInterface(type);
+            string subNameSpace = GetSubNamespaceFromInterface(type);
+            
+            return $"{SolutionProperties.ConnectorProjectName}.{folderName}.{solutionName}.{subNameSpace}";
+        }
+
         public IEnumerable<string> CreateContracts()
         {
             List<string> result = new List<string>();
@@ -142,10 +150,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string nameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-
-                    result.Add($"namespace {nameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ContractsFolder)}");
                     result.Add("{");
                     result.Add($"public partial interface {contract.Name} : {contract.FullName}");
                     result.Add("{");
@@ -165,10 +170,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string nameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-
-                    result.Add($"namespace {nameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ContractsFolder)}");
                     result.Add("{");
                     result.Add($"public partial interface {contract.Name}");
                     result.Add("{");
@@ -189,10 +191,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string nameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-
-                    result.Add($"namespace {nameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ContractsFolder)}");
                     result.Add("{");
                     result.Add($"public partial interface {contract.Name} : IIdentifiable, ICopyable<{contract.Name}>");
                     result.Add("{");
@@ -213,10 +212,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string nameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-
-                    result.Add($"namespace {nameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ContractsFolder)}");
                     result.Add("{");
                     result.Add($"public partial interface {contract.Name} : IIdentifiable, ICopyable<{contract.Name}>");
                     result.Add("{");
@@ -238,12 +234,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string contractNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-                    string modelNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ModelsFolder}.{subNameSpace}";
+                    string contractNameSpace = CreateNamespace(contract, SolutionProperties.ContractsFolder);
                     string contractName = $"{contractNameSpace}.{contract.Name}";
 
-                    result.Add($"namespace {modelNameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ModelsFolder)}");
                     result.Add("{");
                     result.AddRange(CreateModel(contract, contractName));
                     result.AddRange(CreateModuleModel(contract));
@@ -262,12 +256,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string contractNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-                    string modelNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ModelsFolder}.{subNameSpace}";
+                    string contractNameSpace = CreateNamespace(contract, SolutionProperties.ContractsFolder);
                     string contractName = $"{contractNameSpace}.{contract.Name}";
 
-                    result.Add($"namespace {modelNameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ModelsFolder)}");
                     result.Add("{");
                     result.AddRange(CreateModel(contract, contractName));
                     result.AddRange(CreateBusinessModel(contract));
@@ -286,12 +278,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 foreach (var contract in contracts)
                 {
-                    string subNameSpace = GetSubNamespaceFromInterface(contract);
-                    string contractNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ContractsFolder}.{subNameSpace}";
-                    string modelNameSpace = $"{SolutionProperties.ConnectorProjectName}.{SolutionProperties.ModelsFolder}.{subNameSpace}";
+                    string contractNameSpace = CreateNamespace(contract, SolutionProperties.ContractsFolder);
                     string contractName = $"{contractNameSpace}.{contract.Name}";
 
-                    result.Add($"namespace {modelNameSpace}");
+                    result.Add($"namespace {CreateNamespace(contract, SolutionProperties.ModelsFolder)}");
                     result.Add("{");
                     result.AddRange(CreateModel(contract, contractName));
                     result.AddRange(CreatePersistenceModel(contract));
@@ -332,33 +322,36 @@ namespace CSharpCodeGenerator.ConApp.Generation
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : Models.WrapperModel");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : Models.WrapperModel",
+                "{",
+                "}"
+            };
             return result;
         }
         private IEnumerable<string> CreateBusinessModel(Type type)
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : Models.IdentityModel");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : Models.IdentityModel",
+                "{",
+                "}"
+            };
             return result;
         }
         private IEnumerable<string> CreatePersistenceModel(Type type)
         {
             type.CheckArgument(nameof(type));
 
-            List<string> result = new List<string>();
-
-            result.Add($"partial class {CreateEntityNameFromInterface(type)} : Models.IdentityModel");
-            result.Add("{");
-            result.Add("}");
+            var result = new List<string>
+            {
+                $"partial class {CreateEntityNameFromInterface(type)} : Models.IdentityModel",
+                "{",
+                "}"
+            };
             return result;
         }
 
@@ -368,7 +361,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             methodInfo.CheckArgument(nameof(methodInfo));
 
             var result = new List<string>();
-            var returnType = string.Empty;
             var parameterList = string.Empty;
             var parameterNames = string.Empty;
             var delegateCall = new List<string>();
@@ -385,6 +377,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
                 parameterNames += $"{item.Name}";
             }
+            string returnType;
             if (methodInfo.ReturnType == typeof(void))
             {
                 returnType = "void";

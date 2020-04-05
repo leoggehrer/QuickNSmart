@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿//@QnSIgnore
+using System;
 
 namespace QuickNSmart.Contracts.Modules.Account
 {

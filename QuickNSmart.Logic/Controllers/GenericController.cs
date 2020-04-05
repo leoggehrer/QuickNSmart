@@ -130,8 +130,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         internal async virtual Task<IQueryable<I>> ExecuteGetAllAsync()
         {
-            int idx = 0, qryCount = 0;
-            List<I> result = new List<I>();
+            int idx = 0, qryCount;
+            var result = new List<I>();
 
             do
             {
@@ -168,8 +168,8 @@ namespace QuickNSmart.Logic.Controllers
         }
         internal virtual async Task<IQueryable<I>> ExecuteQueryAllAsync(string predicate)
         {
-            int idx = 0, qryCount = 0;
-            List<I> result = new List<I>();
+            int idx = 0, qryCount;
+            var result = new List<I>();
 
             do
             {

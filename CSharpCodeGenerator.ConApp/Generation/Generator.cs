@@ -42,36 +42,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
 
-        /// <summary>
-        /// Diese Methode erstellt den Programmcode der Beziehungen zwischen den Entitaeten aus den Schnittstellen-Typen.
-        /// </summary>
-        /// <param name="type">Der Schnittstellen-Typ.</param>
-        /// <param name="types">Die Schnittstellen-Typen.</param>
-        /// <param name="mapPropertyName">Ein Lambda-Ausdruck zum konvertieren des Eigenschaftsnamen.</param>
-        /// <returns>Die referenzierten Typen.</returns>
-        internal static IEnumerable<Type> CreateTypeToTypeFromContracts(Type type, IEnumerable<Type> types, Func<string, string> mapPropertyName)
-        {
-            type.CheckArgument(nameof(type));
-            types.CheckArgument(nameof(types));
-
-            var result = new List<Type>();
-            var typeName = Generator.CreateEntityNameFromInterface(type);
-
-            foreach (var other in types)
-            {
-                var otherName = Generator.CreateEntityNameFromInterface(other);
-
-                foreach (var pi in other.GetProperties())
-                {
-                    if (pi.Name.Equals($"{typeName}Id"))
-                    {
-                        result.Add(other);
-                    }
-                }
-            }
-            return result;
-        }
-
         #region Helpers
         #region Assemply-Helpers
         internal static IEnumerable<Type> GetInterfaceTypes(Assembly assembly)
