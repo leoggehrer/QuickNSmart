@@ -1,3 +1,5 @@
+//@QnSBaseCode
+//MdStart
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
@@ -59,3 +61,4 @@ namespace QuickNSmart.WebApi
         partial void EndConfigure(IApplicationBuilder app, IWebHostEnvironment env);
     }
 }
+//MdEnd

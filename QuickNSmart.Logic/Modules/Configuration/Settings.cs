@@ -25,7 +25,7 @@ namespace QuickNSmart.Logic.Modules.Configuration
         }
         public static string Get(string key, string defaultValue)
         {
-            var result = default(string);
+            var result = defaultValue;
 
             if (_configurationRoot != null)
             {

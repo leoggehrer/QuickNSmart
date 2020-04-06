@@ -1,11 +1,7 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+//@QnSBaseCode
+//MdStart
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 
 namespace QuickNSmart.WebApi
 {
@@ -24,3 +20,4 @@ namespace QuickNSmart.WebApi
                 });
     }
 }
+//MdEnd
