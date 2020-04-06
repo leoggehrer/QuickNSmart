@@ -1,6 +1,7 @@
 ﻿//@CustomizeCode
 //MdStart
 using System.Linq;
+using CommonBase.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
@@ -13,10 +14,7 @@ namespace QuickNSmart.Logic.DataContext.Db
         static QuickNSmartDbContext()
         {
             ClassConstructing();
-            if (Configuration.Configurator.Contains(CommonBase.StaticLiterals.ConnectionStringKey))
-            {
-                ConnectionString = Configuration.Configurator.Get(CommonBase.StaticLiterals.ConnectionStringKey);
-            }
+            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString, ConnectionString);
             ClassConstructed();
         }
         static partial void ClassConstructing();

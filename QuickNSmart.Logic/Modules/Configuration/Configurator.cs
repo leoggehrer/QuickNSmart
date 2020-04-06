@@ -3,7 +3,7 @@
 using System.Collections.Generic;
 using CommonBase.Extensions;
 
-namespace QuickNSmart.Logic.Configuration
+namespace QuickNSmart.Logic.Modules.Configuration
 {
     public static class Configurator
     {

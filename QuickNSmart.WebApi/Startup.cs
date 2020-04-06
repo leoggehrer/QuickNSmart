@@ -29,6 +29,15 @@ namespace QuickNSmart.WebApi
         public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             BeginConfigure(app, env);
+
+            // Transfer the application settings to the logic.
+            var builder = new ConfigurationBuilder()
+                .SetBasePath(env.ContentRootPath)
+                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
+                .AddEnvironmentVariables();
+            Logic.Modules.Configuration.Settings.SetConfiguration(builder.Build());
+
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
