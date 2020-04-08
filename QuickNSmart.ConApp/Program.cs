@@ -12,7 +12,6 @@ namespace QuickNSmart.ConApp
         static string SaUser => "SysAdmin";
         static string SaEmail => "SysAdmin@QuickNSmart.gmx.at";
         static string SaPwd => "Sys2189!Admin";
-        static bool SaEnableJwt => true;
 
         static string AaUser => "AppAdmin";
         static string AaEmail => "AppAdmin@QuickNSmart.gmx.at";

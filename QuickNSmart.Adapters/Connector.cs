@@ -22,28 +22,19 @@ namespace QuickNSmart.Adapters
             where TContract : Contracts.IIdentifiable
             where TModel: TContract, Contracts.ICopyable<TContract>, new()
         {
-            Contracts.Client.IAdapterAccess<TContract> result = null;
-
-            result = new Service.GenericServiceAdapter<TContract, TModel>(BaseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
-            return result;
+            return new Service.GenericServiceAdapter<TContract, TModel>(BaseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
         }
         public static Contracts.Client.IAdapterAccess<TContract> Create<TContract, TModel>(string sessionToken)
             where TContract : Contracts.IIdentifiable
             where TModel : TContract, Contracts.ICopyable<TContract>, new()
         {
-            Contracts.Client.IAdapterAccess<TContract> result = null;
-
-            result = new Service.GenericServiceAdapter<TContract, TModel>(sessionToken, BaseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
-            return result;
+            return new Service.GenericServiceAdapter<TContract, TModel>(sessionToken, BaseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
         }
         public static Contracts.Client.IAdapterAccess<TContract> Create<TContract, TModel>(string baseUri, string sessionToken)
             where TContract : Contracts.IIdentifiable
             where TModel : TContract, Contracts.ICopyable<TContract>, new()
         {
-            Contracts.Client.IAdapterAccess<TContract> result = null;
-
-            result = new Service.GenericServiceAdapter<TContract, TModel>(sessionToken, baseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
-            return result;
+            return new Service.GenericServiceAdapter<TContract, TModel>(sessionToken, baseUri, typeof(TModel).Name) as Contracts.Client.IAdapterAccess<TContract>;
         }
     }
 }

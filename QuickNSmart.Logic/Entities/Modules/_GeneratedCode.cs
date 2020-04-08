@@ -17,6 +17,28 @@ namespace QuickNSmart.Logic.Entities.Modules.Language
 		}
 		partial void Constructing();
 		partial void Constructed();
+		public System.String AppName
+		{
+			get
+			{
+				OnAppNameReading();
+				return _appName;
+			}
+			set
+			{
+				bool handled = false;
+				OnAppNameChanging(ref handled, ref _appName);
+				if (handled == false)
+				{
+					this._appName = value;
+				}
+				OnAppNameChanged();
+			}
+		}
+		private System.String _appName;
+		partial void OnAppNameReading();
+		partial void OnAppNameChanging(ref bool handled, ref System.String _appName);
+		partial void OnAppNameChanged();
 		public QuickNSmart.Contracts.Modules.Language.LanguageCode KeyLanguage
 		{
 			get
@@ -117,6 +139,7 @@ namespace QuickNSmart.Logic.Entities.Modules.Language
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
+				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;
 				ValueLanguage = other.ValueLanguage;
@@ -140,11 +163,11 @@ namespace QuickNSmart.Logic.Entities.Modules.Language
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(AppName, other.AppName) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, KeyLanguage, Key, ValueLanguage, Value);
+			return HashCode.Combine(Id, Timestamp, AppName, KeyLanguage, Key, ValueLanguage, HashCode.Combine(Value));
 		}
 	}
 }

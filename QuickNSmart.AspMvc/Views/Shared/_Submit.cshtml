@@ -1,7 +1,8 @@
-@*@QnSBaseCode*@
+﻿@*@QnSBaseCode*@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using QuickNSmart.AspMvc.Modules.Session
+@model QuickNSmart.AspMvc.Models.SubmitCmd
 @*Begin:Header*@
 @{
 #if DEBUG
@@ -13,16 +14,15 @@
     Func<string, string> translate = sessionWrapper.Translate;
 }
 @*End:Header*@
-@{
-    var title = translate("Home Page");
 
-    ViewData["Title"] = title;
-}
-
-<div class="text-center">
-    <h1 class="display-4">@translate("Welcome")</h1>
-    <p></p>
-    <h4>@translate("to the QuickNSmart")</h4>
+<div class="d-flex bg-transparent">
+    @if (Model.RightAlign)
+    {
+        <div class="mr-auto"></div>
+    }
+    <div class="p-sm-2">
+        <input type="submit" value="@translate(Model.SubmitText)" class="@Model.SubmitCss" style="@Model.SubmitStyle" />
+    </div>
 </div>
 
 @*Begin:Footer*@

@@ -3,12 +3,8 @@
 
 namespace QuickNSmart.AspMvc.Models
 {
-    public class SubmitBackCmd
+    public class SubmitBackCmd : SubmitCmd
     {
-        public string SubmitText { get; set; } = "Save";
-        public string SubmitCss { get; set; } = "btn btn-primary";
-        public string SubmitStyle { get; set; } = "min-width: 8em;";
-
         public string BackText { get; set; } = "Back to List";
         public string BackAction { get; set; } = "Index";
         public string BackController { get; set; }

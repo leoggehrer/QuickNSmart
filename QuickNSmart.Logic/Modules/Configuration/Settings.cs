@@ -1,25 +1,28 @@
 ﻿//@QnSBaseCode
 //MdStart
 using Microsoft.Extensions.Configuration;
+using CommonBase.Extensions;
 
 namespace QuickNSmart.Logic.Modules.Configuration
 {
     public static partial class Settings
     {
-        private static IConfigurationRoot _configurationRoot = null;
+        private static IConfiguration _configuration;
 
-        public static void SetConfiguration(IConfigurationRoot configurationRoot)
+        public static void SetConfiguration(IConfiguration configuration)
         {
-            _configurationRoot = configurationRoot;
+            configuration.CheckArgument(nameof(configuration));
+
+            _configuration = configuration;
         }
 
         public static string Get(string key)
         {
             var result = default(string);
 
-            if (_configurationRoot != null)
+            if (_configuration != null)
             {
-                result = _configurationRoot[key]; 
+                result = _configuration[key]; 
             }
             return result;
         }
@@ -27,9 +30,9 @@ namespace QuickNSmart.Logic.Modules.Configuration
         {
             var result = defaultValue;
 
-            if (_configurationRoot != null)
+            if (_configuration != null)
             {
-                result = _configurationRoot.GetValue<string>(key, defaultValue);
+                result = _configuration.GetValue<string>(key, defaultValue);
             }
             return result;
         }
@@ -37,9 +40,9 @@ namespace QuickNSmart.Logic.Modules.Configuration
         {
             var result = default(IConfigurationSection);
                 
-            if (_configurationRoot != null)
+            if (_configuration != null)
             {
-                result = _configurationRoot.GetSection(key);
+                result = _configuration.GetSection(key);
             }
             return result;
         }

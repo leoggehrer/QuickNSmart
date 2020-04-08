@@ -46,13 +46,11 @@ namespace QuickNSmart.AspMvc
         {
             BeginConfigure(app, env);
 
+            var x = app.ApplicationServices.GetService<IConfigurationRoot>();
+            
             // Transfer the application settings to the logic.
-            var builder = new ConfigurationBuilder()
-                .SetBasePath(env.ContentRootPath)
-                .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
-                .AddJsonFile($"appsettings.{env.EnvironmentName}.json", optional: true)
-                .AddEnvironmentVariables();
-            Logic.Modules.Configuration.Settings.SetConfiguration(builder.Build());
+            Logic.Modules.Configuration.Settings.SetConfiguration(Configuration);
+            var val = Logic.Modules.Configuration.Settings.Get("Logging:LogLevel:Default");
 
             if (env.IsDevelopment())
             {

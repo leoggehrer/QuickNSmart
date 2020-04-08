@@ -11,6 +11,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class Generator
     {
+        public enum InterfaceType
+        {
+            Unknown,
+            Business,
+            Module,
+            Persistence,
+        }
+
         public SolutionProperties SolutionProperties { get; private set; }
         public Generator(SolutionProperties solutionProperties)
         {
@@ -68,6 +76,24 @@ namespace CSharpCodeGenerator.ConApp.Generation
                         .Where(t => t.IsInterface
                                  && t.FullName.Contains(".Business."));
         }
+        #endregion Assembly-Helpers
+
+        #region Interface helpers
+        internal static InterfaceType GetInterfaceType(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = InterfaceType.Unknown;
+
+            if (type.Namespace.Contains(ContractsProject.BusinessSubName))
+                result = InterfaceType.Business;
+            else if (type.Namespace.Contains(ContractsProject.ModulesSubName))
+                result = InterfaceType.Module;
+            else if (type.Namespace.Contains(ContractsProject.PersistenceSubName))
+                result = InterfaceType.Persistence;
+
+            return result;
+        }
         internal static bool HasIdentifiableBase(Type type)
         {
             type.CheckArgument(nameof(type));
@@ -85,12 +111,23 @@ namespace CSharpCodeGenerator.ConApp.Generation
             type.CheckArgument(nameof(type));
 
             var result = default(Type);
-            
+
             if (type.IsInterface)
             {
-                result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.BusinessSubName)
-                                                               || i.Namespace.Contains(ContractsProject.ModulesSubName)
-                                                               || i.Namespace.Contains(ContractsProject.PersistenceSubName));
+                var interfaceType = GetInterfaceType(type);
+
+                if (interfaceType == InterfaceType.Business)
+                {
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.BusinessSubName));
+                }
+                else if (interfaceType == InterfaceType.Module)
+                {
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.ModulesSubName));
+                }
+                else if (interfaceType == InterfaceType.Persistence)
+                {
+                    result = type.GetInterfaces().FirstOrDefault(i => i.Namespace.Contains(ContractsProject.PersistenceSubName));
+                }
             }
             return result;
         }
@@ -115,7 +152,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
             GetBaseInterfacesRec(type, result);
             return result;
         }
-        #endregion Assembly-Helpers
+        #endregion Interface helpers
+
+
 
         /// <summary>
         /// Diese Methode ueberprueft, ob der Typ ein Schnittstellen-Typ ist. Wenn nicht,

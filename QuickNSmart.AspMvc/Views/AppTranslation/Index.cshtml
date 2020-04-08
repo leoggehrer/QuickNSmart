@@ -1,0 +1,84 @@
+@*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using QuickNSmart.AspMvc.Modules.Session
+@model QuickNSmart.AspMvc.Models.Modules.Language.AppTranslation
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+}
+
+@{
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+@{
+    string title = translate("AppTranslation");
+
+    ViewData["Title"] = title;
+}
+
+<h1>@title</h1>
+<p></p>
+<ul class="nav nav-pills nav-fill">
+    @foreach (var item in Model.NavLinks)
+    {
+        <li class="nav-item">
+            @if (item.Active)
+            {
+                <a class="nav-link bg-secondary active" href="@($"/{item.Controller}/{item.Action}")">@translate(item.Text)</a>
+            }
+            else
+            {
+                <a class="nav-link bg-light" href="@($"/{item.Controller}/{item.Action}")">@translate(item.Text)</a>
+            }
+        </li>
+    }
+</ul>
+<p></p>
+
+@if (Model.HasError)
+{
+    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+}
+
+<form asp-action="@Model.Action" method="post">
+    @await Html.PartialAsync("_Submit", new SubmitCmd { RightAlign = true })
+    @{
+        var index = 0;
+        var keyLabel = translate("Key");
+        var valueLabel = translate("Value");
+
+        foreach (var item in Model.Translations)
+        {
+            <p></p>
+            <div class="row border border-secondary">
+                <div class="col-md-8">
+                    <div class="form-group">
+                        <label class="control-label">@keyLabel</label>
+                        <textarea name="@($"key[{index}]")" class="form-control">@item.Key</textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="control-label">@valueLabel</label>
+                        <textarea name="@($"value[{index++}]")" class="form-control">@item.Value</textarea>
+                    </div>
+                </div>
+            </div>
+        }
+    }
+    @await Html.PartialAsync("_Submit", new SubmitCmd { RightAlign = true })
+</form>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

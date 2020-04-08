@@ -17,6 +17,28 @@ namespace QuickNSmart.Transfer.Modules.Language
 		}
 		partial void Constructing();
 		partial void Constructed();
+		public System.String AppName
+		{
+			get
+			{
+				OnAppNameReading();
+				return _appName;
+			}
+			set
+			{
+				bool handled = false;
+				OnAppNameChanging(ref handled, ref _appName);
+				if (handled == false)
+				{
+					this._appName = value;
+				}
+				OnAppNameChanged();
+			}
+		}
+		private System.String _appName;
+		partial void OnAppNameReading();
+		partial void OnAppNameChanging(ref bool handled, ref System.String _appName);
+		partial void OnAppNameChanged();
 		public QuickNSmart.Contracts.Modules.Language.LanguageCode KeyLanguage
 		{
 			get
@@ -117,6 +139,7 @@ namespace QuickNSmart.Transfer.Modules.Language
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
+				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;
 				ValueLanguage = other.ValueLanguage;
