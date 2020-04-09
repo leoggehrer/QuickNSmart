@@ -3,7 +3,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
@@ -20,10 +19,12 @@ namespace QuickNSmart.AspMvc.Controllers
 
         public IActionResult Index(string error = null)
         {
-            return RedirectToAction("NoTranslations");
+            string page = SessionWrapper.GetStringValue(nameof(page), "A");
+
+            return RedirectToAction("NoTranslations", new { page, error });
         }
 
-        public IActionResult NoTranslations(string error = null)
+        public IActionResult NoTranslations(string page = null, string error = null)
         {
             var model = new Models.Modules.Language.AppTranslation
             {
@@ -44,17 +45,20 @@ namespace QuickNSmart.AspMvc.Controllers
                 Controller = ControllerName,
                 Active = false,
             });
+            SessionWrapper.SetStringValue(nameof(page), page);
+
             Modules.Language.Translator.NoTranslations
+                                       .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.StartsWith(page))
                                        .OrderBy(i => i.Key)
                                        .ToList()
-                                       .ForEach(e => model.Translations.Add(e.Key, e.Value));
+                                       .ForEach(e => model.Entries.Add(e.Key, e.Value));
             return View("Index", model);
         }
-        public IActionResult Translations(string error = null)
+        public IActionResult Translations(string page = null, string error = null)
         {
             var model = new Models.Modules.Language.AppTranslation
             {
-                Action = "UpdateNoTranslation",
+                Action = "UpdateTranslation",
                 ActionError = error,
             };
             model.NavLinks.Add(new Models.ActionItem
@@ -71,10 +75,14 @@ namespace QuickNSmart.AspMvc.Controllers
                 Controller = ControllerName,
                 Active = true,
             });
+            page = string.IsNullOrEmpty(page) ? "A" : page;
+            SessionWrapper.SetStringValue(nameof(page), page);
+
             Modules.Language.Translator.Translations
+                                       .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.ToUpper().StartsWith(page))
                                        .OrderBy(i => i.Key)
                                        .ToList()
-                                       .ForEach(e => model.Translations.Add(e.Key, e.Value));
+                                       .ForEach(e => model.Entries.Add(e.Key, e.Value));
             return View("Index", model);
         }
 
@@ -83,19 +91,40 @@ namespace QuickNSmart.AspMvc.Controllers
         public IActionResult UpdateNoTranslation(IFormCollection formCollection)
         {
             var index = 0;
-            var action = nameof(Translations);
             var error = string.Empty;
-            var keyValuePairs = new List<KeyValuePair<string, string>>();
+            var action = nameof(Translations);
+            var identityUri = string.Empty;
+            var email = string.Empty;
+            var password = string.Empty;
+            var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
 
-            while (formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
+            if (formCollection.TryGetValue(nameof(identityUri), out StringValues stringValues))
+            {
+                identityUri = stringValues[0];
+            }
+            if (formCollection.TryGetValue(nameof(email), out stringValues))
+            {
+                email = stringValues[0];
+            }
+            if (formCollection.TryGetValue(nameof(password), out stringValues))
+            {
+                password = stringValues[0];
+            }
+
+            while (formCollection.TryGetValue($"id[{index}]", out StringValues idValues)
+                   && formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
                    && formCollection.TryGetValue($"value[{index++}]", out StringValues valueValues))
             {
-                keyValuePairs.Add(new KeyValuePair<string, string>(keyValues[0], valueValues[0]));
-
+                keyValuePairs.Add(new KeyValuePair<string, Models.Modules.Language.TranslationEntry>(keyValues[0],
+                    new Models.Modules.Language.TranslationEntry
+                    {
+                        Id = Convert.ToInt32(idValues[0]),
+                        Value = valueValues[0]
+                    }));
             }
             try
             {
-                Modules.Language.Translator.UpdateNoTranslations(keyValuePairs);
+                Modules.Language.Translator.UpdateNoTranslations(identityUri, email, password, keyValuePairs);
             }
             catch (Exception ex)
             {
@@ -112,17 +141,38 @@ namespace QuickNSmart.AspMvc.Controllers
             var index = 0;
             var action = nameof(Translations);
             var error = string.Empty;
-            var keyValuePairs = new List<KeyValuePair<string, string>>();
+            var identityUri = string.Empty;
+            var email = string.Empty;
+            var password = string.Empty;
+            var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
 
-            while (formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
+            if (formCollection.TryGetValue(nameof(identityUri), out StringValues stringValues))
+            {
+                identityUri = stringValues[0];
+            }
+            if (formCollection.TryGetValue(nameof(email), out stringValues))
+            {
+                email = stringValues[0];
+            }
+            if (formCollection.TryGetValue(nameof(password), out stringValues))
+            {
+                password = stringValues[0];
+            }
+
+            while (formCollection.TryGetValue($"id[{index}]", out StringValues idValues)
+                   && formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
                    && formCollection.TryGetValue($"value[{index++}]", out StringValues valueValues))
             {
-                keyValuePairs.Add(new KeyValuePair<string, string>(keyValues[0], valueValues[0]));
-
+                keyValuePairs.Add(new KeyValuePair<string, Models.Modules.Language.TranslationEntry>(keyValues[0],
+                    new Models.Modules.Language.TranslationEntry
+                    {
+                        Id = Convert.ToInt32(idValues[0]),
+                        Value = valueValues[0]
+                    }));
             }
             try
             {
-                Modules.Language.Translator.UpdateTranslations(keyValuePairs);
+                Modules.Language.Translator.UpdateTranslations(identityUri, email, password, keyValuePairs);
             }
             catch (Exception ex)
             {

@@ -49,9 +49,7 @@ namespace QuickNSmart.Logic.Modules.Security
         }
         public static bool CheckToken(string token)
         {
-            SecurityToken validatedToken;
-
-            return CheckToken(token, out validatedToken);
+            return CheckToken(token, out _);
         }
         internal static bool CheckToken(string token, out SecurityToken validatedToken)
         {

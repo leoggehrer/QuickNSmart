@@ -14,12 +14,20 @@
 @{
     SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
     Func<string, string> translate = sessionWrapper.Translate;
+    Func<string, string, string> translate2 = sessionWrapper.Translate;
 }
 @*End:Header*@
 @{
+    string all = "All";
+    string page = string.Empty;
+    string activeHref = string.Empty;
     string title = translate("AppTranslation");
 
     ViewData["Title"] = title;
+    if (sessionWrapper.HasValue(nameof(page)))
+    {
+        page = sessionWrapper.GetStringValue(nameof(page), all);
+    }
 }
 
 <h1>@title</h1>
@@ -30,7 +38,9 @@
         <li class="nav-item">
             @if (item.Active)
             {
-                <a class="nav-link bg-secondary active" href="@($"/{item.Controller}/{item.Action}")">@translate(item.Text)</a>
+                activeHref = $"/{item.Controller}/{item.Action}";
+
+                <a class="nav-link bg-secondary active" href="@activeHref">@translate(item.Text)</a>
             }
             else
             {
@@ -46,25 +56,72 @@
     <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
 }
 
+@{
+    char chrStart = 'A', chrEnd = 'Z';
+    <div class="d-flex justify-content-center">
+        @for (char chrRun = chrStart; chrRun <= chrEnd; chrRun++)
+        {
+            string strRun = Char.ToString(chrRun);
+
+            if (chrRun.ToString().Equals(page))
+            {
+                <div class="p-sm-0"><a class="page-link" style="background-color: lightgray;" href="@($"{activeHref}?page={strRun}")">@strRun</a></div>
+            }
+            else
+            {
+                <div class="p-sm-0"><a class="page-link" href="@($"{activeHref}?page={strRun}")">@strRun</a></div>
+            }
+        }
+        @if (string.IsNullOrEmpty(page))
+        {
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" style="background-color: lightgray;" href="@($"{activeHref}?page={all}")">@translate2($"TranslatorFilter.All", all)</a></div>
+        }
+        else
+        {
+            <div class="p-0" style="margin-left: 10px;"><a class="page-link" href="@($"{activeHref}?page={all}")">@translate2($"TranslatorFilter.All", all)</a></div>
+        }
+    </div>
+}
+
 <form asp-action="@Model.Action" method="post">
     @await Html.PartialAsync("_Submit", new SubmitCmd { RightAlign = true })
+    <div class="form-group row">
+        <label for="staticIdentity" class="col-sm-2 col-form-label">@translate("IdentityUri")</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="translatorIdentityUri" name="identityUri">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="staticEmail" class="col-sm-2 col-form-label">@translate("Email")</label>
+        <div class="col-sm-10">
+            <input type="text" class="form-control" id="translatorEmail" name="email">
+        </div>
+    </div>
+    <div class="form-group row">
+        <label for="staticPassword" class="col-sm-2 col-form-label">@translate("Password")</label>
+        <div class="col-sm-10">
+            <input type="password" class="form-control" id="translatorPassword" name="password">
+        </div>
+    </div>
+
     @{
         var index = 0;
         var keyLabel = translate("Key");
         var valueLabel = translate("Value");
 
-        foreach (var item in Model.Translations)
+        foreach (var item in Model.Entries)
         {
             <p></p>
+            <input type="hidden" name="@($"id[{index}]")" value="@item.Value.Id" />
             <div class="row border border-secondary">
-                <div class="col-md-8">
+                <div class="col-md-12">
                     <div class="form-group">
                         <label class="control-label">@keyLabel</label>
                         <textarea name="@($"key[{index}]")" class="form-control">@item.Key</textarea>
                     </div>
                     <div class="form-group">
                         <label class="control-label">@valueLabel</label>
-                        <textarea name="@($"value[{index++}]")" class="form-control">@item.Value</textarea>
+                        <textarea name="@($"value[{index++}]")" class="form-control">@item.Value.Value</textarea>
                     </div>
                 </div>
             </div>

@@ -124,160 +124,146 @@ namespace QuickNSmart.Adapters.Service
 
         public async Task<TContract> GetByIdAsync(int id)
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/GetById/{id}").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/GetById/{id}").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel>(contentData, DeserializerOptions).ConfigureAwait(false);
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel>(contentData, DeserializerOptions).ConfigureAwait(false);
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<IEnumerable<TContract>> GetPageListAsync(int pageIndex, int pageSize)
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/GetPageList/{pageIndex}/{pageSize}").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/GetPageList/{pageIndex}/{pageSize}").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<IEnumerable<TContract>> GetAllAsync()
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/GetAll").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/GetAll").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
 
         public async Task<IEnumerable<TContract>> QueryPageListAsync(string predicate, int pageIndex, int pageSize)
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/QueryPageList/{predicate}/{pageIndex}/{pageSize}").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/QueryPageList/{predicate}/{pageIndex}/{pageSize}").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<IEnumerable<TContract>> QueryAllAsync(string predicate)
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/QueryAll/{predicate}").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/QueryAll/{predicate}").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
+            }
+            else
+            {
+                string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {stringData}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel[]>(contentData, DeserializerOptions).ConfigureAwait(false) as IEnumerable<TContract>;
-                }
-                else
-                {
-                    string stringData = await response.Content.ReadAsStringAsync().ConfigureAwait(false);
-                    string errorMessage = $"{response.ReasonPhrase}: {stringData}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
 
         public async Task<TContract> CreateAsync()
         {
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var response = await client.GetAsync($"{ExtUri}/Create").ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                HttpResponseMessage response = await client.GetAsync($"{ExtUri}/Create").ConfigureAwait(false);
+                var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var contentData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel>(contentData, DeserializerOptions).ConfigureAwait(false);
+            }
+            else
+            {
+                string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
 
-                    return await JsonSerializer.DeserializeAsync<TModel>(contentData, DeserializerOptions).ConfigureAwait(false);
-                }
-                else
-                {
-                    string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<TContract> InsertAsync(TContract entity)
         {
             entity.CheckArgument(nameof(entity));
 
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var jsonData = JsonSerializer.Serialize(ToModel(entity));
+            var contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
+            var response = await client.PostAsync(ExtUri, contentData).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                string jsonData = JsonSerializer.Serialize(ToModel(entity));
-                StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
-                HttpResponseMessage response = await client.PostAsync(ExtUri, contentData).ConfigureAwait(false);
+                var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                return await JsonSerializer.DeserializeAsync<TModel>(resultData, DeserializerOptions).ConfigureAwait(false);
+            }
+            else
+            {
+                string errorMessage = $"{response.ReasonPhrase}: { await response.Content.ReadAsStringAsync().ConfigureAwait(false) }";
 
-                    return await JsonSerializer.DeserializeAsync<TModel>(resultData, DeserializerOptions).ConfigureAwait(false);
-                }
-                else
-                {
-                    string errorMessage = $"{response.ReasonPhrase}: { await response.Content.ReadAsStringAsync().ConfigureAwait(false) }";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<TContract> UpdateAsync(TContract entity)
@@ -303,16 +289,15 @@ namespace QuickNSmart.Adapters.Service
 
         public async Task DeleteAsync(int id)
         {
-            using (var client = GetClient(BaseUri))
-            {
-                HttpResponseMessage response = await client.DeleteAsync($"{ExtUri}/{id}").ConfigureAwait(false);
-                if (response.IsSuccessStatusCode == false)
-                {
-                    string errorMessage = $"{response.ReasonPhrase}: { await response.Content.ReadAsStringAsync().ConfigureAwait(false) }";
+            using var client = GetClient(BaseUri);
+            var response = await client.DeleteAsync($"{ExtUri}/{id}").ConfigureAwait(false);
 
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+            if (response.IsSuccessStatusCode == false)
+            {
+                string errorMessage = $"{response.ReasonPhrase}: { await response.Content.ReadAsStringAsync().ConfigureAwait(false) }";
+
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
 
@@ -326,19 +311,17 @@ namespace QuickNSmart.Adapters.Service
             };
             invokeParam.SetParameters(parameters);
 
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var jsonData = JsonSerializer.Serialize(invokeParam);
+            var contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
+            var response = await client.PostAsync($"{ExtUri}/CallAction", contentData).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode == false)
             {
-                string jsonData = JsonSerializer.Serialize(invokeParam);
-                StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
-                HttpResponseMessage response = await client.PostAsync($"{ExtUri}/CallAction", contentData).ConfigureAwait(false);
+                string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
 
-                if (response.IsSuccessStatusCode == false)
-                {
-                    string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
         public async Task<TResult> InvokeFunctionAsync<TResult>(string name, params object[] parameters)
@@ -351,26 +334,24 @@ namespace QuickNSmart.Adapters.Service
             };
             invokeParam.SetParameters(parameters);
 
-            using (var client = GetClient(BaseUri))
+            using var client = GetClient(BaseUri);
+            var jsonData = JsonSerializer.Serialize(invokeParam);
+            var contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
+            var response = await client.PostAsync($"{ExtUri}/CallFunction", contentData).ConfigureAwait(false);
+
+            if (response.IsSuccessStatusCode)
             {
-                string jsonData = JsonSerializer.Serialize(invokeParam);
-                StringContent contentData = new StringContent(jsonData, Encoding.UTF8, MediaType);
-                HttpResponseMessage response = await client.PostAsync($"{ExtUri}/CallFunction", contentData).ConfigureAwait(false);
+                var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
+                var invokeResult = await JsonSerializer.DeserializeAsync<Transfer.InvokeTypes.InvokeReturnValue>(resultData, DeserializerOptions).ConfigureAwait(false);
 
-                if (response.IsSuccessStatusCode)
-                {
-                    var resultData = await response.Content.ReadAsStreamAsync().ConfigureAwait(false);
-                    var invokeResult = await JsonSerializer.DeserializeAsync<Transfer.InvokeTypes.InvokeReturnValue>(resultData, DeserializerOptions).ConfigureAwait(false);
+                return JsonSerializer.Deserialize<TResult>(invokeResult.JsonData);
+            }
+            else
+            {
+                string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
 
-                    return JsonSerializer.Deserialize<TResult>(invokeResult.JsonData);
-                }
-                else
-                {
-                    string errorMessage = $"{response.ReasonPhrase}: {await response.Content.ReadAsStringAsync().ConfigureAwait(false)}";
-
-                    System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
-                    throw new AdapterException((int)response.StatusCode, errorMessage);
-                }
+                System.Diagnostics.Debug.WriteLine("{0} ({1})", (int)response.StatusCode, errorMessage);
+                throw new AdapterException((int)response.StatusCode, errorMessage);
             }
         }
     }

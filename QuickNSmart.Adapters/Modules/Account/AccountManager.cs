@@ -69,9 +69,10 @@ namespace QuickNSmart.Adapters.Modules.Account
             }
             else if (Adapter == AdapterType.Service)
             {
-                var serviceInvoker = new Service.InvokeServiceAdapter(BaseUri);
-
-                serviceInvoker.SessionToken = sessionToken;
+                var serviceInvoker = new Service.InvokeServiceAdapter(BaseUri)
+                {
+                    SessionToken = sessionToken
+                };
                 await serviceInvoker.LogoutAsync(sessionToken).ConfigureAwait(false);
             }
         }

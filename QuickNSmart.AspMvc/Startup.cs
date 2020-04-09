@@ -50,7 +50,6 @@ namespace QuickNSmart.AspMvc
             
             // Transfer the application settings to the logic.
             Logic.Modules.Configuration.Settings.SetConfiguration(Configuration);
-            var val = Logic.Modules.Configuration.Settings.Get("Logging:LogLevel:Default");
 
             if (env.IsDevelopment())
             {

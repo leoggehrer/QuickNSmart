@@ -161,13 +161,14 @@ namespace QuickNSmart.Logic.Modules.Security
                 {
                     SessionToken = SystemAuthorizationToken
                 };
-                var entity = new ActionLog();
-
-                entity.IdentityId = identityId;
-                entity.Time = DateTime.Now;
-                entity.Subject = subject;
-                entity.Action = action;
-                entity.Info = info;
+                var entity = new ActionLog
+                {
+                    IdentityId = identityId,
+                    Time = DateTime.Now,
+                    Subject = subject,
+                    Action = action,
+                    Info = info
+                };
                 await actionLogCtrl.InsertAsync(entity).ConfigureAwait(false);
                 await actionLogCtrl.SaveChangesAsync().ConfigureAwait(false);
             });

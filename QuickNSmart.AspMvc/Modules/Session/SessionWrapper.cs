@@ -69,6 +69,12 @@ namespace QuickNSmart.AspMvc.Modules.Session
         {
             return Session.Get<string>(key);
         }
+        public string GetStringValue(string key, string defaultValue)
+        {
+            var result = Session.Get<string>(key);
+
+            return string.IsNullOrEmpty(result) ? defaultValue : result;
+        }
         #endregion String-Access
 
         #region Properties

@@ -28,6 +28,7 @@ namespace QuickNSmart.AspMvc.Modules.Session
         #region String-Access
         void SetStringValue(string key, string value);
         string GetStringValue(string key);
+        string GetStringValue(string key, string defaultValue);
         #endregion String-Access
 
         #region Properties

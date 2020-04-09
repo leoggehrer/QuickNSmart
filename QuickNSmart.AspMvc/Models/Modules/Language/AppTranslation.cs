@@ -8,7 +8,7 @@ namespace QuickNSmart.AspMvc.Models.Modules.Language
     {
         public string Action { get; set; }
         public List<ActionItem> NavLinks { get; } = new List<ActionItem>();
-        public Dictionary<string, string> Translations { get; } = new Dictionary<string, string>();
+        public Dictionary<string, TranslationEntry> Entries { get; } = new Dictionary<string, TranslationEntry>();
     }
 }
 //MdEnd
