@@ -14,19 +14,23 @@
     Func<string, string> translate = sessionWrapper.Translate;
 }
 @*End:Header*@
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+}
 
-    <div class="d-flex bg-transparent">
-        @if (Model.RightAlign)
-        {
-            <div class="mr-auto"></div>
-        }
-        <div class="p-sm-2">
-            @Html.ActionLink(translate(Model.BackText), Model.BackAction, Model.BackController, null, new { @class = Model.BackCss, style = Model.BackStyle })
-        </div>
-        <div class="p-sm-2">
-            <input type="submit" value="@translate(Model.SubmitText)" class="@Model.SubmitCss" style="@Model.SubmitStyle" />
-        </div>
+<div class="d-flex bg-transparent">
+    @if (Model.RightAlign)
+    {
+        <div class="mr-auto"></div>
+    }
+    <div class="p-sm-2">
+        @Html.ActionLink(translateFor(Model.BackText), Model.BackAction, Model.BackController, null, new { @class = Model.BackCss, style = Model.BackStyle })
     </div>
+    <div class="p-sm-2">
+        <input type="submit" value="@translateFor(Model.SubmitText)" class="@Model.SubmitCss" style="@Model.SubmitStyle" />
+    </div>
+</div>
 
 @*Begin:Footer*@
 @{

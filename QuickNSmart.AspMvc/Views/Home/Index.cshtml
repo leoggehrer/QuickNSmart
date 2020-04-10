@@ -10,19 +10,21 @@
     @Html.Raw(beginLabel)
 #endif
     SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
-    Func<string, string> translate = sessionWrapper.Translate;
+    Func<string, string, string> translate2 = sessionWrapper.Translate;
 }
 @*End:Header*@
 @{
-    var title = translate("Home Page");
+    var title = translate2("Home.Page", "Home Page");
 
     ViewData["Title"] = title;
 }
 
 <div class="text-center">
-    <h1 class="display-4">@translate("Welcome")</h1>
+    <h1 class="display-4">@translate2("Home.Title", "Welcome")</h1>
     <p></p>
-    <h4>@translate("to the QuickNSmart")</h4>
+    <h4>@translate2("Home.Title.Text", "to the QuickNSmart")</h4>
+    <p></p>
+    <p>@translate2("Home.Body.Text", string.Empty)</p>
 </div>
 
 @*Begin:Footer*@

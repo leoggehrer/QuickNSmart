@@ -21,39 +21,9 @@ namespace QuickNSmart.AspMvc.Controllers
         {
             string page = SessionWrapper.GetStringValue(nameof(page), "A");
 
-            return RedirectToAction("NoTranslations", new { page, error });
+            return RedirectToAction("Translations", new { page, error });
         }
 
-        public IActionResult NoTranslations(string page = null, string error = null)
-        {
-            var model = new Models.Modules.Language.AppTranslation
-            {
-                Action = "UpdateNoTranslation",
-                ActionError = error,
-            };
-            model.NavLinks.Add(new Models.ActionItem
-            {
-                Text = "Texts with no translation",
-                Action = "NoTranslations",
-                Controller = ControllerName,
-                Active = true,
-            });
-            model.NavLinks.Add(new Models.ActionItem
-            {
-                Text = "Texts with translations",
-                Action = "Translations",
-                Controller = ControllerName,
-                Active = false,
-            });
-            SessionWrapper.SetStringValue(nameof(page), page);
-
-            Modules.Language.Translator.NoTranslations
-                                       .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.StartsWith(page))
-                                       .OrderBy(i => i.Key)
-                                       .ToList()
-                                       .ForEach(e => model.Entries.Add(e.Key, e.Value));
-            return View("Index", model);
-        }
         public IActionResult Translations(string page = null, string error = null)
         {
             var model = new Models.Modules.Language.AppTranslation
@@ -63,17 +33,17 @@ namespace QuickNSmart.AspMvc.Controllers
             };
             model.NavLinks.Add(new Models.ActionItem
             {
-                Text = "Texts with no translation",
-                Action = "NoTranslations",
-                Controller = ControllerName,
-                Active = false,
-            });
-            model.NavLinks.Add(new Models.ActionItem
-            {
                 Text = "Texts with translations",
                 Action = "Translations",
                 Controller = ControllerName,
                 Active = true,
+            });
+            model.NavLinks.Add(new Models.ActionItem
+            {
+                Text = "Texts with no translation",
+                Action = "NoTranslations",
+                Controller = ControllerName,
+                Active = false,
             });
             page = string.IsNullOrEmpty(page) ? "A" : page;
             SessionWrapper.SetStringValue(nameof(page), page);
@@ -85,53 +55,36 @@ namespace QuickNSmart.AspMvc.Controllers
                                        .ForEach(e => model.Entries.Add(e.Key, e.Value));
             return View("Index", model);
         }
-
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public IActionResult UpdateNoTranslation(IFormCollection formCollection)
+        public IActionResult NoTranslations(string page = null, string error = null)
         {
-            var index = 0;
-            var error = string.Empty;
-            var action = nameof(Translations);
-            var identityUri = string.Empty;
-            var email = string.Empty;
-            var password = string.Empty;
-            var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
+            var model = new Models.Modules.Language.AppTranslation
+            {
+                Action = "UpdateNoTranslation",
+                ActionError = error,
+            };
+            model.NavLinks.Add(new Models.ActionItem
+            {
+                Text = "Texts with translations",
+                Action = "Translations",
+                Controller = ControllerName,
+                Active = false,
+            });
+            model.NavLinks.Add(new Models.ActionItem
+            {
+                Text = "Texts with no translation",
+                Action = "NoTranslations",
+                Controller = ControllerName,
+                Active = true,
+            });
+            page = string.IsNullOrEmpty(page) ? "A" : page;
+            SessionWrapper.SetStringValue(nameof(page), page);
 
-            if (formCollection.TryGetValue(nameof(identityUri), out StringValues stringValues))
-            {
-                identityUri = stringValues[0];
-            }
-            if (formCollection.TryGetValue(nameof(email), out stringValues))
-            {
-                email = stringValues[0];
-            }
-            if (formCollection.TryGetValue(nameof(password), out stringValues))
-            {
-                password = stringValues[0];
-            }
-
-            while (formCollection.TryGetValue($"id[{index}]", out StringValues idValues)
-                   && formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
-                   && formCollection.TryGetValue($"value[{index++}]", out StringValues valueValues))
-            {
-                keyValuePairs.Add(new KeyValuePair<string, Models.Modules.Language.TranslationEntry>(keyValues[0],
-                    new Models.Modules.Language.TranslationEntry
-                    {
-                        Id = Convert.ToInt32(idValues[0]),
-                        Value = valueValues[0]
-                    }));
-            }
-            try
-            {
-                Modules.Language.Translator.UpdateNoTranslations(identityUri, email, password, keyValuePairs);
-            }
-            catch (Exception ex)
-            {
-                error = GetExceptionError(ex);
-                action = nameof(NoTranslations);
-            }
-            return RedirectToAction(action, new { error });
+            Modules.Language.Translator.NoTranslations
+                                       .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.StartsWith(page))
+                                       .OrderBy(i => i.Key)
+                                       .ToList()
+                                       .ForEach(e => model.Entries.Add(e.Key, e.Value));
+            return View("Index", model);
         }
 
         [HttpPost]
@@ -140,24 +93,9 @@ namespace QuickNSmart.AspMvc.Controllers
         {
             var index = 0;
             var action = nameof(Translations);
+            var page = SessionWrapper.GetStringValue("page");
             var error = string.Empty;
-            var identityUri = string.Empty;
-            var email = string.Empty;
-            var password = string.Empty;
             var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
-
-            if (formCollection.TryGetValue(nameof(identityUri), out StringValues stringValues))
-            {
-                identityUri = stringValues[0];
-            }
-            if (formCollection.TryGetValue(nameof(email), out stringValues))
-            {
-                email = stringValues[0];
-            }
-            if (formCollection.TryGetValue(nameof(password), out stringValues))
-            {
-                password = stringValues[0];
-            }
 
             while (formCollection.TryGetValue($"id[{index}]", out StringValues idValues)
                    && formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
@@ -172,13 +110,46 @@ namespace QuickNSmart.AspMvc.Controllers
             }
             try
             {
-                Modules.Language.Translator.UpdateTranslations(identityUri, email, password, keyValuePairs);
+                Modules.Language.Translator.UpdateTranslations(keyValuePairs);
             }
             catch (Exception ex)
             {
                 error = GetExceptionError(ex);
             }
-            return RedirectToAction(action, new { error });
+            return RedirectToAction(action, new { page, error });
+        }
+
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult UpdateNoTranslation(IFormCollection formCollection)
+        {
+            var index = 0;
+            var action = nameof(NoTranslations);
+            var page = SessionWrapper.GetStringValue("page");
+            var error = string.Empty;
+            var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
+
+            while (formCollection.TryGetValue($"id[{index}]", out StringValues idValues)
+                   && formCollection.TryGetValue($"key[{index}]", out StringValues keyValues)
+                   && formCollection.TryGetValue($"value[{index++}]", out StringValues valueValues))
+            {
+                keyValuePairs.Add(new KeyValuePair<string, Models.Modules.Language.TranslationEntry>(keyValues[0],
+                    new Models.Modules.Language.TranslationEntry
+                    {
+                        Id = Convert.ToInt32(idValues[0]),
+                        Value = valueValues[0]
+                    }));
+            }
+            try
+            {
+                Modules.Language.Translator.UpdateNoTranslations(keyValuePairs);
+            }
+            catch (Exception ex)
+            {
+                error = GetExceptionError(ex);
+                action = nameof(NoTranslations);
+            }
+            return RedirectToAction(action, new { page, error });
         }
     }
 }

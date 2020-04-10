@@ -10,15 +10,22 @@
     @Html.Raw(beginLabel)
 #endif
     SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
-    Func<string, string> translate = sessionWrapper.Translate;
+    Func<string, string, string> translate2 = sessionWrapper.Translate;
 }
 @*End:Header*@
 @{
-    ViewData["Title"] = "Privacy Policy";
-}
-<h1>@ViewData["Title"]</h1>
+    var title = translate2("Privacy.Page", "Privacy Policy Page");
 
-<p>Use this page to detail your site's privacy policy.</p>
+    ViewData["Title"] = title;
+}
+
+<div class="text-center">
+    <h1 class="display-4">@translate2("Privacy.Welcome", "Privacy Policy")</h1>
+    <p></p>
+    <h4>@translate2("Home.Welcome.Text", "to the QuickNSmart")</h4>
+    <p></p>
+    <p>@translate2("Home.Text", string.Empty)</p>
+</div>
 
 @*Begin:Footer*@
 @{

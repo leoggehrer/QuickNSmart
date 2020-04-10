@@ -15,24 +15,27 @@
 }
 @*End:Header*@
 @{
-    string title = translate("Delete");
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    string action = ViewContext.RouteData.Values["action"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    string title = translateFor(action);
 
     ViewData["Title"] = title;
 }
 
 <h1>@title</h1>
 
-<form asp-action="Delete" method="post">
-    <div class="d-flex bg-transparent">
-        <div class="p-sm-2 mr-auto">
-            <h4>Identity</h4>
-        </div>
+<div class="d-flex bg-transparent">
+    <div class="p-sm-2 mr-auto">
+        <h4>@translate(controller)</h4>
     </div>
-    <hr />
+</div>
+<hr />
 
+<form asp-action="Delete" method="post">
     @if (Model.HasError)
     {
-        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
     }
     else
     {
@@ -46,7 +49,7 @@
 </form>
 
 <div style="margin-top: 1em;">
-    <h4>Rolen</h4 >
+    <h4>Rolen</h4>
     @await Html.PartialAsync("_RoleListDetails", Model.Roles)
 </div>
 @*Begin:Footer*@

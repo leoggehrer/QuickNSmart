@@ -26,9 +26,12 @@
 </environment>
 
 @{
-    string title = translate("Account");
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    string action = ViewContext.RouteData.Values["action"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    string title = translateFor(action);
     string subTitle = translate("Please provide your user credentials to proceed:");
-    string submit = translate("Logon");
+    string submit = translateFor("Logon");
     string forgotPassword = translate("Forgot your password?");
 
     ViewData["Title"] = title;
@@ -62,12 +65,12 @@
                         <p></p>
                         <input name="@nameof(Model.Password)" type="password" class="form-control" placeholder="@translate("Logon.Password")" required />
                         <button class="btn btn-lg btn-primary btn-block" type="submit">
-                            @translate("Logon.Sign in")
+                            @translateFor("Sign in")
                         </button>
                     }
                     @if (Model.HasError)
                     {
-                        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+                        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
                     }
                 </div>
             </div>

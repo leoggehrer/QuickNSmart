@@ -27,6 +27,10 @@ namespace QuickNSmart.AspMvc.Modules.Language
         static partial void ClassConstructed();
 
         private static string BaseUri { get; set; } = string.Empty;
+        private static string IdentityUri { get; set; } = string.Empty;
+        private static string Email { get; set; } = string.Empty;
+        private static string Password { get; set; } = string.Empty;
+
         public static Contracts.Modules.Language.LanguageCode KeyLanguage { get; } = Contracts.Modules.Language.LanguageCode.En;
         public static Contracts.Modules.Language.LanguageCode ValueLanguage { get; } = Contracts.Modules.Language.LanguageCode.De;
 
@@ -42,12 +46,25 @@ namespace QuickNSmart.AspMvc.Modules.Language
             {
                 BaseUri = settingValue;
             }
+            settingValue = Logic.Modules.Configuration.Settings.Get("Translator:IdentityUri");
+            if (settingValue.HasContent())
+            {
+                IdentityUri = settingValue;
+            }
+            settingValue = Logic.Modules.Configuration.Settings.Get("Translator:Email");
+            if (settingValue.HasContent())
+            {
+                Email = settingValue;
+            }
+            settingValue = Logic.Modules.Configuration.Settings.Get("Translator:Password");
+            if (settingValue.HasContent())
+            {
+                Password = settingValue;
+            }
 
             BeginLoadTranslations(ref handled);
             if (handled == false)
             {
-                translations.Clear();
-                noTranslations.Clear();
                 LoadTranslations();
             }
             EndLoadTranslations();
@@ -61,6 +78,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                 var connector = Adapters.Connector.Create<Contracts.Modules.Language.ITranslation, Models.Modules.Language.Translation>();
                 var query = AsyncHelper.RunSync(() => connector.QueryAllAsync(predicate));
 
+                translations.Clear();
                 foreach (var item in query)
                 {
                     translations.Add(item.Key, new TranslationEntry { Id = item.Id, Value = item.Value });
@@ -146,21 +164,20 @@ namespace QuickNSmart.AspMvc.Modules.Language
             AsyncHelper.RunSync(() => trAccMngr.LogoutAsync(login.SessionToken));
         }
 
-        public static void UpdateTranslations(string identityUri, string email, string password, IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
+        public static void UpdateTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
         {
             keyValuePairs.CheckArgument(nameof(keyValuePairs));
 
             var handled = false;
 
-            BeginUpdateTranslations(identityUri, email, password, keyValuePairs, ref handled);
+            BeginUpdateTranslations(keyValuePairs, ref handled);
             if (handled == false)
             {
                 foreach (var item in keyValuePairs)
                 {
                     if (item.Key.HasContent()
                         && item.Value != null 
-                        && item.Value.Id > 0
-                        && item.Value.Value.HasContent())
+                        && item.Value.Id > 0)
                     {
                         var query = translations.Where(e => e.Value.Id == item.Value.Id);
 
@@ -181,7 +198,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                 var login = default(ILoginSession);
                 try
                 {
-                    login = TryLogon(identityUri, email, password);
+                    login = TryLogon(IdentityUri, Email, Password);
                     var connector = Adapters.Connector.Create<ITranslation, Translation>(login.SessionToken);
 
                     foreach (var item in translations.Where(i => i.Value.Changed))
@@ -195,7 +212,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                             AsyncHelper.RunSync(() => connector.UpdateAsync(entity));
                         }
                     }
-                    Init();
+                    LoadTranslations();
                 }
                 finally
                 {
@@ -205,60 +222,69 @@ namespace QuickNSmart.AspMvc.Modules.Language
             }
             EndUpdateTranslations();
         }
-        static partial void BeginUpdateTranslations(string identityUri, string email, string password, IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
+        static partial void BeginUpdateTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
         static partial void EndUpdateTranslations();
 
-        public static void UpdateNoTranslations(string identityUri, string email, string password, IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
+        public static void UpdateNoTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
         {
             keyValuePairs.CheckArgument(nameof(keyValuePairs));
 
             var handled = false;
 
-            BeginUpdateNoTranslations(identityUri, email, password, keyValuePairs, ref handled);
+            BeginUpdateNoTranslations(keyValuePairs, ref handled);
             if (handled == false)
             {
-                foreach (var item in keyValuePairs)
-                {
-                    if (item.Key.HasContent()
-                        && item.Value != null
-                        && item.Value.Id > 0
-                        && item.Value.Value.HasContent())
-                    {
-                        var query = noTranslations.Where(e => e.Value.Id == item.Value.Id);
+                //foreach (var item in keyValuePairs)
+                //{
+                //    if (item.Key.HasContent()
+                //        && item.Value != null
+                //        && item.Value.Id > 0)
+                //    {
+                //        var query = noTranslations.Where(e => e.Value.Id == item.Value.Id);
 
-                        if (query.Any())
-                        {
-                            var translation = query.ElementAt(0);
+                //        if (query.Any())
+                //        {
+                //            var translation = query.ElementAt(0);
 
-                            var changed = translation.Key.Equals(item.Key) == false
-                                          || translation.Value.Value.Equals(item.Value.Value) == false;
+                //            var changed = translation.Key.Equals(item.Key) == false
+                //                          || translation.Value.Value.Equals(item.Value.Value) == false;
 
-                            noTranslations.Remove(translation.Key);
-                            noTranslations.Add(item.Key, new TranslationEntry { Changed = changed, Id = item.Value.Id, Value = item.Value.Value });
-                        }
-                    }
-                }
+                //            noTranslations.Remove(translation.Key);
+                //            noTranslations.Add(item.Key, new TranslationEntry { Changed = changed, Id = item.Value.Id, Value = item.Value.Value });
+                //        }
+                //    }
+                //}
 
                 // Insert missing translations
                 Adapters.Connector.BaseUri = BaseUri;
                 var login = default(ILoginSession);
                 try
                 {
-                    login = TryLogon(identityUri, email, password);
+                    login = TryLogon(IdentityUri, Email, Password);
                     var connector = Adapters.Connector.Create<ITranslation, Translation>(login.SessionToken);
 
-                    foreach (var item in noTranslations.Where(i => i.Value.Changed))
+                    foreach (var item in keyValuePairs.Where(i => i.Key.HasContent()))
                     {
                         var entity = AsyncHelper.RunSync(() => connector.CreateAsync());
 
                         if (entity != null)
                         {
+                            entity.AppName = nameof(QuickNSmart);
+                            entity.KeyLanguage = KeyLanguage;
                             entity.Key = item.Key;
+                            entity.ValueLanguage = ValueLanguage;
                             entity.Value = item.Value.Value;
                             AsyncHelper.RunSync(() => connector.InsertAsync(entity));
+
+                            var entry = noTranslations.SingleOrDefault(i => i.Value.Id == item.Value.Id);
+
+                            if (entry.Value.Id == item.Value.Id)
+                            {
+                                noTranslations.Remove(entry.Key);
+                            }
                         }
                     }
-                    Init();
+                    LoadTranslations();
                 }
                 finally
                 {
@@ -268,7 +294,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
             }
             EndUpdateNoTranslations();
         }
-        static partial void BeginUpdateNoTranslations(string identityUri, string email, string password, IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
+        static partial void BeginUpdateNoTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
         static partial void EndUpdateNoTranslations();
     }
 }

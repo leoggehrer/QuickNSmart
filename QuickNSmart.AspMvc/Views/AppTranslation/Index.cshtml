@@ -53,7 +53,7 @@
 
 @if (Model.HasError)
 {
-    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
+    <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
 }
 
 @{
@@ -82,28 +82,9 @@
         }
     </div>
 }
-
+<p></p>
 <form asp-action="@Model.Action" method="post">
     @await Html.PartialAsync("_Submit", new SubmitCmd { RightAlign = true })
-    <div class="form-group row">
-        <label for="staticIdentity" class="col-sm-2 col-form-label">@translate("IdentityUri")</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="translatorIdentityUri" name="identityUri">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="staticEmail" class="col-sm-2 col-form-label">@translate("Email")</label>
-        <div class="col-sm-10">
-            <input type="text" class="form-control" id="translatorEmail" name="email">
-        </div>
-    </div>
-    <div class="form-group row">
-        <label for="staticPassword" class="col-sm-2 col-form-label">@translate("Password")</label>
-        <div class="col-sm-10">
-            <input type="password" class="form-control" id="translatorPassword" name="password">
-        </div>
-    </div>
-
     @{
         var index = 0;
         var keyLabel = translate("Key");
@@ -111,7 +92,10 @@
 
         foreach (var item in Model.Entries)
         {
-            <p></p>
+            if (index > 0)
+            {
+                <p></p>
+            }
             <input type="hidden" name="@($"id[{index}]")" value="@item.Value.Id" />
             <div class="row border border-secondary">
                 <div class="col-md-12">

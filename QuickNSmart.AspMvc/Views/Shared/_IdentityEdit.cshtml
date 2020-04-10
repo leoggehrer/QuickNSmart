@@ -1,9 +1,26 @@
 @*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
 @using CommonBase.Extensions
 @using QuickNSmart.AspMvc.Extensions
+@using QuickNSmart.AspMvc.Modules.Session
 @model QuickNSmart.AspMvc.Models.Persistence.Account.Identity
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
 
 @{
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    string action = ViewContext.RouteData.Values["action"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
     var options = EnumExtensions.ToList<QuickNSmart.Contracts.Modules.Common.State>();
 }
 
@@ -12,41 +29,51 @@
         <input asp-for="Id" class="form-control" type="hidden" />
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
-            <label asp-for="Guid" class="control-label"></label>
+            <label class="control-label">@translateFor(nameof(Model.Guid))</label>
             <input asp-for="Guid" class="form-control" readonly="readonly" />
             <span asp-validation-for="Guid" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Name" class="control-label"></label>
+            <label class="control-label">@translateFor(nameof(Model.Name))</label>
             <input asp-for="Name" class="form-control" />
             <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="Email" class="control-label"></label>
+            <label class="control-label">@translateFor(nameof(Model.Email))</label>
             <input asp-for="Email" class="form-control" />
             <span asp-validation-for="Email" class="text-danger"></span>
         </div>
         @if (Model.Id == 0)
         {
             <div class="form-group">
-                <label asp-for="Password" class="control-label"></label>
+                <label class="control-label">@translateFor(nameof(Model.Password))</label>
                 <input asp-for="Password" class="form-control" />
                 <span asp-validation-for="Password" class="text-danger"></span>
             </div>
         }
         <div class="form-group form-check">
             <label class="form-check-label">
-                <input class="form-check-input" asp-for="EnableJwtAuth" /> @Html.DisplayNameFor(model => model.EnableJwtAuth)
+                <input class="form-check-input" asp-for="EnableJwtAuth" />@translateFor(nameof(Model.EnableJwtAuth))
             </label>
         </div>
         <div class="form-group">
-            <label asp-for="AccessFailedCount" class="control-label"></label>
+            <label class="control-label">@translateFor(nameof(Model.AccessFailedCount))</label>
             <input asp-for="AccessFailedCount" class="form-control" />
             <span asp-validation-for="AccessFailedCount" class="text-danger"></span>
         </div>
         <div class="form-group">
-            <label asp-for="State" class="control-label"></label>
+            <label class="control-label">@translateFor(nameof(Model.State))</label>
             @Html.ToSelect("form-control", string.Empty, "State", options, Model.State)
         </div>
     </div>
 </div>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

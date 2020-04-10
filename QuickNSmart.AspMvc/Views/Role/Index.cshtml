@@ -17,24 +17,27 @@
 }
 @*End:Header*@
 @{
-    string title = translate("Role");
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    string title = translate(controller);
 
     ViewData["Title"] = title;
 }
 
 <h1>@title</h1>
 
-<p>
-    <a asp-action="Create" class="btn btn-outline-secondary">Create New</a>
+<p style="margin-top: 1em;">
+    <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
 </p>
+
 <table class="table">
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Designation)
+                @translateFor(Html.DisplayNameFor(model => model.Designation))
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Description)
+                @translateFor(Html.DisplayNameFor(model => model.Designation))
             </th>
             <th></th>
         </tr>
@@ -50,8 +53,8 @@
                     @Html.DisplayFor(modelItem => item.Description)
                 </td>
                 <td>
-                    @Html.ActionLink("Edit", "Edit", new { id = item.Id }) |
-                    @Html.ActionLink("Delete", "Delete", new { id = item.Id })
+                    @Html.ActionLink(translateFor("Edit"), "Edit", new { id = item.Id }) |
+                    @Html.ActionLink(translateFor("Delete"), "Delete", new { id = item.Id })
                 </td>
             </tr>
         }
