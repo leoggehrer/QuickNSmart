@@ -35,16 +35,18 @@
 <ul class="nav nav-pills nav-fill">
     @foreach (var item in Model.NavLinks)
     {
+        var href = $"/{item.Controller}/{item.Action}";
+
         <li class="nav-item">
             @if (item.Active)
             {
-                activeHref = $"/{item.Controller}/{item.Action}";
+                activeHref = href;
 
-                <a class="nav-link bg-secondary active" href="@activeHref">@translate(item.Text)</a>
+                <a class="nav-link bg-secondary active" href="@($"{href}?page={page}")">@translate(item.Text)</a>
             }
             else
             {
-                <a class="nav-link bg-light" href="@($"/{item.Controller}/{item.Action}")">@translate(item.Text)</a>
+                <a class="nav-link bg-light" href="@($"{href}?page={page}")">@translate(item.Text)</a>
             }
         </li>
     }
@@ -72,7 +74,7 @@
                 <div class="p-sm-0"><a class="page-link" href="@($"{activeHref}?page={strRun}")">@strRun</a></div>
             }
         }
-        @if (string.IsNullOrEmpty(page))
+        @if (page.Equals(all))
         {
             <div class="p-0" style="margin-left: 10px;"><a class="page-link" style="background-color: lightgray;" href="@($"{activeHref}?page={all}")">@translate2($"TranslatorFilter.All", all)</a></div>
         }

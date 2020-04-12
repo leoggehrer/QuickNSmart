@@ -7,22 +7,28 @@ namespace QuickNSmart.Logic.Modules.Configuration
 {
     public static partial class Settings
     {
-        private static IConfiguration _configuration;
+        private static IConfiguration configuration;
+
+        private static IConfiguration Configuration 
+        {
+            get => configuration ?? (configuration = CommonBase.Modules.Configuration.Configurator.LoadAppSettings());
+            set => configuration = value;
+        }
 
         public static void SetConfiguration(IConfiguration configuration)
         {
             configuration.CheckArgument(nameof(configuration));
 
-            _configuration = configuration;
+            Configuration = configuration;
         }
 
         public static string Get(string key)
         {
             var result = default(string);
 
-            if (_configuration != null)
+            if (Configuration != null)
             {
-                result = _configuration[key]; 
+                result = Configuration[key];
             }
             return result;
         }
@@ -30,19 +36,19 @@ namespace QuickNSmart.Logic.Modules.Configuration
         {
             var result = defaultValue;
 
-            if (_configuration != null)
+            if (Configuration != null)
             {
-                result = _configuration.GetValue<string>(key, defaultValue);
+                result = Configuration.GetValue<string>(key, defaultValue);
             }
             return result;
         }
         public static IConfigurationSection GetSection(string key)
         {
             var result = default(IConfigurationSection);
-                
-            if (_configuration != null)
+
+            if (Configuration != null)
             {
-                result = _configuration.GetSection(key);
+                result = Configuration.GetSection(key);
             }
             return result;
         }

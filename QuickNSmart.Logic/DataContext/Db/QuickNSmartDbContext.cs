@@ -1,7 +1,6 @@
 ﻿//@CustomizeCode
 //MdStart
 using System.Linq;
-using CommonBase.Extensions;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Microsoft.Extensions.Logging;
@@ -14,7 +13,7 @@ namespace QuickNSmart.Logic.DataContext.Db
         static QuickNSmartDbContext()
         {
             ClassConstructing();
-            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString, ConnectionString);
+            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString, DefaultConnectionString);
             ClassConstructed();
         }
         static partial void ClassConstructing();
@@ -30,10 +29,11 @@ namespace QuickNSmart.Logic.DataContext.Db
                     && level == LogLevel.Information)
                 .AddDebug();
         });
-        private static string ConnectionString { get; set; } = "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;";
+        private static string DefaultConnectionString => "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;";
 #else
-        private static string ConnectionString { get; set; } = "Data Source=dbserver;Database=QuickNSmartDb;User Id=sa;Password=Passme123!";
+        private static string DefaultConnectionString => "Data Source=dbserver;Database=QuickNSmartDb;User Id=sa;Password=Passme123!";
 #endif
+        private static string ConnectionString { get; set; }
 
         public QuickNSmartDbContext()
         {

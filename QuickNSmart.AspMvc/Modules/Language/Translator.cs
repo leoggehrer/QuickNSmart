@@ -94,25 +94,16 @@ namespace QuickNSmart.AspMvc.Modules.Language
 
         public static string Translate(string key)
         {
-            var result = key;
-
-            if (translations.TryGetValue(key, out TranslationEntry traVal))
-            {
-                result = traVal.Value;
-            }
-            else if (noTranslations.ContainsKey(key) == false)
-            {
-                int nextId = noTranslations.Any() ? noTranslations.Max(i => i.Value.Id) + 1 : 1;
-
-                noTranslations.Add(key, new TranslationEntry { Id = nextId, Value = key });
-            }
-            return result;
+            return Translate(key, key);
         }
         public static string Translate(string key, string defaultValue)
         {
-            var result = defaultValue;
+            key.CheckArgument(nameof(key));
 
-            if (translations.TryGetValue(key, out TranslationEntry traVal))
+            var result = defaultValue;
+            var hasTranslation = translations.TryGetValue(key, out TranslationEntry traVal);
+
+            if (hasTranslation)
             {
                 result = traVal.Value;
             }
@@ -121,6 +112,19 @@ namespace QuickNSmart.AspMvc.Modules.Language
                 int nextId = noTranslations.Any() ? noTranslations.Max(i => i.Value.Id) + 1 : 1;
 
                 noTranslations.Add(key, new TranslationEntry { Id = nextId, Value = defaultValue });
+            }
+
+            if (hasTranslation == false)
+            {
+                var splitKey = key.Split(".");
+
+                if (splitKey.Length == 2)
+                {
+                    if (translations.TryGetValue(splitKey[1], out traVal))
+                    {
+                        result = traVal.Value;
+                    }
+                }
             }
             return result;
         }
@@ -234,27 +238,6 @@ namespace QuickNSmart.AspMvc.Modules.Language
             BeginUpdateNoTranslations(keyValuePairs, ref handled);
             if (handled == false)
             {
-                //foreach (var item in keyValuePairs)
-                //{
-                //    if (item.Key.HasContent()
-                //        && item.Value != null
-                //        && item.Value.Id > 0)
-                //    {
-                //        var query = noTranslations.Where(e => e.Value.Id == item.Value.Id);
-
-                //        if (query.Any())
-                //        {
-                //            var translation = query.ElementAt(0);
-
-                //            var changed = translation.Key.Equals(item.Key) == false
-                //                          || translation.Value.Value.Equals(item.Value.Value) == false;
-
-                //            noTranslations.Remove(translation.Key);
-                //            noTranslations.Add(item.Key, new TranslationEntry { Changed = changed, Id = item.Value.Id, Value = item.Value.Value });
-                //        }
-                //    }
-                //}
-
                 // Insert missing translations
                 Adapters.Connector.BaseUri = BaseUri;
                 var login = default(ILoginSession);
@@ -263,7 +246,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                     login = TryLogon(IdentityUri, Email, Password);
                     var connector = Adapters.Connector.Create<ITranslation, Translation>(login.SessionToken);
 
-                    foreach (var item in keyValuePairs.Where(i => i.Key.HasContent()))
+                    foreach (var item in keyValuePairs.Where(i => i.Key.HasContent() && i.Key.Equals(i.Value.Value) == false))
                     {
                         var entity = AsyncHelper.RunSync(() => connector.CreateAsync());
 
