@@ -1,0 +1,54 @@
+@*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using QuickNSmart.AspMvc.Modules.Session
+@model IEnumerable<QuickNSmart.AspMvc.Models.IdentityModel>
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+}
+
+@{
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    string title = translate(controller);
+
+    ViewData["Title"] = title;
+    ViewData["TranslateFor"] = translateFor;
+}
+
+<h1>@title</h1>
+
+<p style="margin-top: 1em;">
+    <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
+</p>
+
+<table class="table">
+    <thead>
+        @await Html.PartialAsync("_TableHead", Model, ViewData)
+    </thead>
+    <tbody>
+        @foreach (var item in Model)
+        {
+            @await Html.PartialAsync("_TableRow", item, ViewData)
+        }
+    </tbody>
+</table>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

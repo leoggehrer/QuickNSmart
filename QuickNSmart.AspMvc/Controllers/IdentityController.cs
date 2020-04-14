@@ -6,10 +6,10 @@ using System.Linq;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
-using Model = QuickNSmart.AspMvc.Models.Business.Account.AppAccess;
-using Contract = QuickNSmart.Contracts.Business.Account.IAppAccess;
 using CommonBase.Extensions;
 using QuickNSmart.AspMvc.Models.Persistence.Account;
+using Model = QuickNSmart.AspMvc.Models.Business.Account.AppAccess;
+using Contract = QuickNSmart.Contracts.Business.Account.IAppAccess;
 
 namespace QuickNSmart.AspMvc.Controllers
 {
