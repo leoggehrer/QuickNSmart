@@ -1,0 +1,57 @@
+@*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using QuickNSmart.AspMvc.Modules.Session
+@model QuickNSmart.AspMvc.Models.IdentityModel
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    string action = ViewContext.RouteData.Values["action"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    string title = translateFor(action);
+
+    ViewData["Title"] = title;
+    ViewData["TranslateFor"] = translateFor;
+}
+
+<h1>@title</h1>
+
+<div class="d-flex bg-transparent">
+    <div class="p-sm-2 mr-auto">
+        <h4>@translate(controller)</h4>
+    </div>
+</div>
+<hr />
+
+<form asp-action="Delete">
+    @if (Model.HasError)
+    {
+        <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
+    }
+    else
+    {
+        <h3>@translate("Are you sure you want to delete this?")</h3>
+    }
+    <p></p>
+    @await Html.PartialAsync("_DeleteBody", Model, ViewData)
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss = "btn btn-danger" })
+</form>
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

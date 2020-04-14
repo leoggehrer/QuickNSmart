@@ -246,7 +246,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                     login = TryLogon(IdentityUri, Email, Password);
                     var connector = Adapters.Connector.Create<ITranslation, Translation>(login.SessionToken);
 
-                    foreach (var item in keyValuePairs.Where(i => i.Key.HasContent() && i.Key.Equals(i.Value.Value) == false))
+                    foreach (var item in keyValuePairs.Where(i => i.Key.HasContent()))
                     {
                         var entity = AsyncHelper.RunSync(() => connector.CreateAsync());
 
