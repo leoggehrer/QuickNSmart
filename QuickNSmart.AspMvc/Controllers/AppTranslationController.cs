@@ -21,6 +21,7 @@ namespace QuickNSmart.AspMvc.Controllers
         {
             string page = SessionWrapper.GetStringValue(nameof(page), "A");
 
+            Modules.Language.Translator.Init();
             return RedirectToAction("Translations", new { page, error });
         }
 
