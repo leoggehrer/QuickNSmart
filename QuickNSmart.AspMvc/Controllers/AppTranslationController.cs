@@ -22,65 +22,65 @@ namespace QuickNSmart.AspMvc.Controllers
             string page = SessionWrapper.GetStringValue(nameof(page), "A");
 
             Modules.Language.Translator.Init();
-            return RedirectToAction("Translations", new { page, error });
+            return RedirectToAction(nameof(Translations), new { page, error });
         }
 
         public IActionResult Translations(string page = null, string error = null)
         {
             var model = new Models.Modules.Language.AppTranslation
             {
-                Action = "UpdateTranslation",
+                Action = nameof(UpdateTranslation),
                 ActionError = error,
             };
             model.NavLinks.Add(new Models.ActionItem
             {
-                Text = "Texts with translations",
-                Action = "Translations",
+                Text = "Stored translations",
+                Action = nameof(Translations),
                 Controller = ControllerName,
                 Active = true,
             });
             model.NavLinks.Add(new Models.ActionItem
             {
-                Text = "Texts with no translation",
-                Action = "NoTranslations",
+                Text = "Unstored translations",
+                Action = nameof(UnstoredTranslations),
                 Controller = ControllerName,
                 Active = false,
             });
             page = string.IsNullOrEmpty(page) ? "A" : page;
             SessionWrapper.SetStringValue(nameof(page), page);
 
-            Modules.Language.Translator.Translations
+            Modules.Language.Translator.StoredTranslations
                                        .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.ToUpper().StartsWith(page))
                                        .OrderBy(i => i.Key)
                                        .ToList()
                                        .ForEach(e => model.Entries.Add(e.Key, e.Value));
             return View("Index", model);
         }
-        public IActionResult NoTranslations(string page = null, string error = null)
+        public IActionResult UnstoredTranslations(string page = null, string error = null)
         {
             var model = new Models.Modules.Language.AppTranslation
             {
-                Action = "UpdateNoTranslation",
+                Action = nameof(StoreTranslation),
                 ActionError = error,
             };
             model.NavLinks.Add(new Models.ActionItem
             {
-                Text = "Texts with translations",
-                Action = "Translations",
+                Text = "Stored translations",
+                Action = nameof(Translations),
                 Controller = ControllerName,
                 Active = false,
             });
             model.NavLinks.Add(new Models.ActionItem
             {
-                Text = "Texts with no translation",
-                Action = "NoTranslations",
+                Text = "Unstored translations",
+                Action = nameof(UnstoredTranslations),
                 Controller = ControllerName,
                 Active = true,
             });
             page = string.IsNullOrEmpty(page) ? "A" : page;
             SessionWrapper.SetStringValue(nameof(page), page);
 
-            Modules.Language.Translator.NoTranslations
+            Modules.Language.Translator.UnstoredTranslations
                                        .Where(i => string.IsNullOrEmpty(page) || page.Equals("All") || i.Key.StartsWith(page))
                                        .OrderBy(i => i.Key)
                                        .ToList()
@@ -122,10 +122,10 @@ namespace QuickNSmart.AspMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdateNoTranslation(IFormCollection formCollection)
+        public IActionResult StoreTranslation(IFormCollection formCollection)
         {
             var index = 0;
-            var action = nameof(NoTranslations);
+            var action = nameof(UnstoredTranslations);
             var page = SessionWrapper.GetStringValue("page");
             var error = string.Empty;
             var keyValuePairs = new List<KeyValuePair<string, Models.Modules.Language.TranslationEntry>>();
@@ -143,12 +143,12 @@ namespace QuickNSmart.AspMvc.Controllers
             }
             try
             {
-                Modules.Language.Translator.UpdateNoTranslations(keyValuePairs);
+                Modules.Language.Translator.StoreTranslations(keyValuePairs);
             }
             catch (Exception ex)
             {
                 error = GetExceptionError(ex);
-                action = nameof(NoTranslations);
+                action = nameof(UnstoredTranslations);
             }
             return RedirectToAction(action, new { page, error });
         }

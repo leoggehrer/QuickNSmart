@@ -15,8 +15,8 @@ namespace QuickNSmart.AspMvc.Modules.Language
 {
     public partial class Translator
     {
-        private static readonly Dictionary<string, TranslationEntry> translations = new Dictionary<string, TranslationEntry>();
-        private static readonly Dictionary<string, TranslationEntry> noTranslations = new Dictionary<string, TranslationEntry>();
+        private static readonly Dictionary<string, TranslationEntry> storedTranslations = new Dictionary<string, TranslationEntry>();
+        private static readonly Dictionary<string, TranslationEntry> unstoredTranslations = new Dictionary<string, TranslationEntry>();
         static Translator()
         {
             ClassConstructing();
@@ -34,8 +34,8 @@ namespace QuickNSmart.AspMvc.Modules.Language
         public static Contracts.Modules.Language.LanguageCode KeyLanguage { get; } = Contracts.Modules.Language.LanguageCode.En;
         public static Contracts.Modules.Language.LanguageCode ValueLanguage { get; } = Contracts.Modules.Language.LanguageCode.De;
 
-        public static IEnumerable<KeyValuePair<string, TranslationEntry>> Translations => translations;
-        public static IEnumerable<KeyValuePair<string, TranslationEntry>> NoTranslations = noTranslations;
+        public static IEnumerable<KeyValuePair<string, TranslationEntry>> StoredTranslations => storedTranslations;
+        public static IEnumerable<KeyValuePair<string, TranslationEntry>> UnstoredTranslations = unstoredTranslations;
         private static string CreatePredicate() => $"AppName.Equals(\"{nameof(QuickNSmart)}\") && {nameof(KeyLanguage)} == {(int)KeyLanguage} && {nameof(ValueLanguage)} == {(int)ValueLanguage}";
 
         public static void Init()
@@ -78,10 +78,10 @@ namespace QuickNSmart.AspMvc.Modules.Language
                 var connector = Adapters.Connector.Create<Contracts.Modules.Language.ITranslation, Models.Modules.Language.Translation>();
                 var query = AsyncHelper.RunSync(() => connector.QueryAllAsync(predicate));
 
-                translations.Clear();
+                storedTranslations.Clear();
                 foreach (var item in query)
                 {
-                    translations.Add(item.Key, new TranslationEntry { Id = item.Id, Value = item.Value });
+                    storedTranslations.Add(item.Key, new TranslationEntry { Id = item.Id, Value = item.Value });
                 }
             }
             catch (Exception ex)
@@ -101,17 +101,17 @@ namespace QuickNSmart.AspMvc.Modules.Language
             key.CheckArgument(nameof(key));
 
             var result = defaultValue;
-            var hasTranslation = translations.TryGetValue(key, out TranslationEntry traVal);
+            var hasTranslation = storedTranslations.TryGetValue(key, out TranslationEntry traVal);
 
             if (hasTranslation)
             {
                 result = traVal.Value;
             }
-            else if (noTranslations.ContainsKey(key) == false)
+            else if (unstoredTranslations.ContainsKey(key) == false)
             {
-                int nextId = noTranslations.Any() ? noTranslations.Max(i => i.Value.Id) + 1 : 1;
+                int nextId = unstoredTranslations.Any() ? unstoredTranslations.Max(i => i.Value.Id) + 1 : 1;
 
-                noTranslations.Add(key, new TranslationEntry { Id = nextId, Value = defaultValue });
+                unstoredTranslations.Add(key, new TranslationEntry { Id = nextId, Value = defaultValue });
             }
 
             if (hasTranslation == false)
@@ -120,7 +120,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
 
                 if (splitKey.Length == 2)
                 {
-                    if (translations.TryGetValue(splitKey[1], out traVal))
+                    if (storedTranslations.TryGetValue(splitKey[1], out traVal))
                     {
                         result = traVal.Value;
                     }
@@ -183,7 +183,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                         && item.Value != null 
                         && item.Value.Id > 0)
                     {
-                        var query = translations.Where(e => e.Value.Id == item.Value.Id);
+                        var query = storedTranslations.Where(e => e.Value.Id == item.Value.Id);
 
                         if (query.Any())
                         {
@@ -192,8 +192,8 @@ namespace QuickNSmart.AspMvc.Modules.Language
                             var changed = translation.Key.Equals(item.Key) == false 
                                           || translation.Value.Value.Equals(item.Value.Value) == false;
 
-                            translations.Remove(translation.Key);
-                            translations.Add(item.Key, new TranslationEntry { Changed = changed, Id = item.Value.Id, Value = item.Value.Value });
+                            storedTranslations.Remove(translation.Key);
+                            storedTranslations.Add(item.Key, new TranslationEntry { Changed = changed, Id = item.Value.Id, Value = item.Value.Value });
                         }
                     }
                 }
@@ -205,7 +205,7 @@ namespace QuickNSmart.AspMvc.Modules.Language
                     login = TryLogon(IdentityUri, Email, Password);
                     var connector = Adapters.Connector.Create<ITranslation, Translation>(login.SessionToken);
 
-                    foreach (var item in translations.Where(i => i.Value.Changed))
+                    foreach (var item in storedTranslations.Where(i => i.Value.Changed))
                     {
                         var entity = AsyncHelper.RunSync(() => connector.GetByIdAsync(item.Value.Id));
 
@@ -229,13 +229,13 @@ namespace QuickNSmart.AspMvc.Modules.Language
         static partial void BeginUpdateTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
         static partial void EndUpdateTranslations();
 
-        public static void UpdateNoTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
+        public static void StoreTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs)
         {
             keyValuePairs.CheckArgument(nameof(keyValuePairs));
 
             var handled = false;
 
-            BeginUpdateNoTranslations(keyValuePairs, ref handled);
+            BeginStoreTranslations(keyValuePairs, ref handled);
             if (handled == false)
             {
                 // Insert missing translations
@@ -259,11 +259,11 @@ namespace QuickNSmart.AspMvc.Modules.Language
                             entity.Value = item.Value.Value;
                             AsyncHelper.RunSync(() => connector.InsertAsync(entity));
 
-                            var entry = noTranslations.SingleOrDefault(i => i.Value.Id == item.Value.Id);
+                            var entry = unstoredTranslations.SingleOrDefault(i => i.Value.Id == item.Value.Id);
 
                             if (entry.Value.Id == item.Value.Id)
                             {
-                                noTranslations.Remove(entry.Key);
+                                unstoredTranslations.Remove(entry.Key);
                             }
                         }
                     }
@@ -275,10 +275,10 @@ namespace QuickNSmart.AspMvc.Modules.Language
                         Logout(login);
                 }
             }
-            EndUpdateNoTranslations();
+            EndStoreTranslations();
         }
-        static partial void BeginUpdateNoTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
-        static partial void EndUpdateNoTranslations();
+        static partial void BeginStoreTranslations(IEnumerable<KeyValuePair<string, TranslationEntry>> keyValuePairs, ref bool handled);
+        static partial void EndStoreTranslations();
     }
 }
 //MdEnd
