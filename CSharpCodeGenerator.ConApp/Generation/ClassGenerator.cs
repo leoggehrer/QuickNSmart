@@ -97,6 +97,74 @@ namespace CSharpCodeGenerator.ConApp.Generation
         }
         #endregion Create constructors
 
+        #region Create partial model
+        public static IEnumerable<string> CreateModelFromInterface(Type type, 
+                                                                   Action<Type, List<string>> createAttributes = null, 
+                                                                   Action<Type, PropertyInfo, List<string>> createPropertyAttributes = null)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+            var baseItfcs = GetBaseInterfaces(type).ToArray();
+            var entityName = CreateEntityNameFromInterface(type);
+            var properties = GetAllInterfaceProperties(type, baseItfcs);
+
+            createAttributes?.Invoke(type, result);
+            result.Add($"public partial class {entityName} : {type.FullName}");
+            result.Add("{");
+            result.AddRange(CreatePartialStaticConstrutor(entityName));
+            result.AddRange(CreatePartialConstrutor("public", entityName));
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            {
+                createPropertyAttributes?.Invoke(type, item, result);
+                result.AddRange(CreatePartialProperty(item));
+            }
+            result.AddRange(CreateCopyProperties(type));
+            result.Add("}");
+            return result;
+        }
+        public static IEnumerable<string> CreateDelegateModelFromInterface(Type type,
+                                                                    Action<Type, List<string>> createAttributes = null,
+                                                                    Action<Type, PropertyInfo, List<string>> createPropertyAttributes = null)
+        {
+            type.CheckArgument(nameof(type));
+
+            List<string> result = new List<string>();
+            var baseItfcs = GetBaseInterfaces(type).ToArray();
+            var entityName = CreateEntityNameFromInterface(type);
+            var properties = GetAllInterfaceProperties(type, baseItfcs);
+
+            createAttributes?.Invoke(type, result);
+            result.Add($"partial class {entityName} : {type.FullName}");
+            result.Add("{");
+            result.AddRange(CreatePartialStaticConstrutor(entityName));
+            result.AddRange(CreatePartialConstrutor("public", entityName));
+            if (baseItfcs.Length == 0)
+            {
+                //result.Add($"internal virtual {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
+            }
+            else
+            {
+                //result.Add($"internal virtual {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
+            }
+            result.Add($"public {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            {
+                result.AddRange(CreatePartialDelegateProperty(item));
+            }
+            result.AddRange(CreateDelegateCopyProperties(type, type.FullName));
+
+            foreach (var item in type.GetMethods().Where(mi => mi.Name.Contains("_") == false))
+            {
+                //result.AddRange(CreateDelegateMethod(item));
+            }
+            result.Add("}");
+            return result;
+        }
+
+
+        #endregion Create partial model
+
         #region Create partial property
         static partial void SetPropertyAttributes(Type type, PropertyInfo propertyInfo, List<string> codeLines);
         static partial void SetPropertyGetAttributes(Type type, PropertyInfo propertyInfo, List<string> codeLines);
@@ -233,11 +301,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var result = new List<string>
             {
-                "get".SetIndent(1),
-                "{".SetIndent(1),
-                $"On{propertyInfo.Name}Reading();".SetIndent(2),
-                $"return {DelegatePropertyName}.{propertyInfo.Name};".SetIndent(2),
-                "}".SetIndent(1)
+                "get",
+                "{",
+                $"On{propertyInfo.Name}Reading();",
+                $"return {DelegatePropertyName} != null ? {DelegatePropertyName}.{propertyInfo.Name} : default({propertyInfo.PropertyType});",
+                "}"
             };
             return result;
         }
@@ -252,11 +320,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var result = new List<string>
             {
-                "set".SetIndent(1),
-                "{".SetIndent(1),
-                $"{DelegatePropertyName}.{propertyInfo.Name} = value;".SetIndent(2),
-                $"On{propertyInfo.Name}Changed();".SetIndent(2),
-                "}".SetIndent(1)
+                "set",
+                "{",
+                $"{DelegatePropertyName}.{propertyInfo.Name} = value;",
+                $"On{propertyInfo.Name}Changed();",
+                "}"
             };
             return result;
         }

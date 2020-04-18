@@ -123,34 +123,21 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
         private IEnumerable<string> CreateTransferFromInterface(Type type)
         {
-            type.CheckArgument(nameof(type));
-
-            List<string> result = new List<string>();
-            var baseItfcs = GetBaseInterfaces(type).ToArray();
-            var entityName = CreateEntityNameFromInterface(type);
-            var properties = GetAllInterfaceProperties(type, baseItfcs);
-
-            CreateTransferAttributes(type, result);
-            result.Add($"public partial class {entityName} : {type.FullName}");
-            result.Add("{");
-            result.AddRange(CreatePartialStaticConstrutor(entityName));
-            result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
-            {
-                if (item.PropertyType.IsInterface)
-                {
-                    result.Add("[JsonIgnore]");
-                }
-                else if (item.PropertyType.IsGenericType && item.PropertyType.GetGenericArguments()[0].IsInterface)
-                {
-                    result.Add("[JsonIgnore]");
-                }
-                CreateTransferPropertyAttributes(type, item.Name, result);
-                result.AddRange(CreatePartialProperty(item));
-            }
-            result.AddRange(CreateCopyProperties(type));
-            result.Add("}");
-            return result;
+            return CreateModelFromInterface(type,
+                                            (t, r) => CreateTransferAttributes(t, r),
+                                            (t, p, r) =>
+                                            {
+                                                if (p.PropertyType.IsInterface)
+                                                {
+                                                    r.Add("[JsonIgnore]");
+                                                }
+                                                else if (p.PropertyType.IsGenericType 
+                                                         && p.PropertyType.GetGenericArguments()[0].IsInterface)
+                                                {
+                                                    r.Add("[JsonIgnore]");
+                                                }
+                                                CreateTransferPropertyAttributes(t, p.Name, r);
+                                            });
         }
         private static string GetBaseClassByInterface(Type type)
         {
@@ -161,7 +148,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             if (type.FullName.Contains(ContractsProject.BusinessSubName))
                 result = "IdentityModel";
             else if (type.FullName.Contains(ContractsProject.ModulesSubName))
-            result = HasIdentifiableBase(type) ? "IdentityModel" : "TransferModel";
+                result = HasIdentifiableBase(type) ? "IdentityModel" : "TransferModel";
             else if (type.FullName.Contains(ContractsProject.PersistenceSubName))
                 result = "IdentityModel";
 
