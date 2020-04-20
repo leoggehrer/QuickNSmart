@@ -5,7 +5,7 @@ namespace QuickNSmart.Contracts.Persistence.TestRelation
 {
     public partial interface IInvoice : IIdentifiable, ICopyable<IInvoice>
     {
-        DateTime Date { get; }
+        DateTime Date { get; set; }
         string Subject { get; set; }
         string Street { get; set; }
         string ZipCode { get; set; }

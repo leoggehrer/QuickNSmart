@@ -1,15 +1,12 @@
 using System;
-using System.IO;
 using System.Reflection;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using QuickNSmart.Contracts.Persistence.Account;
 using AccountManager = QuickNSmart.Adapters.Modules.Account.AccountManager;
 
 namespace QuickNSmart.ConApp
 {
     // Search pattern for async calls without ConfigAwait: (?=\bawait\b(?!.*\bConfigureAwait\b))
-    class Program
+    partial class Program
     {
         static string SaUser => "SysAdmin";
         static string SaEmail => "SysAdmin@QuickNSmart.gmx.at";
@@ -24,6 +21,8 @@ namespace QuickNSmart.ConApp
         static async Task Main(string[] args)
         {
             await Task.Run(() => Console.WriteLine("QuickNSmart"));
+
+            BeforeExecuteMain(args);
 
             var rmAccountManager = new AccountManager
             {
@@ -59,6 +58,8 @@ namespace QuickNSmart.ConApp
             {
                 Console.WriteLine($"Error in {MethodBase.GetCurrentMethod().Name}: {ex.Message}");
             }
+
+            EndExecuteMain();
             Console.WriteLine("Press any key to end!");
             Console.ReadKey();
         }
@@ -88,5 +89,8 @@ namespace QuickNSmart.ConApp
             await ctrl.InsertAsync(entity);
             await accMngr.LogoutAsync(login.SessionToken);
         }
+
+        static partial void BeforeExecuteMain(string[] args);
+        static partial void EndExecuteMain();
     }
 }

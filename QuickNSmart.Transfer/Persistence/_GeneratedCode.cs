@@ -176,6 +176,28 @@ namespace QuickNSmart.Transfer.Persistence.TestRelation
 		}
 		partial void Constructing();
 		partial void Constructed();
+		public System.Int32 InvoiceId
+		{
+			get
+			{
+				OnInvoiceIdReading();
+				return _invoiceId;
+			}
+			set
+			{
+				bool handled = false;
+				OnInvoiceIdChanging(ref handled, ref _invoiceId);
+				if (handled == false)
+				{
+					this._invoiceId = value;
+				}
+				OnInvoiceIdChanged();
+			}
+		}
+		private System.Int32 _invoiceId;
+		partial void OnInvoiceIdReading();
+		partial void OnInvoiceIdChanging(ref bool handled, ref System.Int32 _invoiceId);
+		partial void OnInvoiceIdChanged();
 		public System.Int32 Order
 		{
 			get
@@ -298,6 +320,7 @@ namespace QuickNSmart.Transfer.Persistence.TestRelation
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
+				InvoiceId = other.InvoiceId;
 				Order = other.Order;
 				Text = other.Text;
 				Quantity = other.Quantity;

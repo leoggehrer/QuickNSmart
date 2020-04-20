@@ -181,6 +181,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 {
 	partial class Invoice
 	{
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail> InvoiceDetails
+		{
+			get;
+			set;
+		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
@@ -202,6 +207,28 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 		}
 		partial void Constructing();
 		partial void Constructed();
+		public System.Int32 InvoiceId
+		{
+			get
+			{
+				OnInvoiceIdReading();
+				return _invoiceId;
+			}
+			set
+			{
+				bool handled = false;
+				OnInvoiceIdChanging(ref handled, ref _invoiceId);
+				if (handled == false)
+				{
+					this._invoiceId = value;
+				}
+				OnInvoiceIdChanged();
+			}
+		}
+		private System.Int32 _invoiceId;
+		partial void OnInvoiceIdReading();
+		partial void OnInvoiceIdChanging(ref bool handled, ref System.Int32 _invoiceId);
+		partial void OnInvoiceIdChanged();
 		public System.Int32 Order
 		{
 			get
@@ -324,6 +351,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
+				InvoiceId = other.InvoiceId;
 				Order = other.Order;
 				Text = other.Text;
 				Quantity = other.Quantity;
@@ -348,11 +376,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && Order == other.Order && IsEqualsWith(Text, other.Text) && Quantity == other.Quantity && Tax == other.Tax && Price == other.Price;
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && InvoiceId == other.InvoiceId && Order == other.Order && IsEqualsWith(Text, other.Text) && Quantity == other.Quantity && Tax == other.Tax && Price == other.Price;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Order, Text, Quantity, Tax, HashCode.Combine(Price));
+			return HashCode.Combine(Id, Timestamp, InvoiceId, Order, Text, Quantity, HashCode.Combine(Tax, Price));
 		}
 	}
 }
@@ -366,6 +394,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 {
 	partial class InvoiceDetail
 	{
+		public QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice Invoice
+		{
+			get;
+			set;
+		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Persistence.Account

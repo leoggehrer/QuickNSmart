@@ -329,6 +329,20 @@ namespace QuickNSmart.Logic.Controllers.Business
 			return helper.InvokeFunctionAsync(this, name, parameters);
 		}
 		#endregion Invoke handler
+
+		protected override void Dispose(bool disposing)
+		{
+			base.Dispose(disposing);
+
+			if (disposing)
+			{
+				masterController.Dispose();
+				detailController.Dispose();
+
+				masterController = null;
+				detailController = null;
+			}
+		}
 	}
 }
 //MdEnd
