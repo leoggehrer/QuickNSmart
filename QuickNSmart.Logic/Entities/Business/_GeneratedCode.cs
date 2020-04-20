@@ -1,3 +1,73 @@
+namespace QuickNSmart.Logic.Entities.Business.TestRelation
+{
+	using System;
+	partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails
+	{
+		static InvoiceDetails()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public InvoiceDetails()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public void CopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Master.CopyProperties(other.Master);
+				ClearDetails();
+				foreach (var detail in other.Details)
+				{
+					AddDetail(detail);
+				}
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Master, other.Master) && IsEqualsWith(Details, other.Details);
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, Master, Details);
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Business.TestRelation
+{
+	partial class InvoiceDetails : RelationObject<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
+	{
+	}
+}
 namespace QuickNSmart.Logic.Entities.Business.Account
 {
 	using System;

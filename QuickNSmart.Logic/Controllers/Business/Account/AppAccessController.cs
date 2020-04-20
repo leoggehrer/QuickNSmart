@@ -45,7 +45,7 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             return identityController.CountAsync();
         }
 
-        public override Task<IAppAccess> CreateAsync()
+        public override Task<IAppAccess> CreateAsync()                                                                                
         {
             CheckAuthorization(MethodBase.GetCurrentMethod());
 

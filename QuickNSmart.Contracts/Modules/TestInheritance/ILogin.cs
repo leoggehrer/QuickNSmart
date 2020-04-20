@@ -1,7 +1,7 @@
 ﻿//@QnSIgnore
 using System;
 
-namespace QuickNSmart.Contracts.Modules.Account
+namespace QuickNSmart.Contracts.Modules.TestInheritance
 {
     public interface ILogin : ICopyable<ILogin>
     {

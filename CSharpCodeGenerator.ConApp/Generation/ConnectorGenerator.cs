@@ -304,7 +304,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
             result.Add($"public {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
-            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
             {
                 result.AddRange(CreatePartialDelegateProperty(item));
             }
@@ -427,7 +427,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             var result = new List<string>();
 
-            foreach (var pi in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var pi in GetPublicProperties(type).Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
             {
                 if (pi.CanRead && pi.CanWrite)
                     result.Add($"{GetPropertyType(pi)} {pi.Name} " + "{ get; set; }");

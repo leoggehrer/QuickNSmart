@@ -1,3 +1,321 @@
+namespace QuickNSmart.Transfer.Persistence.TestRelation
+{
+	using System.Text.Json.Serialization;
+	public partial class Invoice : QuickNSmart.Contracts.Persistence.TestRelation.IInvoice
+	{
+		static Invoice()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public Invoice()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.DateTime Date
+		{
+			get
+			{
+				OnDateReading();
+				return _date;
+			}
+			set
+			{
+				bool handled = false;
+				OnDateChanging(ref handled, ref _date);
+				if (handled == false)
+				{
+					this._date = value;
+				}
+				OnDateChanged();
+			}
+		}
+		private System.DateTime _date;
+		partial void OnDateReading();
+		partial void OnDateChanging(ref bool handled, ref System.DateTime _date);
+		partial void OnDateChanged();
+		public System.String Subject
+		{
+			get
+			{
+				OnSubjectReading();
+				return _subject;
+			}
+			set
+			{
+				bool handled = false;
+				OnSubjectChanging(ref handled, ref _subject);
+				if (handled == false)
+				{
+					this._subject = value;
+				}
+				OnSubjectChanged();
+			}
+		}
+		private System.String _subject;
+		partial void OnSubjectReading();
+		partial void OnSubjectChanging(ref bool handled, ref System.String _subject);
+		partial void OnSubjectChanged();
+		public System.String Street
+		{
+			get
+			{
+				OnStreetReading();
+				return _street;
+			}
+			set
+			{
+				bool handled = false;
+				OnStreetChanging(ref handled, ref _street);
+				if (handled == false)
+				{
+					this._street = value;
+				}
+				OnStreetChanged();
+			}
+		}
+		private System.String _street;
+		partial void OnStreetReading();
+		partial void OnStreetChanging(ref bool handled, ref System.String _street);
+		partial void OnStreetChanged();
+		public System.String ZipCode
+		{
+			get
+			{
+				OnZipCodeReading();
+				return _zipCode;
+			}
+			set
+			{
+				bool handled = false;
+				OnZipCodeChanging(ref handled, ref _zipCode);
+				if (handled == false)
+				{
+					this._zipCode = value;
+				}
+				OnZipCodeChanged();
+			}
+		}
+		private System.String _zipCode;
+		partial void OnZipCodeReading();
+		partial void OnZipCodeChanging(ref bool handled, ref System.String _zipCode);
+		partial void OnZipCodeChanged();
+		public System.String City
+		{
+			get
+			{
+				OnCityReading();
+				return _city;
+			}
+			set
+			{
+				bool handled = false;
+				OnCityChanging(ref handled, ref _city);
+				if (handled == false)
+				{
+					this._city = value;
+				}
+				OnCityChanged();
+			}
+		}
+		private System.String _city;
+		partial void OnCityReading();
+		partial void OnCityChanging(ref bool handled, ref System.String _city);
+		partial void OnCityChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Date = other.Date;
+				Subject = other.Subject;
+				Street = other.Street;
+				ZipCode = other.ZipCode;
+				City = other.City;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other);
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.TestRelation
+{
+	partial class Invoice : IdentityModel
+	{
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.TestRelation
+{
+	using System.Text.Json.Serialization;
+	public partial class InvoiceDetail : QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail
+	{
+		static InvoiceDetail()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public InvoiceDetail()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.Int32 Order
+		{
+			get
+			{
+				OnOrderReading();
+				return _order;
+			}
+			set
+			{
+				bool handled = false;
+				OnOrderChanging(ref handled, ref _order);
+				if (handled == false)
+				{
+					this._order = value;
+				}
+				OnOrderChanged();
+			}
+		}
+		private System.Int32 _order;
+		partial void OnOrderReading();
+		partial void OnOrderChanging(ref bool handled, ref System.Int32 _order);
+		partial void OnOrderChanged();
+		public System.String Text
+		{
+			get
+			{
+				OnTextReading();
+				return _text;
+			}
+			set
+			{
+				bool handled = false;
+				OnTextChanging(ref handled, ref _text);
+				if (handled == false)
+				{
+					this._text = value;
+				}
+				OnTextChanged();
+			}
+		}
+		private System.String _text;
+		partial void OnTextReading();
+		partial void OnTextChanging(ref bool handled, ref System.String _text);
+		partial void OnTextChanged();
+		public System.Double Quantity
+		{
+			get
+			{
+				OnQuantityReading();
+				return _quantity;
+			}
+			set
+			{
+				bool handled = false;
+				OnQuantityChanging(ref handled, ref _quantity);
+				if (handled == false)
+				{
+					this._quantity = value;
+				}
+				OnQuantityChanged();
+			}
+		}
+		private System.Double _quantity;
+		partial void OnQuantityReading();
+		partial void OnQuantityChanging(ref bool handled, ref System.Double _quantity);
+		partial void OnQuantityChanged();
+		public System.Double Tax
+		{
+			get
+			{
+				OnTaxReading();
+				return _tax;
+			}
+			set
+			{
+				bool handled = false;
+				OnTaxChanging(ref handled, ref _tax);
+				if (handled == false)
+				{
+					this._tax = value;
+				}
+				OnTaxChanged();
+			}
+		}
+		private System.Double _tax;
+		partial void OnTaxReading();
+		partial void OnTaxChanging(ref bool handled, ref System.Double _tax);
+		partial void OnTaxChanged();
+		public System.Double Price
+		{
+			get
+			{
+				OnPriceReading();
+				return _price;
+			}
+			set
+			{
+				bool handled = false;
+				OnPriceChanging(ref handled, ref _price);
+				if (handled == false)
+				{
+					this._price = value;
+				}
+				OnPriceChanged();
+			}
+		}
+		private System.Double _price;
+		partial void OnPriceReading();
+		partial void OnPriceChanging(ref bool handled, ref System.Double _price);
+		partial void OnPriceChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Order = other.Order;
+				Text = other.Text;
+				Quantity = other.Quantity;
+				Tax = other.Tax;
+				Price = other.Price;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other);
+	}
+}
+namespace QuickNSmart.Transfer.Persistence.TestRelation
+{
+	partial class InvoiceDetail : IdentityModel
+	{
+	}
+}
 namespace QuickNSmart.Transfer.Persistence.Account
 {
 	using System.Text.Json.Serialization;

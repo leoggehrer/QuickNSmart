@@ -73,7 +73,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
 
-        public IEnumerable<string> CreateBusinesssEntities()
+        public IEnumerable<string> CreateBusinessEntities()
         {
             List<string> result = new List<string>();
             ContractsProject contractsProject = ContractsProject.Create(SolutionProperties);
@@ -148,7 +148,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IRelationName) == false
                                                     && CanCreateProperty(type, p.Name)))
             {
                 result.AddRange(CreatePartialProperty(item));
@@ -166,7 +167,23 @@ namespace CSharpCodeGenerator.ConApp.Generation
             var result = string.Empty;
 
             if (type.FullName.Contains(ContractsProject.BusinessSubName))
+            {
                 result = "IdentityObject";
+                var itfcs = type.GetInterfaces();
+
+                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IRelationName))
+                {
+                    var genericArgs = itfcs[0].GetGenericArguments();
+
+                    if (genericArgs.Length == 2)
+                    {
+                        var masterEntity = $"{CreateEntityFullNameFromInterface(genericArgs[0])}";
+                        var detailEntity = $"{CreateEntityFullNameFromInterface(genericArgs[1])}";
+
+                        result = $"RelationObject<{genericArgs[0].FullName}, {masterEntity}, {genericArgs[1].FullName}, {detailEntity}>";
+                    }
+                }
+            }
             else if (type.FullName.Contains(ContractsProject.ModulesSubName))
                 result = HasIdentifiableBase(type) ? "IdentityObject" : "ModuleObject";
             else if (type.FullName.Contains(ContractsProject.PersistenceSubName))

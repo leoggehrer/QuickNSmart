@@ -10,8 +10,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class ClassGenerator : Generator
     {
-        public const string DelegatePropertyName = "DelegateObject";
-
         protected ClassGenerator(SolutionProperties solutionProperties)
             : base(solutionProperties)
         {
@@ -114,7 +112,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IRelationName) == false))
             {
                 createPropertyAttributes?.Invoke(type, item, result);
                 result.AddRange(CreatePartialProperty(item));
@@ -148,7 +147,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 //result.Add($"internal virtual {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
             }
             result.Add($"public {type.FullName} {ClassGenerator.DelegatePropertyName} " + "{ get; set; }");
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
             {
                 result.AddRange(CreatePartialDelegateProperty(item));
             }
@@ -340,6 +339,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
         internal static IEnumerable<string> CreateCopyProperties(Type type, string copyType)
         {
             type.CheckArgument(nameof(type));
+            copyType.CheckArgument(nameof(copyType));
 
             var result = new List<string>
             {
@@ -357,7 +357,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
             };
             foreach (var item in GetPublicProperties(type))
             {
-                if (item.CanRead)
+                if (item.Name.Equals(MasterName) && item.DeclaringType.Name.Equals(IRelationName))
+                {
+                    result.Add($"{MasterName}.CopyProperties(other.{MasterName});");
+                }
+                else if (item.Name.Equals(DetailsName) && item.DeclaringType.Name.Equals(IRelationName))
+                {
+                    result.Add("ClearDetails();");
+                    result.Add("foreach (var detail in other.Details)");
+                    result.Add("{");
+                    result.Add("AddDetail(detail);");
+                    result.Add("}");
+                }
+                else if (item.CanRead)
                 {
                     result.Add($"{item.Name} = other.{item.Name};");
                 }

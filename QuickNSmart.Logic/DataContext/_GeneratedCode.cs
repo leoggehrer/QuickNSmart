@@ -4,6 +4,16 @@ namespace QuickNSmart.Logic.DataContext.Db
 	using Microsoft.EntityFrameworkCore.Metadata.Builders;
 	partial class QuickNSmartDbContext : GenericDbContext
 	{
+		protected DbSet<Entities.Persistence.TestRelation.Invoice> InvoiceSet
+		{
+			get;
+			set;
+		}
+		protected DbSet<Entities.Persistence.TestRelation.InvoiceDetail> InvoiceDetailSet
+		{
+			get;
+			set;
+		}
 		protected DbSet<Entities.Persistence.Account.ActionLog> ActionLogSet
 		{
 			get;
@@ -32,7 +42,15 @@ namespace QuickNSmart.Logic.DataContext.Db
 		public override DbSet<E> Set<I, E>()
 		{
 			DbSet<E> result = null;
-			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IActionLog))
+			if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice))
+			{
+				result = InvoiceSet as DbSet<E>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail))
+			{
+				result = InvoiceDetailSet as DbSet<E>;
+			}
+			else if (typeof(I) == typeof(QuickNSmart.Contracts.Persistence.Account.IActionLog))
 			{
 				result = ActionLogSet as DbSet<E>;
 			}
@@ -56,6 +74,12 @@ namespace QuickNSmart.Logic.DataContext.Db
 		}
 		partial void DoModelCreating(ModelBuilder modelBuilder)
 		{
+			modelBuilder.Entity<Entities.Persistence.TestRelation.Invoice>().ToTable(nameof(Entities.Persistence.TestRelation.Invoice), nameof(Entities.Persistence.TestRelation)).HasKey(nameof(Entities.Persistence.TestRelation.Invoice.Id));
+			modelBuilder.Entity<Entities.Persistence.TestRelation.Invoice>().Property(p => p.Timestamp).IsRowVersion();
+			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.TestRelation.Invoice>());
+			modelBuilder.Entity<Entities.Persistence.TestRelation.InvoiceDetail>().ToTable(nameof(Entities.Persistence.TestRelation.InvoiceDetail), nameof(Entities.Persistence.TestRelation)).HasKey(nameof(Entities.Persistence.TestRelation.InvoiceDetail.Id));
+			modelBuilder.Entity<Entities.Persistence.TestRelation.InvoiceDetail>().Property(p => p.Timestamp).IsRowVersion();
+			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.TestRelation.InvoiceDetail>());
 			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().ToTable(nameof(Entities.Persistence.Account.ActionLog), nameof(Entities.Persistence.Account)).HasKey(nameof(Entities.Persistence.Account.ActionLog.Id));
 			modelBuilder.Entity<Entities.Persistence.Account.ActionLog>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.ActionLog>());
@@ -72,6 +96,8 @@ namespace QuickNSmart.Logic.DataContext.Db
 			modelBuilder.Entity<Entities.Persistence.Account.Role>().Property(p => p.Timestamp).IsRowVersion();
 			ConfigureEntityType(modelBuilder.Entity<Entities.Persistence.Account.Role>());
 		}
+		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.TestRelation.Invoice> entityTypeBuilder);
+		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.TestRelation.InvoiceDetail> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.ActionLog> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.Identity> entityTypeBuilder);
 		partial void ConfigureEntityType(EntityTypeBuilder<Entities.Persistence.Account.IdentityXRole> entityTypeBuilder);

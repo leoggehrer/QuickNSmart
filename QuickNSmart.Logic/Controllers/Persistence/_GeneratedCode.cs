@@ -1,3 +1,53 @@
+namespace QuickNSmart.Logic.Controllers.Persistence.TestRelation
+{
+	sealed partial class InvoiceController : GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, Entities.Persistence.TestRelation.Invoice>
+	{
+		static InvoiceController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		internal InvoiceController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		internal InvoiceController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.TestRelation
+{
+	sealed partial class InvoiceDetailController : GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, Entities.Persistence.TestRelation.InvoiceDetail>
+	{
+		static InvoiceDetailController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		internal InvoiceDetailController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		internal InvoiceDetailController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
 namespace QuickNSmart.Logic.Controllers.Persistence.Account
 {
 	sealed partial class ActionLogController : GenericController<QuickNSmart.Contracts.Persistence.Account.IActionLog, Entities.Persistence.Account.ActionLog>

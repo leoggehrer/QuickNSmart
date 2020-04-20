@@ -1,3 +1,96 @@
+namespace QuickNSmart.AspMvc.Models.Business.TestRelation
+{
+	public partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails
+	{
+		static InvoiceDetails()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public InvoiceDetails()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public QuickNSmart.Contracts.Persistence.TestRelation.IInvoice Master
+		{
+			get
+			{
+				OnMasterReading();
+				return _master;
+			}
+			set
+			{
+				bool handled = false;
+				OnMasterChanging(ref handled, ref _master);
+				if (handled == false)
+				{
+					this._master = value;
+				}
+				OnMasterChanged();
+			}
+		}
+		private QuickNSmart.Contracts.Persistence.TestRelation.IInvoice _master;
+		partial void OnMasterReading();
+		partial void OnMasterChanging(ref bool handled, ref QuickNSmart.Contracts.Persistence.TestRelation.IInvoice _master);
+		partial void OnMasterChanged();
+		public System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> Details
+		{
+			get
+			{
+				OnDetailsReading();
+				return _details;
+			}
+			set
+			{
+				bool handled = false;
+				OnDetailsChanging(ref handled, ref _details);
+				if (handled == false)
+				{
+					this._details = value;
+				}
+				OnDetailsChanged();
+			}
+		}
+		private System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> _details;
+		partial void OnDetailsReading();
+		partial void OnDetailsChanging(ref bool handled, ref System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> _details);
+		partial void OnDetailsChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				Master.CopyProperties(other.Master);
+				ClearDetails();
+				foreach (var detail in other.Details)
+				{
+					AddDetail(detail);
+				}
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other);
+	}
+}
+namespace QuickNSmart.AspMvc.Models.Business.TestRelation
+{
+	partial class InvoiceDetails : RelationModel<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.AspMvc.Models.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.AspMvc.Models.Persistence.TestRelation.InvoiceDetail>
+	{
+	}
+}
 namespace QuickNSmart.AspMvc.Models.Business.Account
 {
 	public partial class AppAccess : QuickNSmart.Contracts.Business.Account.IAppAccess

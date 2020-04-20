@@ -64,18 +64,63 @@ namespace CSharpCodeGenerator.ConApp.Generation
             type.CheckArgument(nameof(type));
 
             List<string> result = new List<string>();
-            string entityName = CreateEntityNameFromInterface(type);
-            string subNameSpace = GetSubNamespaceFromInterface(type);
-            string entityType = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}.{entityName}";
-            string controllerName = $"{entityName}Controller";
+
+            var itfcs = type.GetInterfaces();
+
+            if (itfcs.Length > 0 && itfcs[0].Name.Equals(IRelationName) && itfcs[0].GetGenericArguments().Length == 2)
+            {
+                result.AddRange(CreateRelationBusinessController(type));
+            }
+            else
+            {
+                string entityName = CreateEntityNameFromInterface(type);
+                string subNameSpace = GetSubNamespaceFromInterface(type);
+                string entityType = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}.{entityName}";
+                string controllerName = $"{entityName}Controller";
+
+                CreateLogicControllerAttributes(type, result);
+                result.Add($"sealed partial class {controllerName} : BusinessControllerAdapter<{type.FullName}, {entityType}>");
+                result.Add("{");
+                result.AddRange(CreatePartialStaticConstrutor(controllerName));
+                result.AddRange(CreatePartialConstrutor("public", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
+                result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
+                result.Add("}");
+            }
+            return result;
+        }
+        private IEnumerable<string> CreateRelationBusinessController(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>();
+            var entityName = CreateEntityNameFromInterface(type);
+            var subNameSpace = GetSubNamespaceFromInterface(type);
+            var entityType = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}.{entityName}";
+            var controllerName = $"{entityName}Controller";
+            var interfaceTypes = type.GetInterfaces();
+            var firstGenericType = interfaceTypes[0].GetGenericArguments()[0];
+            var secondGenericType = interfaceTypes[0].GetGenericArguments()[1];
+            var masterEntityType = $"{CreateEntityFullNameFromInterface(firstGenericType)}";
+            var detailEntityType = $"{CreateEntityFullNameFromInterface(secondGenericType)}";
+            var masterCtrlType = $"{CreateControllerFullNameFromInterface(firstGenericType)}";
+            var detailCtrlType = $"{CreateControllerFullNameFromInterface(secondGenericType)}";
 
             CreateLogicControllerAttributes(type, result);
-            result.Add($"sealed partial class {controllerName} : BusinessControllerAdapter<{type.FullName}, {entityType}>");
+            result.Add($"sealed partial class {controllerName} : GenericRelationController<{type.FullName}, {entityType}, {firstGenericType.FullName}, {masterEntityType}, {secondGenericType.FullName}, {detailEntityType}>");
             result.Add("{");
 
             result.AddRange(CreatePartialStaticConstrutor(controllerName));
             result.AddRange(CreatePartialConstrutor("public", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
             result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
+
+            result.Add($"protected override GenericController<{firstGenericType.FullName}, {masterEntityType}> CreateMasterController(ControllerObject controller)");
+            result.Add("{");
+            result.Add($"return new {masterCtrlType}(controller);");
+            result.Add("}");
+            result.Add($"protected override GenericController<{secondGenericType.FullName}, {detailEntityType}> CreateDetailController(ControllerObject controller)");
+            result.Add("{");
+            result.Add($"return new {detailCtrlType}(controller);");
+            result.Add("}");
             result.Add("}");
             return result;
         }

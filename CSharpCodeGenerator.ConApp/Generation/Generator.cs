@@ -32,6 +32,12 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string BusinessLabel => "Business";
         public static string PersistenceLabel => "Persistence";
 
+        public const string DelegatePropertyName = "DelegateObject";
+        public const string IIdentifiableName = "IIdentifiable";
+        public const string IRelationName = "IRelation`2";
+        public const string MasterName = "Master";
+        public const string DetailsName = "Details";
+
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {
             List<string> result = new List<string>();
@@ -102,7 +108,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             if (type.IsInterface)
             {
-                result = type.GetInterfaces().Any(i => i.Name.Equals("IIdentifiable"));
+                result = type.GetInterfaces().Any(i => i.Name.Equals(IIdentifiableName));
+            }
+            return result;
+        }
+        internal static bool HasRelationBase(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = false;
+
+            if (type.IsInterface)
+            {
+                result = type.GetInterfaces().Any(i => i.Name.Equals(IRelationName));
             }
             return result;
         }
@@ -153,8 +171,6 @@ namespace CSharpCodeGenerator.ConApp.Generation
             return result;
         }
         #endregion Interface helpers
-
-
 
         /// <summary>
         /// Diese Methode ueberprueft, ob der Typ ein Schnittstellen-Typ ist. Wenn nicht,
@@ -298,19 +314,40 @@ namespace CSharpCodeGenerator.ConApp.Generation
         /// Diese Methode ermittelt den Entity Namen aus seinem Schnittstellen Typ.
         /// </summary>
         /// <param name="type">Schnittstellen-Typ</param>
-        /// <returns>MethodName der Entitaet.</returns>
+        /// <returns>Name der Entitaet.</returns>
         public static string CreateEntityFullNameFromInterface(Type type)
         {
             CheckInterfaceType(type);
 
             var result = string.Empty;
 
-            if (type.GetTypeInfo().IsInterface)
+            if (type.IsInterface)
             {
                 var entityName = type.Name.Substring(1);
 
                 result = type.FullName.Replace(type.Name, entityName);
                 result = result.Replace(".Contracts", ".Logic.Entities");
+            }
+            return result;
+        }
+        /// <summary>
+        /// Diese Methode ermittelt den Kontroller Namen aus seinem Schnittstellen Typ.
+        /// </summary>
+        /// <param name="type">Schnittstellen-Typ</param>
+        /// <returns>Name des Kontrollers.</returns>
+        public static string CreateControllerFullNameFromInterface(Type type)
+        {
+            CheckInterfaceType(type);
+
+            var result = string.Empty;
+
+            if (type.IsInterface)
+            {
+                var entityName = type.Name.Substring(1);
+
+                result = type.FullName.Replace(type.Name, entityName);
+                result = result.Replace(".Contracts", ".Logic.Controllers");
+                result = $"{result}Controller";
             }
             return result;
         }

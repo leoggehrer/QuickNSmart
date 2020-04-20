@@ -135,7 +135,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals("IIdentifiable") == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
             {
                 CreateModelPropertyAttributes(type, item.Name, result);
                 result.AddRange(CreatePartialProperty(item));
@@ -151,7 +151,23 @@ namespace CSharpCodeGenerator.ConApp.Generation
             var result = string.Empty;
 
             if (type.FullName.Contains(ContractsProject.BusinessSubName))
+            {
                 result = "IdentityModel";
+                var itfcs = type.GetInterfaces();
+
+                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IRelationName))
+                {
+                    var genericArgs = itfcs[0].GetGenericArguments();
+
+                    if (genericArgs.Length == 2)
+                    {
+                        var masterModel = $"{CreateModelFullNameFromInterface(genericArgs[0])}";
+                        var detailModel = $"{CreateModelFullNameFromInterface(genericArgs[1])}";
+
+                        result = $"RelationModel<{genericArgs[0].FullName}, {masterModel}, {genericArgs[1].FullName}, {detailModel}>";
+                    }
+                }
+            }
             else if (type.FullName.Contains(ContractsProject.ModulesSubName))
                 result = HasIdentifiableBase(type) ? "IdentityModel" : "ModelObject";
             else if (type.FullName.Contains(ContractsProject.PersistenceSubName))
@@ -161,6 +177,21 @@ namespace CSharpCodeGenerator.ConApp.Generation
             if (baseItfc != null)
             {
                 result = CreateEntityNameFromInterface(baseItfc);
+            }
+            return result;
+        }
+        public static string CreateModelFullNameFromInterface(Type type)
+        {
+            CheckInterfaceType(type);
+
+            var result = string.Empty;
+
+            if (type.IsInterface)
+            {
+                var entityName = type.Name.Substring(1);
+
+                result = type.FullName.Replace(type.Name, entityName);
+                result = result.Replace(".Contracts", ".AspMvc.Models");
             }
             return result;
         }

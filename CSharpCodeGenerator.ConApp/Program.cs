@@ -29,7 +29,7 @@ namespace CSharpCodeGenerator.ConApp
 
             Console.WriteLine("Create Business-Entities...");
             lines.Clear();
-            lines.AddRange(entityGenerator.CreateBusinesssEntities());
+            lines.AddRange(entityGenerator.CreateBusinessEntities());
             WriteAllLines(solutionProperties.EntitiesBusinessFilePath, FormatCSharp(lines));
 
             Console.WriteLine("Create Persistence-Entities...");
