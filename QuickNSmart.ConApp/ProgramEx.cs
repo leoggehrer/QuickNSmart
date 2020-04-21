@@ -1,7 +1,6 @@
-﻿using CommonBase.Helpers;
+﻿//@QnSIgnore
+using CommonBase.Helpers;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using AccountManager = QuickNSmart.Adapters.Modules.Account.AccountManager;
 

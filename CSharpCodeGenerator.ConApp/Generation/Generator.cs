@@ -11,6 +11,14 @@ namespace CSharpCodeGenerator.ConApp.Generation
 {
     partial class Generator
     {
+        static Generator()
+        {
+            Constructing();
+            Constructed();
+        }
+        static partial void Constructing();
+        static partial void Constructed();
+
         public enum InterfaceType
         {
             Unknown,
@@ -32,11 +40,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
         public static string BusinessLabel => "Business";
         public static string PersistenceLabel => "Persistence";
 
-        public const string DelegatePropertyName = "DelegateObject";
-        public const string IIdentifiableName = "IIdentifiable";
-        public const string IRelationName = "IRelation`2";
-        public const string MasterName = "Master";
-        public const string DetailsName = "Details";
+        public static string DelegatePropertyName => "DelegateObject";
+        public static string IIdentifiableName => "IIdentifiable";
+        public static string IRelationName => "IRelation`2";
+        public static string MasterName => "Master";
+        public static string DetailsName => "Details";
 
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {

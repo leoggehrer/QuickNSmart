@@ -1,6 +1,6 @@
-﻿using System;
+﻿//@QnSBaseCode
+//MdStart
 using System.Collections.Generic;
-using System.Text;
 
 namespace QuickNSmart.Contracts
 {
@@ -17,3 +17,4 @@ namespace QuickNSmart.Contracts
         void RemoveDetail(TDetail detail);
     }
 }
+//MdEnd

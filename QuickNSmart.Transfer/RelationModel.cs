@@ -2,6 +2,7 @@
 //MdStart
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 using CommonBase.Extensions;
 
 namespace QuickNSmart.Transfer
@@ -12,10 +13,12 @@ namespace QuickNSmart.Transfer
         where TMasterModel : IdentityModel, Contracts.ICopyable<TMaster>, TMaster, new()
         where TDetailModel : IdentityModel, Contracts.ICopyable<TDetail>, TDetail, new()
     {
-        public virtual TMasterModel MasterModel { get; } = new TMasterModel();
+        public virtual TMasterModel MasterModel { get; set; } = new TMasterModel();
+        [JsonIgnore]
         public virtual TMaster Master => MasterModel;
 
-        public virtual List<TDetailModel> DetailEntities { get; } = new List<TDetailModel>();
+        public virtual List<TDetailModel> DetailEntities { get; set; } = new List<TDetailModel>();
+        [JsonIgnore]
         public virtual IEnumerable<TDetail> Details => DetailEntities as IEnumerable<TDetail>;
 
         public override int Id { get => MasterModel.Id; set => MasterModel.Id = value; }
