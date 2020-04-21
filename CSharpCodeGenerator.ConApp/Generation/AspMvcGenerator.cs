@@ -135,7 +135,8 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.Add("{");
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
-            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false))
+            foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IRelationName) == false))
             {
                 CreateModelPropertyAttributes(type, item.Name, result);
                 result.AddRange(CreatePartialProperty(item));

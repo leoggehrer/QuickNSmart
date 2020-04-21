@@ -16,50 +16,6 @@ namespace QuickNSmart.AspMvc.Models.Business.TestRelation
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public QuickNSmart.Contracts.Persistence.TestRelation.IInvoice Master
-		{
-			get
-			{
-				OnMasterReading();
-				return _master;
-			}
-			set
-			{
-				bool handled = false;
-				OnMasterChanging(ref handled, ref _master);
-				if (handled == false)
-				{
-					this._master = value;
-				}
-				OnMasterChanged();
-			}
-		}
-		private QuickNSmart.Contracts.Persistence.TestRelation.IInvoice _master;
-		partial void OnMasterReading();
-		partial void OnMasterChanging(ref bool handled, ref QuickNSmart.Contracts.Persistence.TestRelation.IInvoice _master);
-		partial void OnMasterChanged();
-		public System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> Details
-		{
-			get
-			{
-				OnDetailsReading();
-				return _details;
-			}
-			set
-			{
-				bool handled = false;
-				OnDetailsChanging(ref handled, ref _details);
-				if (handled == false)
-				{
-					this._details = value;
-				}
-				OnDetailsChanged();
-			}
-		}
-		private System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> _details;
-		partial void OnDetailsReading();
-		partial void OnDetailsChanging(ref bool handled, ref System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail> _details);
-		partial void OnDetailsChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
 		{
 			if (other == null)
