@@ -25,22 +25,22 @@ namespace QuickNSmart.ConApp
             using var ctrl = Adapters.Factory.Create<Contracts.Business.TestRelation.IInvoiceDetails>(login.SessionToken);
             var entity = await ctrl.CreateAsync();
 
-            entity.Master.Date = DateTime.Now;
-            entity.Master.Subject = $"Rechnung {DateTime.Now}";
-            entity.Master.Street = "Europastraße 67";
-            entity.Master.ZipCode = "4020";
-            entity.Master.City = "Linz";
+            entity.FirstItem.Date = DateTime.Now;
+            entity.FirstItem.Subject = $"Rechnung {DateTime.Now}";
+            entity.FirstItem.Street = "Europastraße 67";
+            entity.FirstItem.ZipCode = "4020";
+            entity.FirstItem.City = "Linz";
 
             for (int i = 0; i < 5; i++)
             {
-                var detail = entity.CreateDetail();
+                var detail = entity.CreateSecondItem();
 
                 detail.Order = i;
                 detail.Text = $"Position: {i + 1}";
                 detail.Quantity = 1;
                 detail.Price = 43.50;
                 detail.Tax = 20;
-                entity.AddDetail(detail);
+                entity.AddSecondItem(detail);
             }
             await ctrl.InsertAsync(entity);
             await accMngr.LogoutAsync(login.SessionToken);

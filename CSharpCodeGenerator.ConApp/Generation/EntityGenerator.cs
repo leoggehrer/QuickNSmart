@@ -149,7 +149,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
             foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
-                                                    && p.DeclaringType.Name.Equals(IRelationName) == false
+                                                    && p.DeclaringType.Name.Equals(IOneToManyName) == false
                                                     && CanCreateProperty(type, p.Name)))
             {
                 result.AddRange(CreatePartialProperty(item));
@@ -171,16 +171,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result = "IdentityObject";
                 var itfcs = type.GetInterfaces();
 
-                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IRelationName))
+                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToManyName))
                 {
                     var genericArgs = itfcs[0].GetGenericArguments();
 
                     if (genericArgs.Length == 2)
                     {
-                        var masterEntity = $"{CreateEntityFullNameFromInterface(genericArgs[0])}";
-                        var detailEntity = $"{CreateEntityFullNameFromInterface(genericArgs[1])}";
+                        var firstEntity = $"{CreateEntityFullNameFromInterface(genericArgs[0])}";
+                        var secondEntity = $"{CreateEntityFullNameFromInterface(genericArgs[1])}";
 
-                        result = $"RelationObject<{genericArgs[0].FullName}, {masterEntity}, {genericArgs[1].FullName}, {detailEntity}>";
+                        result = $"OneToManyObject<{genericArgs[0].FullName}, {firstEntity}, {genericArgs[1].FullName}, {secondEntity}>";
                     }
                 }
             }

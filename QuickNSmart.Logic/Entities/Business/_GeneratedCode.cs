@@ -29,11 +29,11 @@ namespace QuickNSmart.Logic.Entities.Business.TestRelation
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
-				Master.CopyProperties(other.Master);
-				ClearDetails();
-				foreach (var detail in other.Details)
+				FirstItem.CopyProperties(other.FirstItem);
+				ClearSecondItems();
+				foreach (var item in other.SecondItems)
 				{
-					AddDetail(detail);
+					AddSecondItem(item);
 				}
 			}
 			AfterCopyProperties(other);
@@ -54,17 +54,17 @@ namespace QuickNSmart.Logic.Entities.Business.TestRelation
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Master, other.Master) && IsEqualsWith(Details, other.Details);
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItems, other.SecondItems);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Master, Details);
+			return HashCode.Combine(Id, Timestamp, FirstItem, SecondItems);
 		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Business.TestRelation
 {
-	partial class InvoiceDetails : RelationObject<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
+	partial class InvoiceDetails : OneToManyObject<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
 	{
 	}
 }

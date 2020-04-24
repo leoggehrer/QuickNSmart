@@ -1,6 +1,6 @@
 namespace QuickNSmart.Logic.Controllers.Business.TestRelation
 {
-	sealed partial class InvoiceDetailsController : GenericRelationController<QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails, Entities.Business.TestRelation.InvoiceDetails, QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
+	sealed partial class InvoiceDetailsController : GenericOneToManyController<QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails, Entities.Business.TestRelation.InvoiceDetails, QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
 	{
 		static InvoiceDetailsController()
 		{
@@ -21,11 +21,11 @@ namespace QuickNSmart.Logic.Controllers.Business.TestRelation
 			Constructing();
 			Constructed();
 		}
-		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice> CreateMasterController(ControllerObject controller)
+		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice> CreateOneEntityController(ControllerObject controller)
 		{
 			return new QuickNSmart.Logic.Controllers.Persistence.TestRelation.InvoiceController(controller);
 		}
-		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail> CreateDetailController(ControllerObject controller)
+		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail> CreateManyEntityController(ControllerObject controller)
 		{
 			return new QuickNSmart.Logic.Controllers.Persistence.TestRelation.InvoiceDetailController(controller);
 		}

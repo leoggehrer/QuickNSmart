@@ -42,9 +42,9 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
         public static string DelegatePropertyName => "DelegateObject";
         public static string IIdentifiableName => "IIdentifiable";
-        public static string IRelationName => "IRelation`2";
-        public static string MasterName => "Master";
-        public static string DetailsName => "Details";
+        public static string IOneToManyName => "IOneToMany`2";
+        public static string FirstItemName => "FirstItem";
+        public static string SecondItemsName => "SecondItems";
 
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)
         {
@@ -120,7 +120,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             }
             return result;
         }
-        internal static bool HasRelationBase(Type type)
+        internal static bool HasOneToManyBase(Type type)
         {
             type.CheckArgument(nameof(type));
 
@@ -128,7 +128,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             if (type.IsInterface)
             {
-                result = type.GetInterfaces().Any(i => i.Name.Equals(IRelationName));
+                result = type.GetInterfaces().Any(i => i.Name.Equals(IOneToManyName));
             }
             return result;
         }

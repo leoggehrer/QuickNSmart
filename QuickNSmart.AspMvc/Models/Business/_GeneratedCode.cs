@@ -28,11 +28,11 @@ namespace QuickNSmart.AspMvc.Models.Business.TestRelation
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
-				Master.CopyProperties(other.Master);
-				ClearDetails();
-				foreach (var detail in other.Details)
+				FirstItem.CopyProperties(other.FirstItem);
+				ClearSecondItems();
+				foreach (var item in other.SecondItems)
 				{
-					AddDetail(detail);
+					AddSecondItem(item);
 				}
 			}
 			AfterCopyProperties(other);
@@ -43,7 +43,7 @@ namespace QuickNSmart.AspMvc.Models.Business.TestRelation
 }
 namespace QuickNSmart.AspMvc.Models.Business.TestRelation
 {
-	partial class InvoiceDetails : RelationModel<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.AspMvc.Models.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.AspMvc.Models.Persistence.TestRelation.InvoiceDetail>
+	partial class InvoiceDetails : OneToManyModel<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.AspMvc.Models.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.AspMvc.Models.Persistence.TestRelation.InvoiceDetail>
 	{
 	}
 }

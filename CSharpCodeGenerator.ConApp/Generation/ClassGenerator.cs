@@ -113,7 +113,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
             foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
-                                                    && p.DeclaringType.Name.Equals(IRelationName) == false))
+                                                    && p.DeclaringType.Name.Equals(IOneToManyName) == false))
             {
                 createPropertyAttributes?.Invoke(type, item, result);
                 result.AddRange(CreatePartialProperty(item));
@@ -357,16 +357,16 @@ namespace CSharpCodeGenerator.ConApp.Generation
             };
             foreach (var item in GetPublicProperties(type))
             {
-                if (item.Name.Equals(MasterName) && item.DeclaringType.Name.Equals(IRelationName))
+                if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
                 {
-                    result.Add($"{MasterName}.CopyProperties(other.{MasterName});");
+                    result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
                 }
-                else if (item.Name.Equals(DetailsName) && item.DeclaringType.Name.Equals(IRelationName))
+                else if (item.Name.Equals(SecondItemsName) && item.DeclaringType.Name.Equals(IOneToManyName))
                 {
-                    result.Add("ClearDetails();");
-                    result.Add("foreach (var detail in other.Details)");
+                    result.Add($"Clear{SecondItemsName}();");
+                    result.Add($"foreach (var item in other.{SecondItemsName})");
                     result.Add("{");
-                    result.Add("AddDetail(detail);");
+                    result.Add("AddSecondItem(item);");
                     result.Add("}");
                 }
                 else if (item.CanRead)
