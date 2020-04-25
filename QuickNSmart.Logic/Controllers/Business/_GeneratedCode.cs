@@ -1,6 +1,6 @@
-namespace QuickNSmart.Logic.Controllers.Business.TestRelation
+namespace QuickNSmart.Logic.Controllers.Business.TestOneToMany
 {
-	sealed partial class InvoiceDetailsController : GenericOneToManyController<QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails, Entities.Business.TestRelation.InvoiceDetails, QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
+	sealed partial class InvoiceDetailsController : GenericOneToManyController<QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails, Entities.Business.TestOneToMany.InvoiceDetails, QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.Invoice, QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.InvoiceDetail>
 	{
 		static InvoiceDetailsController()
 		{
@@ -21,13 +21,13 @@ namespace QuickNSmart.Logic.Controllers.Business.TestRelation
 			Constructing();
 			Constructed();
 		}
-		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice> CreateOneEntityController(ControllerObject controller)
+		protected override GenericController<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.Invoice> CreateFirstEntityController(ControllerObject controller)
 		{
-			return new QuickNSmart.Logic.Controllers.Persistence.TestRelation.InvoiceController(controller);
+			return new QuickNSmart.Logic.Controllers.Persistence.TestOneToMany.InvoiceController(controller);
 		}
-		protected override GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail> CreateManyEntityController(ControllerObject controller)
+		protected override GenericController<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.InvoiceDetail> CreateSecondEntityController(ControllerObject controller)
 		{
-			return new QuickNSmart.Logic.Controllers.Persistence.TestRelation.InvoiceDetailController(controller);
+			return new QuickNSmart.Logic.Controllers.Persistence.TestOneToMany.InvoiceDetailController(controller);
 		}
 	}
 }
@@ -54,6 +54,39 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 		{
 			Constructing();
 			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Business.Account
+{
+	sealed partial class IdentityUserController : GenericOneToOneController<QuickNSmart.Contracts.Business.Account.IIdentityUser, Entities.Business.Account.IdentityUser, QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity, QuickNSmart.Contracts.Persistence.Account.IUser, QuickNSmart.Logic.Entities.Persistence.Account.User>
+	{
+		static IdentityUserController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityUserController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public IdentityUserController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+		protected override GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity> CreateFirstEntityController(ControllerObject controller)
+		{
+			return new QuickNSmart.Logic.Controllers.Persistence.Account.IdentityController(controller);
+		}
+		protected override GenericController<QuickNSmart.Contracts.Persistence.Account.IUser, QuickNSmart.Logic.Entities.Persistence.Account.User> CreateSecondEntityController(ControllerObject controller)
+		{
+			return new QuickNSmart.Logic.Controllers.Persistence.Account.UserController(controller);
 		}
 	}
 }

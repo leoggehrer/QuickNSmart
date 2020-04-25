@@ -113,6 +113,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
             foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IOneToOneName) == false
                                                     && p.DeclaringType.Name.Equals(IOneToManyName) == false))
             {
                 createPropertyAttributes?.Invoke(type, item, result);
@@ -357,7 +358,15 @@ namespace CSharpCodeGenerator.ConApp.Generation
             };
             foreach (var item in GetPublicProperties(type))
             {
-                if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
+                if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToOneName))
+                {
+                    result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
+                }
+                else if (item.Name.Equals(SecondItemName) && item.DeclaringType.Name.Equals(IOneToOneName))
+                {
+                    result.Add($"{SecondItemName}.CopyProperties(other.{SecondItemName});");
+                }
+                else if (item.Name.Equals(FirstItemName) && item.DeclaringType.Name.Equals(IOneToManyName))
                 {
                     result.Add($"{FirstItemName}.CopyProperties(other.{FirstItemName});");
                 }

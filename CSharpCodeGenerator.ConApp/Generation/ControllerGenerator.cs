@@ -67,7 +67,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
             var itfcs = type.GetInterfaces();
 
-            if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToManyName) && itfcs[0].GetGenericArguments().Length == 2)
+            if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToOneName) && itfcs[0].GetGenericArguments().Length == 2)
+            {
+                result.AddRange(CreateOneToOneBusinessController(type));
+            }
+            else if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToManyName) && itfcs[0].GetGenericArguments().Length == 2)
             {
                 result.AddRange(CreateOneToManyBusinessController(type));
             }
@@ -86,6 +90,42 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
                 result.Add("}");
             }
+            return result;
+        }
+        private IEnumerable<string> CreateOneToOneBusinessController(Type type)
+        {
+            type.CheckArgument(nameof(type));
+
+            var result = new List<string>();
+            var entityName = CreateEntityNameFromInterface(type);
+            var subNameSpace = GetSubNamespaceFromInterface(type);
+            var entityType = $"{SolutionProperties.EntitiesFolder}.{subNameSpace}.{entityName}";
+            var controllerName = $"{entityName}Controller";
+            var interfaceTypes = type.GetInterfaces();
+            var firstGenericType = interfaceTypes[0].GetGenericArguments()[0];
+            var secondGenericType = interfaceTypes[0].GetGenericArguments()[1];
+            var masterEntityType = $"{CreateEntityFullNameFromInterface(firstGenericType)}";
+            var detailEntityType = $"{CreateEntityFullNameFromInterface(secondGenericType)}";
+            var masterCtrlType = $"{CreateControllerFullNameFromInterface(firstGenericType)}";
+            var detailCtrlType = $"{CreateControllerFullNameFromInterface(secondGenericType)}";
+
+            CreateLogicControllerAttributes(type, result);
+            result.Add($"sealed partial class {controllerName} : GenericOneToOneController<{type.FullName}, {entityType}, {firstGenericType.FullName}, {masterEntityType}, {secondGenericType.FullName}, {detailEntityType}>");
+            result.Add("{");
+
+            result.AddRange(CreatePartialStaticConstrutor(controllerName));
+            result.AddRange(CreatePartialConstrutor("public", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
+            result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
+
+            result.Add($"protected override GenericController<{firstGenericType.FullName}, {masterEntityType}> CreateFirstEntityController(ControllerObject controller)");
+            result.Add("{");
+            result.Add($"return new {masterCtrlType}(controller);");
+            result.Add("}");
+            result.Add($"protected override GenericController<{secondGenericType.FullName}, {detailEntityType}> CreateSecondEntityController(ControllerObject controller)");
+            result.Add("{");
+            result.Add($"return new {detailCtrlType}(controller);");
+            result.Add("}");
+            result.Add("}");
             return result;
         }
         private IEnumerable<string> CreateOneToManyBusinessController(Type type)
@@ -113,11 +153,11 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialConstrutor("public", controllerName, $"{SolutionProperties.DataContextFolder}.IContext context", "base(context)"));
             result.AddRange(CreatePartialConstrutor("public", controllerName, "ControllerObject controller", "base(controller)", null, false));
 
-            result.Add($"protected override GenericController<{firstGenericType.FullName}, {masterEntityType}> CreateOneEntityController(ControllerObject controller)");
+            result.Add($"protected override GenericController<{firstGenericType.FullName}, {masterEntityType}> CreateFirstEntityController(ControllerObject controller)");
             result.Add("{");
             result.Add($"return new {masterCtrlType}(controller);");
             result.Add("}");
-            result.Add($"protected override GenericController<{secondGenericType.FullName}, {detailEntityType}> CreateManyEntityController(ControllerObject controller)");
+            result.Add($"protected override GenericController<{secondGenericType.FullName}, {detailEntityType}> CreateSecondEntityController(ControllerObject controller)");
             result.Add("{");
             result.Add($"return new {detailCtrlType}(controller);");
             result.Add("}");

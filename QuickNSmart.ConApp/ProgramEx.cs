@@ -22,7 +22,7 @@ namespace QuickNSmart.ConApp
         {
             var accMngr = new AccountManager();
             var login = await accMngr.LogonAsync(SaEmail, SaPwd);
-            using var ctrl = Adapters.Factory.Create<Contracts.Business.TestRelation.IInvoiceDetails>(login.SessionToken);
+            using var ctrl = Adapters.Factory.Create<Contracts.Business.TestOneToMany.IInvoiceDetails>(login.SessionToken);
             var entity = await ctrl.CreateAsync();
 
             entity.FirstItem.Date = DateTime.Now;

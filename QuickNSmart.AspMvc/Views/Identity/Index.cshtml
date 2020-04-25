@@ -26,10 +26,21 @@
 
 <h1>@title</h1>
 
-<p style="margin-top: 1em;">
-    <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
-</p>
-
+@if (sessionWrapper.IsAuthenticated && sessionWrapper.HasRole("SysAdmin", "AppAdmin"))
+{
+    <div class="d-flex bg-transparent">
+        <div class="mr-auto p-sm-2">
+            <a asp-action="Create" class="btn btn-outline-secondary">@translateFor("Create New")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Export" class="btn btn-outline-secondary">@translateFor("Export")</a>
+        </div>
+        <div class="p-sm-2">
+            <a asp-action="Import" class="btn btn-outline-primary">@translateFor("Import")</a>
+        </div>
+    </div>
+}
+<p></p>
 <table class="table">
     <thead>
         <tr>

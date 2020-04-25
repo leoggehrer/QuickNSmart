@@ -135,7 +135,7 @@ namespace QuickNSmart.AspMvc.Modules.Session
                 return LoginSession != null;
             }
         }
-        public bool HasRole(string role)
+        public bool HasRole(string role, params string[] further)
         {
             var result = false;
             var loginSession = LoginSession;
@@ -145,6 +145,10 @@ namespace QuickNSmart.AspMvc.Modules.Session
                 var accMngr = new Adapters.Modules.Account.AccountManager();
 
                 result = AsyncHelper.RunSync(() => accMngr.HasRoleAsync(loginSession.SessionToken, role));
+                for (int i = 0; result == false && i < further.Length; i++)
+                {
+                    result = AsyncHelper.RunSync(() => accMngr.HasRoleAsync(loginSession.SessionToken, further[i]));
+                }
             }
             return result;
         }

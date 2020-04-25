@@ -42,8 +42,10 @@ namespace CSharpCodeGenerator.ConApp.Generation
 
         public static string DelegatePropertyName => "DelegateObject";
         public static string IIdentifiableName => "IIdentifiable";
+        public static string IOneToOneName => "IOneToOne`2";
         public static string IOneToManyName => "IOneToMany`2";
         public static string FirstItemName => "FirstItem";
+        public static string SecondItemName => "SecondItem";
         public static string SecondItemsName => "SecondItems";
 
         internal static IEnumerable<string> EnvelopeWithANamespace(IEnumerable<string> source, string nameSpace, params string[] usings)

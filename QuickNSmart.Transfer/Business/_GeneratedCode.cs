@@ -1,7 +1,7 @@
-namespace QuickNSmart.Transfer.Business.TestRelation
+namespace QuickNSmart.Transfer.Business.TestOneToMany
 {
 	using System.Text.Json.Serialization;
-	public partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails
+	public partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails
 	{
 		static InvoiceDetails()
 		{
@@ -17,7 +17,7 @@ namespace QuickNSmart.Transfer.Business.TestRelation
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public void CopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		public void CopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other)
 		{
 			if (other == null)
 			{
@@ -38,13 +38,13 @@ namespace QuickNSmart.Transfer.Business.TestRelation
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other);
 	}
 }
-namespace QuickNSmart.Transfer.Business.TestRelation
+namespace QuickNSmart.Transfer.Business.TestOneToMany
 {
-	partial class InvoiceDetails : OneToManyModel<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Transfer.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Transfer.Persistence.TestRelation.InvoiceDetail>
+	partial class InvoiceDetails : OneToManyModel<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice, QuickNSmart.Transfer.Persistence.TestOneToMany.Invoice, QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail, QuickNSmart.Transfer.Persistence.TestOneToMany.InvoiceDetail>
 	{
 	}
 }
@@ -137,6 +137,52 @@ namespace QuickNSmart.Transfer.Business.Account
 namespace QuickNSmart.Transfer.Business.Account
 {
 	partial class AppAccess : IdentityModel
+	{
+	}
+}
+namespace QuickNSmart.Transfer.Business.Account
+{
+	using System.Text.Json.Serialization;
+	public partial class IdentityUser : QuickNSmart.Contracts.Business.Account.IIdentityUser
+	{
+		static IdentityUser()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityUser()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				FirstItem.CopyProperties(other.FirstItem);
+				SecondItem.CopyProperties(other.SecondItem);
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other);
+	}
+}
+namespace QuickNSmart.Transfer.Business.Account
+{
+	partial class IdentityUser : OneToOneModel<QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Transfer.Persistence.Account.Identity, QuickNSmart.Contracts.Persistence.Account.IUser, QuickNSmart.Transfer.Persistence.Account.User>
 	{
 	}
 }

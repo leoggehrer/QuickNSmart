@@ -3,8 +3,8 @@ namespace QuickNSmart.WebApi.Controllers
 	using Microsoft.AspNetCore.Mvc;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Contract = Contracts.Persistence.TestRelation.IInvoice;
-	using Model = Transfer.Persistence.TestRelation.Invoice;
+	using Contract = Contracts.Persistence.TestOneToMany.IInvoice;
+	using Model = Transfer.Persistence.TestOneToMany.Invoice;
 	[ApiController]
 	[Route("Controller")]
 	public partial class InvoiceController : GenericController<Contract, Model>
@@ -86,8 +86,8 @@ namespace QuickNSmart.WebApi.Controllers
 	using Microsoft.AspNetCore.Mvc;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Contract = Contracts.Persistence.TestRelation.IInvoiceDetail;
-	using Model = Transfer.Persistence.TestRelation.InvoiceDetail;
+	using Contract = Contracts.Persistence.TestOneToMany.IInvoiceDetail;
+	using Model = Transfer.Persistence.TestOneToMany.InvoiceDetail;
 	[ApiController]
 	[Route("Controller")]
 	public partial class InvoiceDetailController : GenericController<Contract, Model>
@@ -584,8 +584,91 @@ namespace QuickNSmart.WebApi.Controllers
 	using Microsoft.AspNetCore.Mvc;
 	using System.Collections.Generic;
 	using System.Threading.Tasks;
-	using Contract = Contracts.Business.TestRelation.IInvoiceDetails;
-	using Model = Transfer.Business.TestRelation.InvoiceDetails;
+	using Contract = Contracts.Persistence.Account.IUser;
+	using Model = Transfer.Persistence.Account.User;
+	[ApiController]
+	[Route("Controller")]
+	public partial class UserController : GenericController<Contract, Model>
+	{
+		[HttpGet("/api/[controller]/MaxPageSize")]
+		public Task<int> GetMaxPageAsync()
+		{
+			return GetMaxPageAsync();
+		}
+		[HttpGet("/api/[controller]/Count")]
+		public Task<int> GetCountAsync()
+		{
+			return CountModelsAsync();
+		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountModelsByAsync(predicate);
+		}
+		[HttpGet("/api/[controller]/GetById/{id}")]
+		public Task<Model> GetByIdAsync(int id)
+		{
+			return GetModelByIdAsync(id);
+		}
+		[HttpGet("/api/[controller]/GetPageList/{index}/{size}")]
+		public Task<IEnumerable<Model>> GetPageListAsync(int index, int size)
+		{
+			return GetModelPageListAsync(index, size);
+		}
+		[HttpGet("/api/[controller]/GetAll")]
+		public Task<IEnumerable<Model>> GetAllAsync()
+		{
+			return GetAllModelsAsync();
+		}
+		[HttpGet("/api/[controller]/QueryPageList/{predicate}/{index}/{size}")]
+		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
+		{
+			return QueryModelPageListAsync(predicate, index, size);
+		}
+		[HttpGet("/api/[controller]/QueryAll/{predicate}")]
+		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
+		{
+			return QueryAllModelsAsync(predicate);
+		}
+		[HttpGet("/api/[controller]/Create")]
+		public Task<Model> CreateAsync()
+		{
+			return CreateModelAsync();
+		}
+		[HttpPost("/api/[controller]")]
+		public Task<Model> PostAsync(Model model)
+		{
+			return InsertModelAsync(model);
+		}
+		[HttpPut("/api/[controller]")]
+		public Task<Model> PutAsync(Model model)
+		{
+			return UpdateModelAsync(model);
+		}
+		[HttpDelete("/api/[controller]/{id}")]
+		public Task DeleteAsync(int id)
+		{
+			return DeleteModelAsync(id);
+		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+	}
+}
+namespace QuickNSmart.WebApi.Controllers
+{
+	using Microsoft.AspNetCore.Mvc;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
+	using Contract = Contracts.Business.TestOneToMany.IInvoiceDetails;
+	using Model = Transfer.Business.TestOneToMany.InvoiceDetails;
 	[ApiController]
 	[Route("Controller")]
 	public partial class InvoiceDetailsController : GenericController<Contract, Model>
@@ -672,6 +755,89 @@ namespace QuickNSmart.WebApi.Controllers
 	[ApiController]
 	[Route("Controller")]
 	public partial class AppAccessController : GenericController<Contract, Model>
+	{
+		[HttpGet("/api/[controller]/MaxPageSize")]
+		public Task<int> GetMaxPageAsync()
+		{
+			return GetMaxPageAsync();
+		}
+		[HttpGet("/api/[controller]/Count")]
+		public Task<int> GetCountAsync()
+		{
+			return CountModelsAsync();
+		}
+		[HttpGet("/api/[controller]/CountBy/{predicate}")]
+		public Task<int> GetCountByAsync(string predicate)
+		{
+			return CountModelsByAsync(predicate);
+		}
+		[HttpGet("/api/[controller]/GetById/{id}")]
+		public Task<Model> GetByIdAsync(int id)
+		{
+			return GetModelByIdAsync(id);
+		}
+		[HttpGet("/api/[controller]/GetPageList/{index}/{size}")]
+		public Task<IEnumerable<Model>> GetPageListAsync(int index, int size)
+		{
+			return GetModelPageListAsync(index, size);
+		}
+		[HttpGet("/api/[controller]/GetAll")]
+		public Task<IEnumerable<Model>> GetAllAsync()
+		{
+			return GetAllModelsAsync();
+		}
+		[HttpGet("/api/[controller]/QueryPageList/{predicate}/{index}/{size}")]
+		public Task<IEnumerable<Model>> QueryPageListAsync(string predicate, int index, int size)
+		{
+			return QueryModelPageListAsync(predicate, index, size);
+		}
+		[HttpGet("/api/[controller]/QueryAll/{predicate}")]
+		public Task<IEnumerable<Model>> QueryAllAsync(string predicate)
+		{
+			return QueryAllModelsAsync(predicate);
+		}
+		[HttpGet("/api/[controller]/Create")]
+		public Task<Model> CreateAsync()
+		{
+			return CreateModelAsync();
+		}
+		[HttpPost("/api/[controller]")]
+		public Task<Model> PostAsync(Model model)
+		{
+			return InsertModelAsync(model);
+		}
+		[HttpPut("/api/[controller]")]
+		public Task<Model> PutAsync(Model model)
+		{
+			return UpdateModelAsync(model);
+		}
+		[HttpDelete("/api/[controller]/{id}")]
+		public Task DeleteAsync(int id)
+		{
+			return DeleteModelAsync(id);
+		}
+		[HttpPost("/api/[controller]/CallAction")]
+		public Task CallActionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeActionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+		[HttpPost("/api/[controller]/CallFunction")]
+		public Task<Transfer.InvokeTypes.InvokeReturnValue> CallFunctionAsync(Transfer.InvokeTypes.InvokeParam invokeParam)
+		{
+			return InvokeFunctionAsync(invokeParam.MethodName, invokeParam.GetParameters());
+		}
+	}
+}
+namespace QuickNSmart.WebApi.Controllers
+{
+	using Microsoft.AspNetCore.Mvc;
+	using System.Collections.Generic;
+	using System.Threading.Tasks;
+	using Contract = Contracts.Business.Account.IIdentityUser;
+	using Model = Transfer.Business.Account.IdentityUser;
+	[ApiController]
+	[Route("Controller")]
+	public partial class IdentityUserController : GenericController<Contract, Model>
 	{
 		[HttpGet("/api/[controller]/MaxPageSize")]
 		public Task<int> GetMaxPageAsync()

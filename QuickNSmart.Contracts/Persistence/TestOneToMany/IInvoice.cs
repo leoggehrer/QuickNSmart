@@ -1,7 +1,7 @@
 ﻿//@QnSIgnore
 using System;
 
-namespace QuickNSmart.Contracts.Persistence.TestRelation
+namespace QuickNSmart.Contracts.Persistence.TestOneToMany
 {
     public partial interface IInvoice : IIdentifiable, ICopyable<IInvoice>
     {

@@ -1,7 +1,7 @@
-namespace QuickNSmart.Logic.Entities.Business.TestRelation
+namespace QuickNSmart.Logic.Entities.Business.TestOneToMany
 {
 	using System;
-	partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails
+	partial class InvoiceDetails : QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails
 	{
 		static InvoiceDetails()
 		{
@@ -17,7 +17,7 @@ namespace QuickNSmart.Logic.Entities.Business.TestRelation
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public void CopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		public void CopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other)
 		{
 			if (other == null)
 			{
@@ -38,17 +38,17 @@ namespace QuickNSmart.Logic.Entities.Business.TestRelation
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails instance))
+			if (!(obj is QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Business.TestRelation.IInvoiceDetails other)
+		protected bool Equals(QuickNSmart.Contracts.Business.TestOneToMany.IInvoiceDetails other)
 		{
 			if (other == null)
 			{
@@ -62,9 +62,9 @@ namespace QuickNSmart.Logic.Entities.Business.TestRelation
 		}
 	}
 }
-namespace QuickNSmart.Logic.Entities.Business.TestRelation
+namespace QuickNSmart.Logic.Entities.Business.TestOneToMany
 {
-	partial class InvoiceDetails : OneToManyObject<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice, QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail>
+	partial class InvoiceDetails : OneToManyObject<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.Invoice, QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail, QuickNSmart.Logic.Entities.Persistence.TestOneToMany.InvoiceDetail>
 	{
 	}
 }
@@ -175,6 +175,72 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 namespace QuickNSmart.Logic.Entities.Business.Account
 {
 	partial class AppAccess : IdentityObject
+	{
+	}
+}
+namespace QuickNSmart.Logic.Entities.Business.Account
+{
+	using System;
+	partial class IdentityUser : QuickNSmart.Contracts.Business.Account.IIdentityUser
+	{
+		static IdentityUser()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public IdentityUser()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				FirstItem.CopyProperties(other.FirstItem);
+				SecondItem.CopyProperties(other.SecondItem);
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Business.Account.IIdentityUser other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Business.Account.IIdentityUser instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Business.Account.IIdentityUser other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItem, other.SecondItem);
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, FirstItem, SecondItem);
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Business.Account
+{
+	partial class IdentityUser : OneToOneObject<QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity, QuickNSmart.Contracts.Persistence.Account.IUser, QuickNSmart.Logic.Entities.Persistence.Account.User>
 	{
 	}
 }

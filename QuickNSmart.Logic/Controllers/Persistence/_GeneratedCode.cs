@@ -1,6 +1,6 @@
-namespace QuickNSmart.Logic.Controllers.Persistence.TestRelation
+namespace QuickNSmart.Logic.Controllers.Persistence.TestOneToMany
 {
-	sealed partial class InvoiceController : GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoice, Entities.Persistence.TestRelation.Invoice>
+	sealed partial class InvoiceController : GenericController<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice, Entities.Persistence.TestOneToMany.Invoice>
 	{
 		static InvoiceController()
 		{
@@ -23,9 +23,9 @@ namespace QuickNSmart.Logic.Controllers.Persistence.TestRelation
 		}
 	}
 }
-namespace QuickNSmart.Logic.Controllers.Persistence.TestRelation
+namespace QuickNSmart.Logic.Controllers.Persistence.TestOneToMany
 {
-	sealed partial class InvoiceDetailController : GenericController<QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail, Entities.Persistence.TestRelation.InvoiceDetail>
+	sealed partial class InvoiceDetailController : GenericController<QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail, Entities.Persistence.TestOneToMany.InvoiceDetail>
 	{
 		static InvoiceDetailController()
 		{
@@ -171,6 +171,31 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
 		partial void Constructing();
 		partial void Constructed();
 		internal RoleController(ControllerObject controller):base(controller)
+		{
+			Constructing();
+			Constructed();
+		}
+	}
+}
+namespace QuickNSmart.Logic.Controllers.Persistence.Account
+{
+	sealed partial class UserController : GenericController<QuickNSmart.Contracts.Persistence.Account.IUser, Entities.Persistence.Account.User>
+	{
+		static UserController()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		internal UserController(DataContext.IContext context):base(context)
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		internal UserController(ControllerObject controller):base(controller)
 		{
 			Constructing();
 			Constructed();

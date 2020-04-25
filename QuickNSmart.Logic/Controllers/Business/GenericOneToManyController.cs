@@ -35,8 +35,8 @@ namespace QuickNSmart.Logic.Controllers.Business
 		public GenericOneToManyController(DataContext.IContext context) : base(context)
 		{
 			Constructing();
-			oneEntityController = CreateOneEntityController(this);
-			manyEntityController = CreateManyEntityController(this);
+			oneEntityController = CreateFirstEntityController(this);
+			manyEntityController = CreateSecondEntityController(this);
 			ChangedSessionToken += GenericOneToManyController_ChangedSessionToken;
 			Constructed();
 		}
@@ -45,8 +45,8 @@ namespace QuickNSmart.Logic.Controllers.Business
 		public GenericOneToManyController(ControllerObject controller) : base(controller)
 		{
 			Constructing();
-			oneEntityController = CreateOneEntityController(this);
-			manyEntityController = CreateManyEntityController(this);
+			oneEntityController = CreateFirstEntityController(this);
+			manyEntityController = CreateSecondEntityController(this);
 			ChangedSessionToken += GenericOneToManyController_ChangedSessionToken;
 			Constructed();
 		}
@@ -57,8 +57,8 @@ namespace QuickNSmart.Logic.Controllers.Business
 			manyEntityController.SessionToken = SessionToken;
 		}
 
-		protected abstract GenericController<TFirst, TFirstEntity> CreateOneEntityController(ControllerObject controller);
-		protected abstract GenericController<TSecond, TSecondEntity> CreateManyEntityController(ControllerObject controller);
+		protected abstract GenericController<TFirst, TFirstEntity> CreateFirstEntityController(ControllerObject controller);
+		protected abstract GenericController<TSecond, TSecondEntity> CreateSecondEntityController(ControllerObject controller);
 
 		protected E ConvertTo(I contract)
 		{
@@ -230,7 +230,7 @@ namespace QuickNSmart.Logic.Controllers.Business
 			var result = new E();
 
 			result.FirstEntity.CopyProperties(entity.FirstItem);
-			await oneEntityController.InsertAsync(result.FirstEntity);
+			await oneEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
 
 			foreach (var item in entity.SecondItems)
 			{

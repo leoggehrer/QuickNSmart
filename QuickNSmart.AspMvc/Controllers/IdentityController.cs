@@ -1,8 +1,9 @@
 //@QnSBaseCode
 //MdStart
 using System;
-using System.Threading.Tasks;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.AspNetCore.Http;
@@ -10,6 +11,7 @@ using CommonBase.Extensions;
 using QuickNSmart.AspMvc.Models.Persistence.Account;
 using Model = QuickNSmart.AspMvc.Models.Business.Account.AppAccess;
 using Contract = QuickNSmart.Contracts.Business.Account.IAppAccess;
+using IdentityUser = QuickNSmart.Contracts.Business.Account.IIdentityUser;
 
 namespace QuickNSmart.AspMvc.Controllers
 {
@@ -196,6 +198,87 @@ namespace QuickNSmart.AspMvc.Controllers
                 return RedirectToAction("Delete", new { error = GetExceptionError(ex) });
             }
         }
+
+
+        #region Export and Import
+        protected override string[] CsvHeader => new string[] { "Id", "Name", "Email", "Password", "Firstname", "Lastname", "AccessFaildCount", "State" };
+
+        [ActionName("Export")]
+        public async Task<FileResult> ExportAsync()
+        {
+            var fileName = $"{typeof(Model).Name}.csv";
+            using var ctrl = Factory.Create<IdentityUser>(SessionWrapper.SessionToken);
+            var entities = (await ctrl.GetAllAsync().ConfigureAwait(false)).Select(e => new 
+            {
+                e.Id,
+                e.FirstItem.Name,
+                e.FirstItem.Email,
+                e.FirstItem.Password,
+                e.SecondItem.Firstname,
+                e.SecondItem.Lastname,
+                e.FirstItem.AccessFailedCount,
+                e.SecondItem.State
+            });
+
+            return ExportDefault(CsvHeader, entities, fileName);
+        }
+
+        [ActionName("Import")]
+        public ActionResult ImportAsync(string error = null)
+        {
+            var model = new Models.Modules.Export.ImportProtocol() { ActionError = error };
+
+            return View(model);
+        }
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        [ActionName("Import")]
+        public async Task<IActionResult> ImportAsync()
+        {
+            var index = 0;
+            var model = new Models.Modules.Export.ImportProtocol();
+            var logInfos = new List<Models.Modules.Export.ImportLog>();
+            var importModels = ImportDefault<Model>(CsvHeader);
+            using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
+
+            foreach (var item in importModels)
+            {
+                index++;
+                try
+                {
+                    if (item.Action == Models.Modules.Export.ImportAction.Delete)
+                    {
+                        await ctrl.DeleteAsync(item.Id);
+                    }
+                    else if (item.Action == Models.Modules.Export.ImportAction.Update)
+                    {
+                        await ctrl.UpdateAsync(item.Model);
+                    }
+                    else if (item.Action == Models.Modules.Export.ImportAction.Insert)
+                    {
+                        await ctrl.InsertAsync(item.Model);
+                    }
+                    logInfos.Add(new Models.Modules.Export.ImportLog
+                    {
+                        IsError = false,
+                        Prefix = $"Line: {index} - {item.Action}",
+                        Text = "OK",
+                    });
+                }
+                catch (Exception ex)
+                {
+                    logInfos.Add(new Models.Modules.Export.ImportLog
+                    {
+                        IsError = true,
+                        Prefix = $"Line: {index} - {item.Action}",
+                        Text = ex.Message,
+                    });
+                }
+            }
+            model.LogInfos = logInfos;
+            return View(model);
+        }
+        #endregion Export and Import
 
         #region Helpers
         private async Task LoadRolesAsync(Model model)

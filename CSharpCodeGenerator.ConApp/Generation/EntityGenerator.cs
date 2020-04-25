@@ -149,6 +149,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
             result.AddRange(CreatePartialStaticConstrutor(entityName));
             result.AddRange(CreatePartialConstrutor("public", entityName));
             foreach (var item in properties.Where(p => p.DeclaringType.Name.Equals(IIdentifiableName) == false
+                                                    && p.DeclaringType.Name.Equals(IOneToOneName) == false
                                                     && p.DeclaringType.Name.Equals(IOneToManyName) == false
                                                     && CanCreateProperty(type, p.Name)))
             {
@@ -171,7 +172,19 @@ namespace CSharpCodeGenerator.ConApp.Generation
                 result = "IdentityObject";
                 var itfcs = type.GetInterfaces();
 
-                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToManyName))
+                if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToOneName))
+                {
+                    var genericArgs = itfcs[0].GetGenericArguments();
+
+                    if (genericArgs.Length == 2)
+                    {
+                        var firstEntity = $"{CreateEntityFullNameFromInterface(genericArgs[0])}";
+                        var secondEntity = $"{CreateEntityFullNameFromInterface(genericArgs[1])}";
+
+                        result = $"OneToOneObject<{genericArgs[0].FullName}, {firstEntity}, {genericArgs[1].FullName}, {secondEntity}>";
+                    }
+                }
+                else if (itfcs.Length > 0 && itfcs[0].Name.Equals(IOneToManyName))
                 {
                     var genericArgs = itfcs[0].GetGenericArguments();
 

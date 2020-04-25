@@ -132,6 +132,20 @@ namespace QuickNSmart.Logic.DataContext.Db
             entityTypeBuilder
                 .Ignore(p => p.JsonWebToken);
         }
+        partial void ConfigureEntityType(EntityTypeBuilder<User> entityTypeBuilder)
+        {
+            entityTypeBuilder
+                .Property(p => p.Firstname)
+                .IsRequired()
+                .HasMaxLength(64);
+            entityTypeBuilder
+                .Property(p => p.Lastname)
+                .IsRequired()
+                .HasMaxLength(64);
+
+            entityTypeBuilder
+                .Ignore(p => p.Fullname);
+        }
         #endregion Configuration
     }
 }

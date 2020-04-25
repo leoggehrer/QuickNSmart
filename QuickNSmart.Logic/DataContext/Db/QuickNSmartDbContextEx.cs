@@ -1,6 +1,6 @@
 ﻿//@QnSIgnore
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using QuickNSmart.Logic.Entities.Persistence.TestRelation;
+using QuickNSmart.Logic.Entities.Persistence.TestOneToMany;
 
 namespace QuickNSmart.Logic.DataContext.Db
 {

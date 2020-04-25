@@ -11,6 +11,10 @@
   <ItemGroup>
     <ProjectReference Include="..\CommonBase\CommonBase.csproj" />
   </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Business\TestOneToOne\" />
+  </ItemGroup>
   <Target Name="PostBuild" AfterTargets="PostBuildEvent" Condition="True">
     <Exec Command="ECHO ON&#xD;&#xA;cd ..&#xD;&#xA;cd CSharpCodeGenerator.ConApp&#xD;&#xA;dotnet run &quot;-path&quot; $(ProjectDir)$(OutDir)" />
   </Target>

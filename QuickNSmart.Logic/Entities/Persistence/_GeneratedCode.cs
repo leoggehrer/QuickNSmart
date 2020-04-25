@@ -1,7 +1,7 @@
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	using System;
-	partial class Invoice : QuickNSmart.Contracts.Persistence.TestRelation.IInvoice
+	partial class Invoice : QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice
 	{
 		static Invoice()
 		{
@@ -127,7 +127,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 		partial void OnCityReading();
 		partial void OnCityChanging(ref bool handled, ref System.String _city);
 		partial void OnCityChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other)
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice other)
 		{
 			if (other == null)
 			{
@@ -147,17 +147,17 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Persistence.TestRelation.IInvoice instance))
+			if (!(obj is QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Persistence.TestRelation.IInvoice other)
+		protected bool Equals(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoice other)
 		{
 			if (other == null)
 			{
@@ -171,27 +171,27 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 		}
 	}
 }
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	partial class Invoice : IdentityObject
 	{
 	}
 }
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	partial class Invoice
 	{
-		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.TestRelation.InvoiceDetail> InvoiceDetails
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.TestOneToMany.InvoiceDetail> InvoiceDetails
 		{
 			get;
 			set;
 		}
 	}
 }
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	using System;
-	partial class InvoiceDetail : QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail
+	partial class InvoiceDetail : QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail
 	{
 		static InvoiceDetail()
 		{
@@ -339,7 +339,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 		partial void OnPriceReading();
 		partial void OnPriceChanging(ref bool handled, ref System.Double _price);
 		partial void OnPriceChanged();
-		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other)
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail other)
 		{
 			if (other == null)
 			{
@@ -360,17 +360,17 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 			}
 			AfterCopyProperties(other);
 		}
-		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other, ref bool handled);
-		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other);
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail other);
 		public override bool Equals(object obj)
 		{
-			if (!(obj is QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail instance))
+			if (!(obj is QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail instance))
 			{
 				return false;
 			}
 			return base.Equals(instance) && Equals(instance);
 		}
-		protected bool Equals(QuickNSmart.Contracts.Persistence.TestRelation.IInvoiceDetail other)
+		protected bool Equals(QuickNSmart.Contracts.Persistence.TestOneToMany.IInvoiceDetail other)
 		{
 			if (other == null)
 			{
@@ -384,17 +384,17 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
 		}
 	}
 }
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	partial class InvoiceDetail : IdentityObject
 	{
 	}
 }
-namespace QuickNSmart.Logic.Entities.Persistence.TestRelation
+namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 {
 	partial class InvoiceDetail
 	{
-		public QuickNSmart.Logic.Entities.Persistence.TestRelation.Invoice Invoice
+		public QuickNSmart.Logic.Entities.Persistence.TestOneToMany.Invoice Invoice
 		{
 			get;
 			set;
@@ -831,6 +831,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			set;
 		}
 		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.LoginSession> LoginSessions
+		{
+			get;
+			set;
+		}
+		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.User> Users
 		{
 			get;
 			set;
@@ -1383,6 +1388,196 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 	partial class Role
 	{
 		public System.Collections.Generic.ICollection<QuickNSmart.Logic.Entities.Persistence.Account.IdentityXRole> IdentityXRoles
+		{
+			get;
+			set;
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	using System;
+	partial class User : QuickNSmart.Contracts.Persistence.Account.IUser
+	{
+		static User()
+		{
+			ClassConstructing();
+			ClassConstructed();
+		}
+		static partial void ClassConstructing();
+		static partial void ClassConstructed();
+		public User()
+		{
+			Constructing();
+			Constructed();
+		}
+		partial void Constructing();
+		partial void Constructed();
+		public System.Int32 IdentityId
+		{
+			get
+			{
+				OnIdentityIdReading();
+				return _identityId;
+			}
+			set
+			{
+				bool handled = false;
+				OnIdentityIdChanging(ref handled, ref _identityId);
+				if (handled == false)
+				{
+					this._identityId = value;
+				}
+				OnIdentityIdChanged();
+			}
+		}
+		private System.Int32 _identityId;
+		partial void OnIdentityIdReading();
+		partial void OnIdentityIdChanging(ref bool handled, ref System.Int32 _identityId);
+		partial void OnIdentityIdChanged();
+		public System.String Firstname
+		{
+			get
+			{
+				OnFirstnameReading();
+				return _firstname;
+			}
+			set
+			{
+				bool handled = false;
+				OnFirstnameChanging(ref handled, ref _firstname);
+				if (handled == false)
+				{
+					this._firstname = value;
+				}
+				OnFirstnameChanged();
+			}
+		}
+		private System.String _firstname;
+		partial void OnFirstnameReading();
+		partial void OnFirstnameChanging(ref bool handled, ref System.String _firstname);
+		partial void OnFirstnameChanged();
+		public System.String Lastname
+		{
+			get
+			{
+				OnLastnameReading();
+				return _lastname;
+			}
+			set
+			{
+				bool handled = false;
+				OnLastnameChanging(ref handled, ref _lastname);
+				if (handled == false)
+				{
+					this._lastname = value;
+				}
+				OnLastnameChanged();
+			}
+		}
+		private System.String _lastname;
+		partial void OnLastnameReading();
+		partial void OnLastnameChanging(ref bool handled, ref System.String _lastname);
+		partial void OnLastnameChanged();
+		public System.String Fullname
+		{
+			get
+			{
+				OnFullnameReading();
+				return _fullname;
+			}
+			set
+			{
+				bool handled = false;
+				OnFullnameChanging(ref handled, ref _fullname);
+				if (handled == false)
+				{
+					this._fullname = value;
+				}
+				OnFullnameChanged();
+			}
+		}
+		private System.String _fullname;
+		partial void OnFullnameReading();
+		partial void OnFullnameChanging(ref bool handled, ref System.String _fullname);
+		partial void OnFullnameChanged();
+		public QuickNSmart.Contracts.Modules.Common.State State
+		{
+			get
+			{
+				OnStateReading();
+				return _state;
+			}
+			set
+			{
+				bool handled = false;
+				OnStateChanging(ref handled, ref _state);
+				if (handled == false)
+				{
+					this._state = value;
+				}
+				OnStateChanged();
+			}
+		}
+		private QuickNSmart.Contracts.Modules.Common.State _state;
+		partial void OnStateReading();
+		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.Modules.Common.State _state);
+		partial void OnStateChanged();
+		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		{
+			if (other == null)
+			{
+				throw new System.ArgumentNullException(nameof(other));
+			}
+			bool handled = false;
+			BeforeCopyProperties(other, ref handled);
+			if (handled == false)
+			{
+				Id = other.Id;
+				Timestamp = other.Timestamp;
+				IdentityId = other.IdentityId;
+				Firstname = other.Firstname;
+				Lastname = other.Lastname;
+				Fullname = other.Fullname;
+				State = other.State;
+			}
+			AfterCopyProperties(other);
+		}
+		partial void BeforeCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other, ref bool handled);
+		partial void AfterCopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other);
+		public override bool Equals(object obj)
+		{
+			if (!(obj is QuickNSmart.Contracts.Persistence.Account.IUser instance))
+			{
+				return false;
+			}
+			return base.Equals(instance) && Equals(instance);
+		}
+		protected bool Equals(QuickNSmart.Contracts.Persistence.Account.IUser other)
+		{
+			if (other == null)
+			{
+				return false;
+			}
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
+		}
+		public override int GetHashCode()
+		{
+			return HashCode.Combine(Id, Timestamp, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
+		}
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class User : IdentityObject
+	{
+	}
+}
+namespace QuickNSmart.Logic.Entities.Persistence.Account
+{
+	partial class User
+	{
+		public QuickNSmart.Logic.Entities.Persistence.Account.Identity Identity
 		{
 			get;
 			set;
