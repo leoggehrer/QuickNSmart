@@ -29,12 +29,12 @@
     <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@Model.ActionError</span>
 }
 
-<form id="form" asp-action="Import" asp-controller="Translation" method="post" enctype="multipart/form-data">
+<form id="form" asp-action="Import" method="post" enctype="multipart/form-data">
     <div class="form-group">
         <label class="control-label">@translate("Importfile")</label>
         <input asp-for="FilePath" class="form-control-file btn btn-outline-secondary" type="file" />
     </div>
-    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = translate("Import"), BackController = "Home" })
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = translate("Import"), BackController = Model.BackController, BackAction = Model.BackAction })
 </form>
 
 <div id="progress" class="progress" style="visibility: hidden;">

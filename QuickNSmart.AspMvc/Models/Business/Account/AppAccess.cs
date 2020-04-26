@@ -10,65 +10,34 @@ namespace QuickNSmart.AspMvc.Models.Business.Account
 {
     public partial class AppAccess
     {
-        internal Identity IdentityEntity = new Identity();
-        partial void OnIdentityReading()
-        {
-            _identity = IdentityEntity;
-        }
-
-        internal List<Role> RoleEntities = new List<Role>();
-        partial void OnRolesReading()
-        {
-            _roles = RoleEntities;
-        }
-
-        public void ClearRoles()
-        {
-            RoleEntities.Clear();
-        }
-        public IRole CreateRole()
-        {
-            var result = new Role();
-
-            return result;
-        }
-        public void AddRole(IRole entity)
-        {
-            entity.CheckArgument(nameof(entity));
-
-            var item = new Role();
-
-            item.CopyProperties(entity);
-            RoleEntities.Add(item);
-        }
-        public void RemoveRole(IRole entity)
-        {
-            entity.CheckArgument(nameof(entity));
-
-            foreach (var item in RoleEntities)
+        private static char RoleSeparator => ',';
+        public string RoleList 
+        { 
+            get
             {
-                if (entity.Id != 0 && entity.Id == item.Id)
-                {
-                    RoleEntities.Remove(item);
-                }
-                else if (item.Description != null && item.Description.Equals(item.Description))
-                {
-                    RoleEntities.Remove(item);
-                }
-            }
-        }
+                string result = string.Empty;
 
-        partial void AfterCopyProperties(IAppAccess other)
-        {
-            IdentityEntity.CopyProperties(other.Identity);
-            RoleEntities.Clear();
+                foreach (var item in SecondItems)
+                {
+                    if (result.Length > 0)
+                        result += RoleSeparator;
 
-            foreach (var item in other.Roles)
+                    result += item.Designation;
+                }
+                return result;
+            } 
+            set
             {
-                var entity = new Role();
+                var values = value != null ? value.Split(RoleSeparator) : new string[0];
 
-                entity.CopyProperties(item);
-                RoleEntities.Add(entity);
+                ClearSecondItems();
+                foreach (var item in values)
+                {
+                    var role = CreateSecondItem();
+
+                    role.Designation = item;
+                    AddSecondItem(role);
+                }
             }
         }
     }

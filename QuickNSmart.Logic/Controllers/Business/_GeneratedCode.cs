@@ -34,7 +34,7 @@ namespace QuickNSmart.Logic.Controllers.Business.TestOneToMany
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {
 	[Logic.Modules.Security.Authorize("SysAdmin")]
-	sealed partial class AppAccessController : BusinessControllerAdapter<QuickNSmart.Contracts.Business.Account.IAppAccess, Entities.Business.Account.AppAccess>
+	sealed partial class AppAccessController : GenericOneToManyController<QuickNSmart.Contracts.Business.Account.IAppAccess, Entities.Business.Account.AppAccess, QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity, QuickNSmart.Contracts.Persistence.Account.IRole, QuickNSmart.Logic.Entities.Persistence.Account.Role>
 	{
 		static AppAccessController()
 		{
@@ -54,6 +54,14 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
 		{
 			Constructing();
 			Constructed();
+		}
+		protected override GenericController<QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity> CreateFirstEntityController(ControllerObject controller)
+		{
+			return new QuickNSmart.Logic.Controllers.Persistence.Account.IdentityController(controller);
+		}
+		protected override GenericController<QuickNSmart.Contracts.Persistence.Account.IRole, QuickNSmart.Logic.Entities.Persistence.Account.Role> CreateSecondEntityController(ControllerObject controller)
+		{
+			return new QuickNSmart.Logic.Controllers.Persistence.Account.RoleController(controller);
 		}
 	}
 }

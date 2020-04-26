@@ -74,17 +74,17 @@ namespace QuickNSmart.ConApp
             using var ctrl = Adapters.Factory.Create<Contracts.Business.Account.IAppAccess>(login.SessionToken);
             var entity = await ctrl.CreateAsync();
 
-            entity.Identity.Name = user;
-            entity.Identity.Email = email;
-            entity.Identity.Password = pwd;
-            entity.Identity.EnableJwtAuth = enableJwtAuth;
+            entity.FirstItem.Name = user;
+            entity.FirstItem.Email = email;
+            entity.FirstItem.Password = pwd;
+            entity.FirstItem.EnableJwtAuth = enableJwtAuth;
 
             foreach (var item in roles)
             {
-                var role = entity.CreateRole();
+                var role = entity.CreateSecondItem();
 
                 role.Designation = item;
-                entity.AddRole(role);
+                entity.AddSecondItem(role);
             }
             await ctrl.InsertAsync(entity);
             await accMngr.LogoutAsync(login.SessionToken);

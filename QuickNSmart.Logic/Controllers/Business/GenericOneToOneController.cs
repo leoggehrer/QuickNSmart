@@ -27,16 +27,16 @@ namespace QuickNSmart.Logic.Controllers.Business
         static partial void ClassConstructing();
         static partial void ClassConstructed();
 
-        private GenericController<TFirst, TFirstEntity> firstEntityController;
-        private GenericController<TSecond, TSecondEntity> secondEntityController;
+        protected GenericController<TFirst, TFirstEntity> FirstEntityController { get; private set; }
+        protected GenericController<TSecond, TSecondEntity> SecondEntityController { get; private set; }
 
-        public virtual int MaxPageSize => firstEntityController.MaxPageSize;
+        public virtual int MaxPageSize => FirstEntityController.MaxPageSize;
 
         public GenericOneToOneController(DataContext.IContext context) : base(context)
         {
             Constructing();
-            firstEntityController = CreateFirstEntityController(this);
-            secondEntityController = CreateSecondEntityController(this);
+            FirstEntityController = CreateFirstEntityController(this);
+            SecondEntityController = CreateSecondEntityController(this);
             ChangedSessionToken += GenericOneToOneController_ChangedSessionToken;
             Constructed();
         }
@@ -45,16 +45,16 @@ namespace QuickNSmart.Logic.Controllers.Business
         public GenericOneToOneController(ControllerObject controller) : base(controller)
         {
             Constructing();
-            firstEntityController = CreateFirstEntityController(this);
-            secondEntityController = CreateSecondEntityController(this);
+            FirstEntityController = CreateFirstEntityController(this);
+            SecondEntityController = CreateSecondEntityController(this);
             ChangedSessionToken += GenericOneToOneController_ChangedSessionToken;
             Constructed();
         }
 
         private void GenericOneToOneController_ChangedSessionToken(object sender, EventArgs e)
         {
-            firstEntityController.SessionToken = SessionToken;
-            secondEntityController.SessionToken = SessionToken;
+            FirstEntityController.SessionToken = SessionToken;
+            SecondEntityController.SessionToken = SessionToken;
         }
 
         protected abstract GenericController<TFirst, TFirstEntity> CreateFirstEntityController(ControllerObject controller);
@@ -84,11 +84,11 @@ namespace QuickNSmart.Logic.Controllers.Business
 
         public virtual Task<int> CountAsync()
         {
-            return firstEntityController.CountAsync();
+            return FirstEntityController.CountAsync();
         }
         public virtual Task<int> CountByAsync(string predicate)
         {
-            return firstEntityController.CountByAsync(predicate);
+            return FirstEntityController.CountByAsync(predicate);
         }
         #region Async-Methods
         protected virtual PropertyInfo GetNavigationToOne()
@@ -102,7 +102,7 @@ namespace QuickNSmart.Logic.Controllers.Business
         protected virtual async Task LoadSecondAsync(E entity, int masterId)
         {
             var predicate = $"{typeof(TFirstEntity).Name}Id == {masterId}";
-            var qyr = await secondEntityController.QueryAllAsync(predicate).ConfigureAwait(false);
+            var qyr = await SecondEntityController.QueryAllAsync(predicate).ConfigureAwait(false);
 
             if (qyr.Any())
             {
@@ -118,7 +118,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             var result = new List<TSecondEntity>();
             var predicate = $"{typeof(TFirstEntity).Name}Id == {masterId}";
 
-            foreach (var item in (await secondEntityController.QueryAllAsync(predicate).ConfigureAwait(false)).ToList())
+            foreach (var item in (await SecondEntityController.QueryAllAsync(predicate).ConfigureAwait(false)).ToList())
             {
                 var e = new TSecondEntity();
 
@@ -130,7 +130,7 @@ namespace QuickNSmart.Logic.Controllers.Business
         public virtual async Task<I> GetByIdAsync(int id)
         {
             var result = default(E);
-            var firstEntity = await firstEntityController.GetByIdAsync(id).ConfigureAwait(false);
+            var firstEntity = await FirstEntityController.GetByIdAsync(id).ConfigureAwait(false);
 
             if (firstEntity != null)
             {
@@ -152,7 +152,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 List<I> result = new List<I>();
 
-                foreach (var item in (await firstEntityController.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToList())
+                foreach (var item in (await FirstEntityController.GetPageListAsync(pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
                     E entity = new E();
 
@@ -170,7 +170,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 List<I> result = new List<I>();
 
-                foreach (var item in (await firstEntityController.GetAllAsync().ConfigureAwait(false)).ToList())
+                foreach (var item in (await FirstEntityController.GetAllAsync().ConfigureAwait(false)).ToList())
                 {
                     E entity = new E();
 
@@ -189,7 +189,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 List<I> result = new List<I>();
 
-                foreach (var item in (await firstEntityController.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToList())
+                foreach (var item in (await FirstEntityController.QueryPageListAsync(predicate, pageIndex, pageSize).ConfigureAwait(false)).ToList())
                 {
                     E entity = new E();
 
@@ -207,7 +207,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 List<I> result = new List<I>();
 
-                foreach (var item in (await firstEntityController.QueryAllAsync(predicate).ConfigureAwait(false)).ToList())
+                foreach (var item in (await FirstEntityController.QueryAllAsync(predicate).ConfigureAwait(false)).ToList())
                 {
                     E entity = new E();
 
@@ -234,7 +234,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             var result = new E();
 
             result.FirstEntity.CopyProperties(entity.FirstItem);
-            await firstEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
+            await FirstEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
 
             result.SecondEntity.CopyProperties(entity.SecondItem);
             var pi = GetNavigationToOne();
@@ -243,7 +243,7 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 pi.SetValue(result.SecondEntity, result.FirstEntity);
             }
-            await secondEntityController.InsertAsync(result.SecondEntity).ConfigureAwait(false);
+            await SecondEntityController.InsertAsync(result.SecondEntity).ConfigureAwait(false);
             return result;
         }
 
@@ -254,24 +254,26 @@ namespace QuickNSmart.Logic.Controllers.Business
             entity.SecondItem.CheckArgument(nameof(entity.SecondItem));
 
             var result = new E();
+            var updFirst = await FirstEntityController.UpdateAsync(entity.FirstItem).ConfigureAwait(false);
 
-            result.FirstEntity.CopyProperties(entity.FirstItem);
-            await firstEntityController.UpdateAsync(result.FirstEntity).ConfigureAwait(false);
-
-            result.SecondEntity.CopyProperties(entity.SecondItem);
-            if (result.SecondEntity.Id == 0)
+            result.FirstEntity.CopyProperties(updFirst);
+            if (entity.SecondItem.Id == 0)
             {
                 var pi = GetForeignKeyToOne();
 
                 if (pi != null)
                 {
-                    pi.SetValue(result.SecondEntity, result.FirstEntity.Id);
+                    pi.SetValue(entity.SecondItem, result.FirstEntity.Id);
                 }
-                await secondEntityController.InsertAsync(result.SecondEntity).ConfigureAwait(false);
+                var insSecond = await SecondEntityController.InsertAsync(entity.SecondItem).ConfigureAwait(false);
+
+                result.SecondEntity.CopyProperties(insSecond);
             }
             else
             {
-                await secondEntityController.UpdateAsync(result.SecondEntity).ConfigureAwait(false);
+                var updSecond = await SecondEntityController.UpdateAsync(entity.SecondItem).ConfigureAwait(false);
+
+                result.SecondEntity.CopyProperties(updSecond);
             }
             return result;
         }
@@ -284,9 +286,9 @@ namespace QuickNSmart.Logic.Controllers.Business
             {
                 if (entity.SecondItem.Id > 0)
                 {
-                    await secondEntityController.DeleteAsync(entity.SecondItem.Id).ConfigureAwait(false);
+                    await SecondEntityController.DeleteAsync(entity.SecondItem.Id).ConfigureAwait(false);
                 }
-                await firstEntityController.DeleteAsync(entity.Id).ConfigureAwait(false);
+                await FirstEntityController.DeleteAsync(entity.Id).ConfigureAwait(false);
             }
             else
             {
@@ -321,11 +323,11 @@ namespace QuickNSmart.Logic.Controllers.Business
 
             if (disposing)
             {
-                firstEntityController.Dispose();
-                secondEntityController.Dispose();
+                FirstEntityController.Dispose();
+                SecondEntityController.Dispose();
 
-                firstEntityController = null;
-                secondEntityController = null;
+                FirstEntityController = null;
+                SecondEntityController = null;
             }
         }
     }

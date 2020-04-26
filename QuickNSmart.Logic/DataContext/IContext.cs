@@ -3,6 +3,7 @@
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 using QuickNSmart.Contracts;
 using QuickNSmart.Logic.Entities;
 
@@ -10,7 +11,11 @@ namespace QuickNSmart.Logic.DataContext
 {
     internal interface IContext : IDisposable
     {
-        IQueryable<E> Set<I, E>()
+        DbSet<E> ContextSet<I, E>()
+            where I : IIdentifiable
+            where E : IdentityObject, I;
+
+        IQueryable<E> QueryableSet<I, E>()
             where I : IIdentifiable
             where E : IdentityObject, I;
 

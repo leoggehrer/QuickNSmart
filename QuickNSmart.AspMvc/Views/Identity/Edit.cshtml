@@ -38,14 +38,14 @@
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
     }
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("_IdentityEdit", Model.Identity)
+        @await Html.PartialAsync("_IdentityEdit", Model.FirstItem)
     </div>
 
     @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 
     <div style="margin-top: 1em;">
         <h4>Rolen</h4>
-        @await Html.PartialAsync("_RoleListEdit", Model.Roles)
+        @await Html.PartialAsync("_RoleListEdit", Model.SecondItems)
     </div>
 </form>
 @*Begin:Footer*@

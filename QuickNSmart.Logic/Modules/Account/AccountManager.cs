@@ -52,14 +52,14 @@ namespace QuickNSmart.Logic.Modules.Account
             {
                 var appAccess = await appAccessCtrl.CreateAsync().ConfigureAwait(false);
 
-                appAccess.Identity.Name = name;
-                appAccess.Identity.Email = email;
-                appAccess.Identity.Password = password;
-                appAccess.Identity.EnableJwtAuth = enableJwtAuth;
-                var role = appAccess.CreateRole();
+                appAccess.FirstItem.Name = name;
+                appAccess.FirstItem.Email = email;
+                appAccess.FirstItem.Password = password;
+                appAccess.FirstItem.EnableJwtAuth = enableJwtAuth;
+                var role = appAccess.CreateSecondItem();
 
                 role.Designation = "SysAdmin";
-                appAccess.AddRole(role);
+                appAccess.AddSecondItem(role);
                 await appAccessCtrl.InsertAsync(appAccess).ConfigureAwait(false);
                 await appAccessCtrl.SaveChangesAsync().ConfigureAwait(false);
             }

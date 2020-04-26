@@ -37,7 +37,7 @@ namespace QuickNSmart.Logic.Controllers
 
         public int MaxPageSize => 500;
 
-        internal IQueryable<E> Set() => Context.Set<I, E>();
+        internal IQueryable<E> QueryableSet() => Context.QueryableSet<I, E>();
 
         protected GenericController(IContext context)
             : base(context)
@@ -105,7 +105,7 @@ namespace QuickNSmart.Logic.Controllers
         }
         internal virtual Task<I> ExecuteGetByIdAsync(int id)
         {
-            return Task.Run<I>(() => Set().SingleOrDefault(i => i.Id == id));
+            return Task.Run<I>(() => QueryableSet().SingleOrDefault(i => i.Id == id));
         }
 
         public virtual Task<IQueryable<I>> GetPageListAsync(int pageIndex, int pageSize)
@@ -119,7 +119,7 @@ namespace QuickNSmart.Logic.Controllers
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.FromResult<IQueryable<I>>(Set().Skip(pageIndex * pageSize).Take(pageSize));
+            return Task.FromResult<IQueryable<I>>(QueryableSet().Skip(pageIndex * pageSize).Take(pageSize));
         }
 
         public virtual Task<IQueryable<I>> GetAllAsync()
@@ -154,7 +154,7 @@ namespace QuickNSmart.Logic.Controllers
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.FromResult<IQueryable<I>>(Set().AsQueryable()
+            return Task.FromResult<IQueryable<I>>(QueryableSet().AsQueryable()
                      .Where(predicate)
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
@@ -164,7 +164,7 @@ namespace QuickNSmart.Logic.Controllers
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Task.FromResult<IQueryable<I>>(Set().AsQueryable()
+            return Task.FromResult<IQueryable<I>>(QueryableSet().AsQueryable()
                      .Where(predicate)
                      .Skip(pageIndex * pageSize)
                      .Take(pageSize));
@@ -207,7 +207,7 @@ namespace QuickNSmart.Logic.Controllers
 
         internal virtual Task<IQueryable<I>> ExecuteGroupByAsync(string keySelector, string resultSelector)
         {
-            return Task.FromResult<IQueryable<I>>(Set().GroupBy(keySelector, resultSelector) as IQueryable<I>);
+            return Task.FromResult<IQueryable<I>>(QueryableSet().GroupBy(keySelector, resultSelector) as IQueryable<I>);
         }
         public virtual Task<I> CreateAsync()
         {
@@ -267,7 +267,7 @@ namespace QuickNSmart.Logic.Controllers
             CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
             entity.CheckArgument(nameof(entity));
 
-            var entityModel = Set().SingleOrDefault(i => i.Id == entity.Id);
+            var entityModel = QueryableSet().SingleOrDefault(i => i.Id == entity.Id);
 
             if (entityModel != null)
             {
@@ -371,18 +371,18 @@ namespace QuickNSmart.Logic.Controllers
         #region Internal-Methods
         internal virtual E ExecuteQueryById(int id)
         {
-            return Set().SingleOrDefault(i => i.Id == id);
+            return QueryableSet().SingleOrDefault(i => i.Id == id);
         }
         internal virtual IQueryable<E> ExecuteQuery(Expression<Func<E, bool>> predicate)
         {
-            return Set().Where(predicate);
+            return QueryableSet().Where(predicate);
         }
         internal virtual IQueryable<E> ExecuteQuery(string predicate, int pageIndex, int pageSize)
         {
             if (pageSize < 1 && pageSize > MaxPageSize)
                 throw new LogicException(ErrorType.InvalidPageSize);
 
-            return Set().Where(predicate)
+            return QueryableSet().Where(predicate)
                        .Skip(pageIndex * pageSize)
                        .Take(pageSize);
         }

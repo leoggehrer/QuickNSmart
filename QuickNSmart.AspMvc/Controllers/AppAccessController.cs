@@ -11,15 +11,13 @@ using CommonBase.Extensions;
 using QuickNSmart.AspMvc.Models.Persistence.Account;
 using Model = QuickNSmart.AspMvc.Models.Business.Account.AppAccess;
 using Contract = QuickNSmart.Contracts.Business.Account.IAppAccess;
-using IdentityUserModel = QuickNSmart.AspMvc.Models.Business.Account.IdentityUser;
-using IdentityUserContract = QuickNSmart.Contracts.Business.Account.IIdentityUser;
 
 namespace QuickNSmart.AspMvc.Controllers
 {
-    public partial class IdentityController : AccessController
+    public partial class AppAccessController : AccessController
     {
         private readonly ILogger<IdentityController> _logger;
-        public IdentityController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)
+        public AppAccessController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)
             : base(factoryWrapper)
         {
             Constructing();
@@ -64,8 +62,8 @@ namespace QuickNSmart.AspMvc.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        [ActionName("IdentityEdit")]
-        public async Task<IActionResult> IdentityEditAsync(int id, Identity identityModel, IFormCollection collection)
+        [ActionName("Edit")]
+        public async Task<IActionResult> EditAsync(int id, Identity identityModel, IFormCollection collection)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             async Task<IActionResult> CreateFailedAsync(Identity identity, string error)

@@ -87,50 +87,6 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 		}
 		partial void Constructing();
 		partial void Constructed();
-		public QuickNSmart.Contracts.Persistence.Account.IIdentity Identity
-		{
-			get
-			{
-				OnIdentityReading();
-				return _identity;
-			}
-			set
-			{
-				bool handled = false;
-				OnIdentityChanging(ref handled, ref _identity);
-				if (handled == false)
-				{
-					this._identity = value;
-				}
-				OnIdentityChanged();
-			}
-		}
-		private QuickNSmart.Contracts.Persistence.Account.IIdentity _identity;
-		partial void OnIdentityReading();
-		partial void OnIdentityChanging(ref bool handled, ref QuickNSmart.Contracts.Persistence.Account.IIdentity _identity);
-		partial void OnIdentityChanged();
-		public System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> Roles
-		{
-			get
-			{
-				OnRolesReading();
-				return _roles;
-			}
-			set
-			{
-				bool handled = false;
-				OnRolesChanging(ref handled, ref _roles);
-				if (handled == false)
-				{
-					this._roles = value;
-				}
-				OnRolesChanged();
-			}
-		}
-		private System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> _roles;
-		partial void OnRolesReading();
-		partial void OnRolesChanging(ref bool handled, ref System.Collections.Generic.IEnumerable<QuickNSmart.Contracts.Persistence.Account.IRole> _roles);
-		partial void OnRolesChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Business.Account.IAppAccess other)
 		{
 			if (other == null)
@@ -143,8 +99,12 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 			{
 				Id = other.Id;
 				Timestamp = other.Timestamp;
-				Identity = other.Identity;
-				Roles = other.Roles;
+				FirstItem.CopyProperties(other.FirstItem);
+				ClearSecondItems();
+				foreach (var item in other.SecondItems)
+				{
+					AddSecondItem(item);
+				}
 			}
 			AfterCopyProperties(other);
 		}
@@ -164,17 +124,17 @@ namespace QuickNSmart.Logic.Entities.Business.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Identity, other.Identity) && IsEqualsWith(Roles, other.Roles);
+			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(FirstItem, other.FirstItem) && IsEqualsWith(SecondItems, other.SecondItems);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Identity, Roles);
+			return HashCode.Combine(Id, Timestamp, FirstItem, SecondItems);
 		}
 	}
 }
 namespace QuickNSmart.Logic.Entities.Business.Account
 {
-	partial class AppAccess : IdentityObject
+	partial class AppAccess : OneToManyObject<QuickNSmart.Contracts.Persistence.Account.IIdentity, QuickNSmart.Logic.Entities.Persistence.Account.Identity, QuickNSmart.Contracts.Persistence.Account.IRole, QuickNSmart.Logic.Entities.Persistence.Account.Role>
 	{
 	}
 }

@@ -1,4 +1,4 @@
-﻿@*@QnSBaseCode*@
+@*@QnSBaseCode*@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using QuickNSmart.AspMvc.Modules.Session
@@ -32,26 +32,22 @@
 </div>
 <hr />
 
-<form asp-action="Delete" method="post">
+<form asp-action="Edit">
     @if (Model.HasError)
     {
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
     }
-    else
-    {
-        <h3>@translate("Are you sure you want to delete this?")</h3>
-    }
     <div style="margin-top: 1em;">
-        @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
+        @await Html.PartialAsync("_IdentityEdit", Model.FirstItem)
     </div>
 
-    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss = "btn btn-danger" })
-</form>
+    @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 
-<div style="margin-top: 1em;">
-    <h4>Rolen</h4>
-    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
-</div>
+    <div style="margin-top: 1em;">
+        <h4>Rolen</h4>
+        @await Html.PartialAsync("_RoleListEdit", Model.SecondItems)
+    </div>
+</form>
 @*Begin:Footer*@
 @{
 #if DEBUG
@@ -61,3 +57,7 @@
 #endif
 }
 @*End:Footer*@
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -4,9 +4,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Text;
-using CommonBase.Extensions;
 using Microsoft.AspNetCore.Http;
+using CommonBase.Extensions;
 using Microsoft.AspNetCore.Mvc;
 using QuickNSmart.AspMvc.Models.Modules.Export;
 using QuickNSmart.AspMvc.Modules.Session;
@@ -77,20 +78,15 @@ namespace QuickNSmart.AspMvc.Controllers
                     if (exportLine.Length > 0)
                         exportLine.Append(Separator);
 
-                    var pi = item.GetType().GetProperty(field);
+                    var value = GetFieldValue(item, field);
 
-                    if (pi != null && pi.CanRead)
+                    if (value != null)
                     {
-                        var value = pi.GetValue(item);
-
-                        if (value != null)
-                        {
-                            exportLine.Append(value.ToString());
-                        }
-                        else
-                        {
-                            exportLine.Append(CsvNull);
-                        }
+                        exportLine.Append(value.ToString());
+                    }
+                    else
+                    {
+                        exportLine.Append(CsvNull);
                     }
                 }
                 contentData.AddRange(Encoding.UTF8.GetBytes(Environment.NewLine));
@@ -157,34 +153,105 @@ namespace QuickNSmart.AspMvc.Controllers
             return result;
         }
 
-        protected virtual T CreateModelFromCsv<T>(string[] header, string[] data)
+        protected virtual T CreateModelFromCsv<T>(string[] propertyNames, string[] data)
             where T : new()
         {
             T result = new T();
 
-            for (int i = 0; i < header.Length && i < data.Length; i++)
+            for (int i = 0; i < propertyNames.Length && i < data.Length; i++)
             {
-                var pi = result.GetType().GetProperty(header[i]);
+                var csvVal = data[i];
 
-                if (pi != null && pi.CanWrite)
+                if (csvVal.Equals(CsvNull))
                 {
-                    var csvVal = data[i];
-
-                    if (csvVal.Equals(CsvNull))
-                    {
-                        pi.SetValue(result, null);
-                    }
-                    else if (pi.PropertyType.IsEnum)
-                    {
-                        pi.SetValue(result, Enum.Parse(pi.PropertyType, csvVal));
-                    }
-                    else
-                    {
-                        pi.SetValue(result, Convert.ChangeType(csvVal, pi.PropertyType));
-                    }
+                    SetFieldValue(result, propertyNames[i], null);
+                }
+                else
+                {
+                    SetFieldValue(result, propertyNames[i], csvVal);
                 }
             }
             return result;
+        }
+        protected virtual void CopyModels(string[] propertyNames, object source, object target)
+        {
+            propertyNames.CheckArgument(nameof(propertyNames));
+            source.CheckArgument(nameof(source));
+            target.CheckArgument(nameof(target));
+
+            static (object Obj, PropertyInfo PropInfo) GetPropertyInfo(string pn, object obj)
+            {
+                var pnElems = pn.Split(".");
+                var pi = obj.GetType().GetProperty(pnElems[0]);
+
+                for (int i = 1; pi != null && pi.CanRead && i < pnElems.Length; i++)
+                {
+                    obj = pi.GetValue(obj);
+                    pi = obj == null ? null : obj.GetType().GetProperty(pnElems[i]);
+                }
+                return (obj, pi);
+            }
+
+            foreach (var propertyName in propertyNames)
+            {
+                var src = GetPropertyInfo(propertyName, source);
+                var trg = GetPropertyInfo(propertyName, target);
+
+                if (src.Obj != null && src.PropInfo != null && src.PropInfo.CanRead 
+                    && trg.Obj != null && trg.PropInfo != null && trg.PropInfo.CanWrite)
+                {
+                    trg.PropInfo.SetValue(trg.Obj, src.PropInfo.GetValue(src.Obj));
+                }
+            }
+        }
+        protected virtual object GetFieldValue(object item, string propertyName)
+        {
+            item.CheckArgument(nameof(item));
+            propertyName.CheckArgument(nameof(propertyName));
+
+            var result = default(object);
+            var propertyElems = propertyName.Split(".");
+            var pi = item.GetType().GetProperty(propertyElems[0]);
+
+            for (int i = 1; pi != null && pi.CanRead && i < propertyElems.Length; i++)
+            {
+                item = pi.GetValue(item);
+                pi = item == null ? null : item.GetType().GetProperty(propertyElems[i]);
+            }
+            if (item != null && pi != null && pi.CanRead)
+            {
+                result = pi.GetValue(item);
+            }
+            return result;
+        }
+        protected virtual void SetFieldValue(object item, string propertyName, string strVal)
+        {
+            item.CheckArgument(nameof(item));
+            propertyName.CheckArgument(nameof(propertyName));
+
+            var propertyElems = propertyName.Split(".");
+            var pi = item.GetType().GetProperty(propertyElems[0]);
+
+            for (int i = 1; pi != null && pi.CanRead && i < propertyElems.Length; i++)
+            {
+                item = pi.GetValue(item);
+                pi = item == null ? null : item.GetType().GetProperty(propertyElems[i]);
+            }
+            if (item != null && pi != null && pi.CanWrite)
+            {
+                if (strVal == null)
+                {
+                    pi.SetValue(item, null);
+                }
+                else if (pi.PropertyType.IsEnum)
+                {
+                    pi.SetValue(item, Enum.Parse(pi.PropertyType, strVal));
+                }
+                else
+                {
+                    pi.SetValue(item, Convert.ChangeType(strVal, pi.PropertyType));
+                }
+            }
         }
         #endregion Export-Helpers
 

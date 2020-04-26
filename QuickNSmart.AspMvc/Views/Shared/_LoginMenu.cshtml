@@ -17,8 +17,8 @@
     Func<string, string> translateFor = pn => translate($"{pn}");
     string mnoLogon = translateFor("Logon");
     string mnuLogout = translateFor("Logout");
-    string mnuIdentityMngr = translateFor("Identity-Manage");
-    string mnuRoleMngr = translateFor("Role-Manage");
+    string mnuAccessAuth = translateFor("Access-Authorization");
+    string mnuRoleMngr = translateFor("Role-Management");
     string mnuPwdChange = translateFor("Change password");
     string mnuPwdReset = translateFor("Reset password");
     string mnuTranslation = translateFor("Translations");
@@ -46,7 +46,7 @@
                 <ul class="dropdown-menu">
                     @if (sessionWrapper.HasRole("SysAdmin") == true)
                     {
-                        <li class="dropdown-item">@Html.ActionLink(mnuIdentityMngr, "Index", "Identity", routeValues: null, htmlAttributes: null)</li>
+                        <li class="dropdown-item">@Html.ActionLink(mnuAccessAuth, "Index", "AppAccess", routeValues: null, htmlAttributes: null)</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuRoleMngr, "Index", "Role", routeValues: null, htmlAttributes: null)</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuPwdReset, "ResetPassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
@@ -56,7 +56,7 @@
                     }
                     else if (sessionWrapper.HasRole("AppAdmin") == true)
                     {
-                        <li class="dropdown-item">@Html.ActionLink(mnuIdentityMngr, "Index", "Identity", routeValues: null, htmlAttributes: null)</li>
+                        <li class="dropdown-item">@Html.ActionLink(mnuAccessAuth, "Index", "AppAccess", routeValues: null, htmlAttributes: null)</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuRoleMngr, "Index", "Role", routeValues: null, htmlAttributes: null)</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuPwdChange, "ChangePassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
                         <li class="dropdown-item">@Html.ActionLink(mnuPwdReset, "ResetPassword", "Account", routeValues: null, htmlAttributes: new { title = "Manage" })</li>
