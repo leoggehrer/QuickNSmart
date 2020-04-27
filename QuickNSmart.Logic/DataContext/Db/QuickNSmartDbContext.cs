@@ -1,4 +1,4 @@
-﻿//@CustomizeCode
+﻿//@QnSBaseCode
 //MdStart
 using System.Linq;
 using Microsoft.EntityFrameworkCore;
