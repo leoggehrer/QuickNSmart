@@ -1,9 +1,7 @@
 ﻿//@QnSBaseCode
 //MdStart
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using System.Threading.Tasks;
 using CommonBase.Extensions;
 using QuickNSmart.Contracts.Business.Account;
@@ -11,7 +9,6 @@ using QuickNSmart.Logic.Controllers.Persistence.Account;
 using QuickNSmart.Logic.Entities.Business.Account;
 using QuickNSmart.Logic.Entities.Persistence.Account;
 using QuickNSmart.Logic.Modules.Account;
-using QuickNSmart.Logic.Exceptions;
 
 namespace QuickNSmart.Logic.Controllers.Business.Account
 {

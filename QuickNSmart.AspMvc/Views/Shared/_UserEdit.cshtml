@@ -1,0 +1,57 @@
+@*@QnSBaseCode*@
+@using Microsoft.AspNetCore.Mvc.Razor
+@using Microsoft.AspNetCore.Mvc.Rendering
+@using CommonBase.Extensions
+@using QuickNSmart.AspMvc.Extensions
+@using QuickNSmart.AspMvc.Modules.Session
+@model QuickNSmart.AspMvc.Models.Persistence.Account.User
+@*Begin:Header*@
+@{
+#if DEBUG
+    string currentView = ((RazorView)ViewContext.View).Path;
+    string beginLabel = $"<!--View Begin: '{currentView}'-->";
+    @Html.Raw(beginLabel)
+#endif
+    SessionWrapper sessionWrapper = new SessionWrapper(Context.Session);
+    Func<string, string> translate = sessionWrapper.Translate;
+}
+@*End:Header*@
+
+@{
+    string controller = ViewContext.RouteData.Values["controller"].ToString();
+    string action = ViewContext.RouteData.Values["action"].ToString();
+    Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
+    var options = EnumExtensions.ToList<QuickNSmart.Contracts.Modules.Common.State>();
+}
+
+<div class="row">
+    <div class="col-md-8">
+        <input name="UserId" type="hidden" value="@Model.Id" />
+        <input asp-for="IdentityId" type="hidden" />
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+        <div class="form-group">
+            <label class="control-label">@translateFor(nameof(Model.Firstname))</label>
+            <input asp-for="@Model.Firstname" class="form-control" />
+            <span asp-validation-for="Firstname" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">@translateFor(nameof(Model.Lastname))</label>
+            <input asp-for="Lastname" class="form-control" />
+            <span asp-validation-for="Lastname" class="text-danger"></span>
+        </div>
+        <div class="form-group">
+            <label class="control-label">@translateFor(nameof(Model.State))</label>
+            @Html.ToSelect("form-control", string.Empty, "State", options, Model.State)
+        </div>
+    </div>
+</div>
+
+@*Begin:Footer*@
+@{
+#if DEBUG
+    string endLabel = $"<!--View Ende: '{currentView}'-->";
+
+    @Html.Raw(endLabel)
+#endif
+}
+@*End:Footer*@

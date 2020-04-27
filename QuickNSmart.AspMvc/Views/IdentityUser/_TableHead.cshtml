@@ -1,6 +1,6 @@
 ﻿@*@QnSBaseCode*@
 @*This partial view can alternatively be used with the shared index view.*@
-@model IEnumerable<QuickNSmart.AspMvc.Models.Business.Account.AppAccess>
+@model IEnumerable<QuickNSmart.AspMvc.Models.Business.Account.IdentityUser>
 
 @{
     Func<string, string> translateFor = ViewData["TranslateFor"] as Func<string, string>;
@@ -12,6 +12,12 @@
     </th>
     <th>
         @translateFor(Html.DisplayNameFor(model => model.FirstItem.Email))
+    </th>
+    <th>
+        @translateFor(Html.DisplayNameFor(model => model.SecondItem.Lastname))
+    </th>
+    <th>
+        @translateFor(Html.DisplayNameFor(model => model.SecondItem.Firstname))
     </th>
     <th>
         @translateFor(Html.DisplayNameFor(model => model.FirstItem.EnableJwtAuth))

@@ -114,6 +114,10 @@ namespace QuickNSmart.Logic.Controllers.Business
 		{
 			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
 		}
+		public virtual Task RejectChangesAsync()
+		{
+			throw new NotSupportedException($"It is not supported: {MethodBase.GetCurrentMethod().GetOriginal()}!");
+		}
 		#endregion Async-Methods
 
 		#region Invoke handler

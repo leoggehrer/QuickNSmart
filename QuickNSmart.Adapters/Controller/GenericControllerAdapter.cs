@@ -1,5 +1,6 @@
 ﻿//@QnSBaseCode
 //MdStart
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.Json;
@@ -79,7 +80,7 @@ namespace QuickNSmart.Adapters.Controller
         {
             var result = await controller.InsertAsync(entity).ConfigureAwait(false);
 
-            await controller.SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync().ConfigureAwait(false);
             return result;
         }
 
@@ -87,14 +88,27 @@ namespace QuickNSmart.Adapters.Controller
         {
             var result = await controller.UpdateAsync(entity).ConfigureAwait(false);
 
-            await controller.SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync().ConfigureAwait(false);
             return result;
         }
 
         public async Task DeleteAsync(int id)
         {
             await controller.DeleteAsync(id).ConfigureAwait(false);
-            await controller.SaveChangesAsync().ConfigureAwait(false);
+            await SaveChangesAsync().ConfigureAwait(false);
+        }
+
+        private async Task SaveChangesAsync()
+        {
+            try
+            {
+                await controller.SaveChangesAsync().ConfigureAwait(false);
+            }
+            catch (Exception ex)
+            {
+                await controller.RejectChangesAsync().ConfigureAwait(false);
+                throw ex;
+            }
         }
 
         public Task InvokeActionAsync(string name, params object[] parameters)

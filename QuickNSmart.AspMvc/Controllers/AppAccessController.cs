@@ -16,8 +16,8 @@ namespace QuickNSmart.AspMvc.Controllers
 {
     public partial class AppAccessController : AccessController
     {
-        private readonly ILogger<IdentityController> _logger;
-        public AppAccessController(ILogger<IdentityController> logger, IFactoryWrapper factoryWrapper)
+        private readonly ILogger<IdentityUserController> _logger;
+        public AppAccessController(ILogger<IdentityUserController> logger, IFactoryWrapper factoryWrapper)
             : base(factoryWrapper)
         {
             Constructing();
@@ -63,7 +63,7 @@ namespace QuickNSmart.AspMvc.Controllers
         [HttpPost]
         [ValidateAntiForgeryToken]
         [ActionName("Edit")]
-        public async Task<IActionResult> EditAsync(int id, Identity identityModel, IFormCollection collection)
+        public async Task<IActionResult> EditAsync(int id, Identity identityModel, IFormCollection formCollection)
         {
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             async Task<IActionResult> CreateFailedAsync(Identity identity, string error)
@@ -96,7 +96,7 @@ namespace QuickNSmart.AspMvc.Controllers
                 var roles = await ctrlRole.GetAllAsync().ConfigureAwait(false);
 
                 model.ClearSecondItems();
-                foreach (var item in collection.Where(l => l.Key.StartsWith("Assigned")))
+                foreach (var item in formCollection.Where(l => l.Key.StartsWith("Assigned")))
                 {
                     var roleId = item.Key.ToInt();
                     var role = roles.SingleOrDefault(r => r.Id == roleId);
@@ -205,7 +205,7 @@ namespace QuickNSmart.AspMvc.Controllers
         [ActionName("Export")]
         public async Task<FileResult> ExportAsync()
         {
-            var fileName = "IdentityUser.csv";
+            var fileName = "AppAccess.csv";
             using var ctrl = Factory.Create<Contract>(SessionWrapper.SessionToken);
             var entities = (await ctrl.GetAllAsync().ConfigureAwait(false)).Select(e => ConvertTo<Model, Contract>(e));
 

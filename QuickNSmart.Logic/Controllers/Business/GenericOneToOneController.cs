@@ -300,6 +300,10 @@ namespace QuickNSmart.Logic.Controllers.Business
         {
             return Context.SaveChangesAsync();
         }
+        public virtual Task RejectChangesAsync()
+        {
+            return Context.RejectChangesAsync();
+        }
         #endregion Async-Methods
 
         #region Invoke handler

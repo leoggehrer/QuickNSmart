@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using QuickNSmart.AspMvc.Modules.Session
-@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+@model QuickNSmart.AspMvc.Models.Business.Account.IdentityUser
 @*Begin:Header*@
 @{
 #if DEBUG
@@ -32,7 +32,7 @@
 </div>
 <hr />
 
-<form asp-action="IdentityEdit">
+<form asp-action="Edit">
     @if (Model.HasError)
     {
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
@@ -44,8 +44,8 @@
     @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd())
 
     <div style="margin-top: 1em;">
-        <h4>Rolen</h4>
-        @await Html.PartialAsync("_RoleListEdit", Model.SecondItems)
+        <h4>@translateFor("User")</h4>
+        @await Html.PartialAsync("_UserEdit", Model.SecondItem)
     </div>
 </form>
 @*Begin:Footer*@

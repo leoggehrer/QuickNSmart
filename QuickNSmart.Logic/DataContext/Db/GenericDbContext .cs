@@ -98,6 +98,30 @@ namespace QuickNSmart.Logic.DataContext.Db
         {
             return base.SaveChangesAsync();
         }
+        public Task<int> RejectChangesAsync()
+        {
+            return Task.Run(() =>
+            {
+                int count = 0;
+                foreach (var item in ChangeTracker.Entries())
+                {
+                    switch (item.State)
+                    {
+                        case EntityState.Modified:
+                        case EntityState.Deleted:
+                            count++;
+                            item.State = EntityState.Modified; //Revert changes made to deleted entity.
+                            item.State = EntityState.Unchanged;
+                            break;
+                        case EntityState.Added:
+                            count++;
+                            item.State = EntityState.Detached;
+                            break;
+                    }
+                }
+                return count;
+            });
+        }
     }
 }
 //MdEnd

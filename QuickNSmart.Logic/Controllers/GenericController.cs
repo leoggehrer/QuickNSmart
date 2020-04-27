@@ -351,6 +351,27 @@ namespace QuickNSmart.Logic.Controllers
         {
             return Task.FromResult(0);
         }
+
+        protected virtual Task BeforeRejectChangesAsync()
+        {
+            return Task.FromResult(0);
+        }
+        public Task RejectChangesAsync()
+        {
+            CheckAuthorization(GetType(), MethodBase.GetCurrentMethod());
+
+            return ExecuteRejectChangesAsync();
+        }
+        internal async Task ExecuteRejectChangesAsync()
+        {
+            await BeforeSaveChangesAsync().ConfigureAwait(false);
+            await Context.RejectChangesAsync().ConfigureAwait(false);
+            await AfterSaveChangesAsync().ConfigureAwait(false);
+        }
+        protected virtual Task AfterRejectChangesAsync()
+        {
+            return Task.FromResult(0);
+        }
         #endregion Async-Methods
 
         #region Invoke handler

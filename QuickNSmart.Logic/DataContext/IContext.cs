@@ -45,6 +45,8 @@ namespace QuickNSmart.Logic.DataContext
             where E : IdentityObject, I;
 
         Task<int> SaveChangesAsync();
+
+        Task<int> RejectChangesAsync();
         #endregion Async-Methods
     }
 }

@@ -94,6 +94,10 @@ namespace QuickNSmart.Contracts.Client
         /// Saves any changes in the underlying persistence.
         /// </summary>
         Task SaveChangesAsync();
+        /// <summary>
+        /// Reject any changes in the underlying persistence.
+        /// </summary>
+        Task RejectChangesAsync();
 
         /// <summary>
         /// Invokes a custom action that represents a controller method.
