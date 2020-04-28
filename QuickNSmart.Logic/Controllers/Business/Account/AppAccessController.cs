@@ -50,7 +50,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             var result = new AppAccess();
 
             result.FirstEntity.CopyProperties(entity.FirstItem);
-            result.FirstEntity.PasswordHash = AccountManager.CalculateHash(entity.FirstItem.Password);
             await OneEntityController.InsertAsync(result.FirstEntity).ConfigureAwait(false);
 
             foreach (var item in entity.SecondItems)

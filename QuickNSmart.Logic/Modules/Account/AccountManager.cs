@@ -99,7 +99,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
                         if (identity != null)
                         {
-                            var login = await QueryLoginAsync(identity.Email, identity.PasswordHash).ConfigureAwait(false);
+                            var login = await QueryLoginByEmailAsync(identity.Email, identity.Password).ConfigureAwait(false);
 
                             if (login != null)
                             {
@@ -120,8 +120,7 @@ namespace QuickNSmart.Logic.Modules.Account
         public static async Task<ILoginSession> LogonAsync(string email, string password)
         {
             var result = default(ILoginSession);
-            var calculatedHash = CalculateHash(password);
-            var login = await QueryLoginAsync(email, calculatedHash).ConfigureAwait(false);
+            var login = await QueryLoginByEmailAsync(email, password).ConfigureAwait(false);
 
             if (login != null)
             {
@@ -151,6 +150,12 @@ namespace QuickNSmart.Logic.Modules.Account
 
                     await sessionCtrl.UpdateAsync(session).ConfigureAwait(false);
                     await sessionCtrl.SaveChangesAsync().ConfigureAwait(false);
+                }
+                var querySession = LoginSessions.SingleOrDefault(ls => ls.SessionToken.Equals(sessionToken));
+
+                if (querySession != null)
+                {
+                    querySession.LogoutTime = session?.LogoutTime;
                 }
             }
             catch (LogicException ex)
@@ -192,7 +197,7 @@ namespace QuickNSmart.Logic.Modules.Account
 
             if (identity != null)
             {
-                if (ComparePasswords(identity.PasswordHash, CalculateHash(oldPassword)) == false)
+                if (VerifyPasswordHash(oldPassword, identity.PasswordHash, identity.PasswordSalt) == false)
                     throw new LogicException(ErrorType.InvalidPassword);
 
                 identity.Password = newPassword;
@@ -200,7 +205,10 @@ namespace QuickNSmart.Logic.Modules.Account
                 await identityCtrl.SaveChangesAsync().ConfigureAwait(false);
                 if (login.Identity != null)
                 {
-                    login.Identity.PasswordHash = CalculateHash(newPassword);
+                    var securePassword = CreatePasswordHash(newPassword);
+
+                    login.Identity.PasswordHash = securePassword.Hash;
+                    login.Identity.PasswordSalt = securePassword.Salt;
                 }
             }
         }
@@ -231,7 +239,10 @@ namespace QuickNSmart.Logic.Modules.Account
             await identityCtrl.SaveChangesAsync().ConfigureAwait(false);
             if (login.Identity != null)
             {
-                login.Identity.PasswordHash = CalculateHash(newPassword);
+                var securePassword = CreatePasswordHash(newPassword);
+
+                login.Identity.PasswordHash = securePassword.Hash;
+                login.Identity.PasswordSalt = securePassword.Salt;
             }
         }
         [Authorize("SysAdmin")]
@@ -263,7 +274,8 @@ namespace QuickNSmart.Logic.Modules.Account
         #region Internal logon
         internal static async Task<LoginSession> QueryAliveSessionAsync(string sessionToken)
         {
-            LoginSession result = LoginSessions.FirstOrDefault(ls => ls.SessionToken.Equals(sessionToken));
+            LoginSession result = LoginSessions.FirstOrDefault(ls => ls.IsActive
+                                                                  && ls.SessionToken.Equals(sessionToken));
 
             if (result == null)
             {
@@ -282,31 +294,32 @@ namespace QuickNSmart.Logic.Modules.Account
 
                     if (identity != null)
                     {
-                        result = new LoginSession();
-                        result.CopyProperties(session);
-                        result.Identity = new Identity();
-                        result.Identity.CopyProperties(identity);
-                        result.Name = identity.Name;
-                        result.Email = identity.Email;
-                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
-                        result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                        session.Name = identity.Name;
+                        session.Email = identity.Email;
+                        session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                        session.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
                         {
                             new Claim(ClaimTypes.Email, identity.Email),
-                        }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
-                        LoginSessions.Add(result);
+                            new Claim(ClaimTypes.System, nameof(QuickNSmart)),
+                        }.Union(session.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
+
+                        result = new LoginSession();
+                        result.CopyProperties(session);
+                        LoginSessions.Add(session);
                     }
                 }
             }
             return result;
         }
-        internal static async Task<LoginSession> QueryLoginAsync(string email, byte[] calculatedHash)
+        internal static async Task<LoginSession> QueryLoginByEmailAsync(string email, string password)
         {
             email.CheckArgument(nameof(email));
-            calculatedHash.CheckArgument(nameof(calculatedHash));
+            password.CheckArgument(nameof(password));
 
-            var result = await QueryAliveSessionAsync(email, calculatedHash).ConfigureAwait(false);
+            var result = default(LoginSession);
+            var querySession = await QueryAliveSessionAsync(email, password).ConfigureAwait(false);
 
-            if (result == null)
+            if (querySession == null)
             {
                 using var identityCtrl = new Controllers.Persistence.Account.IdentityController(Factory.CreateContext())
                 {
@@ -314,18 +327,20 @@ namespace QuickNSmart.Logic.Modules.Account
                 };
                 var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                 && e.AccessFailedCount < 4
-                                                && e.Email.ToLower() == email.ToLower()
-                                                && e.PasswordHash == calculatedHash).FirstOrDefault();
+                                                && e.Email.ToLower() == email.ToLower()).FirstOrDefault();
 
-                if (identity != null)
+                if (identity != null && VerifyPasswordHash(password, identity.PasswordHash, identity.PasswordSalt))
                 {
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
                     var session = new LoginSession();
 
-                    session.IdentityId = identity.Id;
-                    session.Name = identity.Name;
-                    session.Email = identity.Email;
+                    session.Identity = identity;
                     session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                    session.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                    {
+                        new Claim(ClaimTypes.Email, identity.Email),
+                        new Claim(ClaimTypes.System, nameof(QuickNSmart)),
+                    }.Union(session.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
                     var entity = await sessionCtrl.ExecuteInsertAsync(session).ConfigureAwait(false);
 
                     if (identity.AccessFailedCount > 0)
@@ -337,27 +352,25 @@ namespace QuickNSmart.Logic.Modules.Account
 
                     result = new LoginSession();
                     result.CopyProperties(session);
-                    result.Name = identity.Name;
-                    result.Email = identity.Email;
-                    result.Roles.AddRange(session.Roles);
-                    result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
-                    {
-                        new Claim(ClaimTypes.Email, identity.Email),
-                        new Claim(ClaimTypes.System, nameof(QuickNSmart)),
-                    }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
-                    LoginSessions.Add(result);
+                    LoginSessions.Add(session);
                 }
             }
+            else if (VerifyPasswordHash(password, querySession.PasswordHash, querySession.PasswordSalt))
+            {
+                result = new LoginSession();
+
+                result.CopyProperties(querySession);
+            }
+
             return result;
         }
-        internal static async Task<LoginSession> QueryAliveSessionAsync(string email, byte[] calculatedHash)
+        internal static async Task<LoginSession> QueryAliveSessionAsync(string email, string password)
         {
             email.CheckArgument(nameof(email));
-            calculatedHash.CheckArgument(nameof(calculatedHash));
+            password.CheckArgument(nameof(password));
 
             LoginSession result = LoginSessions.FirstOrDefault(e => e.IsActive
-                                                                 && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase)
-                                                                 && e.PasswordHash == calculatedHash);
+                                                                 && e.Email.Equals(email, StringComparison.CurrentCultureIgnoreCase));
 
             if (result == null)
             {
@@ -367,31 +380,29 @@ namespace QuickNSmart.Logic.Modules.Account
                 };
                 var identity = identityCtrl.ExecuteQuery(e => e.State == Contracts.Modules.Common.State.Active
                                                     && e.AccessFailedCount < 4
-                                                    && e.Email.ToLower() == email.ToLower()
-                                                    && e.PasswordHash == calculatedHash).FirstOrDefault();
+                                                    && e.Email.ToLower() == email.ToLower()).FirstOrDefault();
 
-                if (identity != null)
+                if (identity != null && VerifyPasswordHash(password, identity.PasswordHash, identity.PasswordSalt))
                 {
                     using var sessionCtrl = new Controllers.Persistence.Account.LoginSessionController(identityCtrl);
                     var session = sessionCtrl.ExecuteQuery(e => e.LogoutTime == null
-                                                      && e.IdentityId == identity.Id)
+                                                             && e.IdentityId == identity.Id)
                                              .ToList()
                                              .FirstOrDefault(e => e.IsActive);
 
                     if (session != null)
                     {
+                        session.Identity = identity;
+                        session.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
+                        session.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
+                        {
+                        new Claim(ClaimTypes.Email, identity.Email),
+                        new Claim(ClaimTypes.System, nameof(QuickNSmart)),
+                        }.Union(session.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
+
                         result = new LoginSession();
                         result.CopyProperties(session);
-                        result.Identity = new Identity();
-                        result.Identity.CopyProperties(identity);
-                        result.Name = identity.Name;
-                        result.Email = identity.Email;
-                        result.Roles.AddRange(await QueryIdentityRolesAsync(sessionCtrl, identity.Id).ConfigureAwait(false));
-                        result.JsonWebToken = JsonWebToken.GenerateToken(new Claim[]
-                        {
-                            new Claim(ClaimTypes.Email, identity.Email),
-                        }.Union(result.Roles.Select(e => new Claim(ClaimTypes.Role, e.Designation))));
-                        LoginSessions.Add(result);
+                        LoginSessions.Add(session);
                     }
                 }
             }
@@ -499,43 +510,25 @@ namespace QuickNSmart.Logic.Modules.Account
         #endregion Update thread
 
         #region Helpers
-        internal static byte[] CalculateHash(string plainText)
+        internal static (byte[] Hash, byte[] Salt) CreatePasswordHash(string password)
         {
-            if (String.IsNullOrEmpty(plainText))
-                throw new ArgumentNullException(nameof(plainText));
+            using var hmac = new System.Security.Cryptography.HMACSHA512();
 
-            System.Security.Cryptography.SHA1 sha1 = System.Security.Cryptography.SHA1.Create();
-            byte[] plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-            byte[] hashedBytes = sha1.ComputeHash(plainTextBytes);
-            return hashedBytes;
+            var passwordSalt = hmac.Key;
+            var passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return (passwordHash, passwordSalt);
         }
-        internal static bool ComparePasswords(Byte[] passwordHash, string password)
+        internal static bool VerifyPasswordHash(string password, byte[] passwordHash, byte[] passwordSalt)
         {
-            return ComparePasswords(passwordHash, CalculateHash(password));
-        }
-        internal static bool ComparePasswords(Byte[] passwordHash, Byte[] calculatedHash)
-        {
-            if (passwordHash == null)
-                throw new ArgumentNullException(nameof(passwordHash));
+            using var hmac = new System.Security.Cryptography.HMACSHA512(passwordSalt);
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            var result = computedHash.Length == passwordHash.Length;
 
-            if (calculatedHash == null)
-                throw new ArgumentNullException(nameof(calculatedHash));
-
-            byte[] originalArray = passwordHash.ToArray();
-            byte[] compareArray = calculatedHash.ToArray();
-
-            if (compareArray.Length != originalArray.Length)
+            for (int i = 0; i < passwordHash.Length && result; i++)
             {
-                return false;
+                result = passwordHash[i] == computedHash[i];
             }
-            for (int i = 0; i < compareArray.Length; i++)
-            {
-                if (originalArray[i] != compareArray[i])
-                {
-                    return false;
-                }
-            }
-            return true;
+            return result;
         }
         /// <summary>
         /// Das Kennwort wenn es den Einstellungen im CommonBase/Modules/PasswordRules entspricht.

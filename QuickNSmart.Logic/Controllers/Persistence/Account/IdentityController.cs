@@ -41,7 +41,11 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
             CheckInsertEntity(entity);
             entity.Guid = System.Guid.NewGuid().ToString();
             entity.State = Contracts.Modules.Common.State.Active;
-            entity.PasswordHash = AccountManager.CalculateHash(entity.Password);
+
+            var securePassword = AccountManager.CreatePasswordHash(entity.Password);
+
+            entity.PasswordHash = securePassword.Hash;
+            entity.PasswordSalt = securePassword.Salt;
 
             return base.BeforeInsertingAsync(entity);
         }
@@ -51,7 +55,10 @@ namespace QuickNSmart.Logic.Controllers.Persistence.Account
             CheckUpdateEntity(entity);
             if (entity.Password.HasContent())
             {
-                entity.PasswordHash = AccountManager.CalculateHash(entity.Password);
+                var securePassword = AccountManager.CreatePasswordHash(entity.Password);
+
+                entity.PasswordHash = securePassword.Hash;
+                entity.PasswordSalt = securePassword.Salt;
             }
             return base.BeforeUpdatingAsync(entity);
         }

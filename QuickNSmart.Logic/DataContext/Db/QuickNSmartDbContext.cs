@@ -100,6 +100,9 @@ namespace QuickNSmart.Logic.DataContext.Db
             entityTypeBuilder
                 .Property(p => p.PasswordHash)
                 .IsRequired();
+            entityTypeBuilder
+                .Property(p => p.PasswordSalt)
+                .IsRequired();
         }
         partial void ConfigureEntityType(EntityTypeBuilder<Role> entityTypeBuilder)
         {
@@ -136,11 +139,9 @@ namespace QuickNSmart.Logic.DataContext.Db
         {
             entityTypeBuilder
                 .Property(p => p.Firstname)
-                .IsRequired()
                 .HasMaxLength(64);
             entityTypeBuilder
                 .Property(p => p.Lastname)
-                .IsRequired()
                 .HasMaxLength(64);
 
             entityTypeBuilder
