@@ -101,7 +101,7 @@ namespace CSharpCodeGenerator.ConApp.Generation
                     result.Add($"modelBuilder.Entity<{entityType}>()");
                     result.Add($".ToTable(nameof({entityType}), nameof({entityNameSpace}))");
                     result.Add($".HasKey(nameof({entityType}.Id));");
-                    result.Add($"modelBuilder.Entity<{entityType}>().Property(p => p.Timestamp).IsRowVersion();");
+                    result.Add($"modelBuilder.Entity<{entityType}>().Property(p => p.RowVersion).IsRowVersion();");
                     result.Add($"ConfigureEntityType(modelBuilder.Entity<{entityType}>());");
                 }
                 result.Add("}");

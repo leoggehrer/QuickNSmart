@@ -16,7 +16,7 @@ namespace QuickNSmart.AspMvc.Models
         public virtual TSecond SecondItem => SecondEntity;
 
         public override int Id { get => FirstModel.Id; set => FirstModel.Id = value; }
-        public override byte[] Timestamp { get => FirstModel.Timestamp; set => FirstModel.Timestamp = value; }
+        public override byte[] RowVersion { get => FirstModel.RowVersion; set => FirstModel.RowVersion = value; }
     }
 }
 //MdEnd

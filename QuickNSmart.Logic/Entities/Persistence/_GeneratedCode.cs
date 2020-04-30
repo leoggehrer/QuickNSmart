@@ -138,7 +138,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Date = other.Date;
 				Subject = other.Subject;
 				Street = other.Street;
@@ -163,11 +163,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && Date == other.Date && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Street, other.Street) && IsEqualsWith(ZipCode, other.ZipCode) && IsEqualsWith(City, other.City);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && Date == other.Date && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Street, other.Street) && IsEqualsWith(ZipCode, other.ZipCode) && IsEqualsWith(City, other.City);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Date, Subject, Street, ZipCode, HashCode.Combine(City));
+			return HashCode.Combine(Id, RowVersion, Date, Subject, Street, ZipCode, HashCode.Combine(City));
 		}
 	}
 }
@@ -350,7 +350,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				InvoiceId = other.InvoiceId;
 				Order = other.Order;
 				Text = other.Text;
@@ -376,11 +376,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.TestOneToMany
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && InvoiceId == other.InvoiceId && Order == other.Order && IsEqualsWith(Text, other.Text) && Quantity == other.Quantity && Tax == other.Tax && Price == other.Price;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && InvoiceId == other.InvoiceId && Order == other.Order && IsEqualsWith(Text, other.Text) && Quantity == other.Quantity && Tax == other.Tax && Price == other.Price;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, InvoiceId, Order, Text, Quantity, HashCode.Combine(Tax, Price));
+			return HashCode.Combine(Id, RowVersion, InvoiceId, Order, Text, Quantity, HashCode.Combine(Tax, Price));
 		}
 	}
 }
@@ -541,7 +541,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Time = other.Time;
 				Subject = other.Subject;
@@ -566,11 +566,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && Time == other.Time && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Action, other.Action) && IsEqualsWith(Info, other.Info);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && Time == other.Time && IsEqualsWith(Subject, other.Subject) && IsEqualsWith(Action, other.Action) && IsEqualsWith(Info, other.Info);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, Time, Subject, Action, HashCode.Combine(Info));
+			return HashCode.Combine(Id, RowVersion, IdentityId, Time, Subject, Action, HashCode.Combine(Info));
 		}
 	}
 }
@@ -775,7 +775,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Guid = other.Guid;
 				Name = other.Name;
 				Email = other.Email;
@@ -802,11 +802,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && EnableJwtAuth == other.EnableJwtAuth && AccessFailedCount == other.AccessFailedCount && State == other.State;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(Guid, other.Guid) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(Password, other.Password) && EnableJwtAuth == other.EnableJwtAuth && AccessFailedCount == other.AccessFailedCount && State == other.State;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Guid, Name, Email, Password, HashCode.Combine(EnableJwtAuth, AccessFailedCount, State));
+			return HashCode.Combine(Id, RowVersion, Guid, Name, Email, Password, HashCode.Combine(EnableJwtAuth, AccessFailedCount, State));
 		}
 	}
 }
@@ -916,7 +916,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				RoleId = other.RoleId;
 			}
@@ -938,11 +938,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && RoleId == other.RoleId;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && RoleId == other.RoleId;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, RoleId);
+			return HashCode.Combine(Id, RowVersion, IdentityId, RoleId);
 		}
 	}
 }
@@ -1218,7 +1218,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				IsRemoteAuth = other.IsRemoteAuth;
 				Origin = other.Origin;
@@ -1248,11 +1248,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsRemoteAuth == other.IsRemoteAuth && IsEqualsWith(Origin, other.Origin) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsRemoteAuth == other.IsRemoteAuth && IsEqualsWith(Origin, other.Origin) && IsEqualsWith(Name, other.Name) && IsEqualsWith(Email, other.Email) && IsEqualsWith(JsonWebToken, other.JsonWebToken) && IsEqualsWith(SessionToken, other.SessionToken) && LoginTime == other.LoginTime && LastAccess == other.LastAccess && LogoutTime == other.LogoutTime;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, IsRemoteAuth, Origin, Name, HashCode.Combine(Email, JsonWebToken, SessionToken, LoginTime, LastAccess, LogoutTime));
+			return HashCode.Combine(Id, RowVersion, IdentityId, IsRemoteAuth, Origin, Name, HashCode.Combine(Email, JsonWebToken, SessionToken, LoginTime, LastAccess, LogoutTime));
 		}
 	}
 }
@@ -1347,7 +1347,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Designation = other.Designation;
 				Description = other.Description;
 			}
@@ -1369,11 +1369,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(Designation, other.Designation) && IsEqualsWith(Description, other.Description);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(Designation, other.Designation) && IsEqualsWith(Description, other.Description);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, Designation, Description);
+			return HashCode.Combine(Id, RowVersion, Designation, Description);
 		}
 	}
 }
@@ -1534,7 +1534,7 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Firstname = other.Firstname;
 				Lastname = other.Lastname;
@@ -1559,11 +1559,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
+			return HashCode.Combine(Id, RowVersion, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
 		}
 	}
 }

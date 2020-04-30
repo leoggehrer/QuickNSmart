@@ -16,7 +16,7 @@ namespace QuickNSmart.Logic.Entities
         public virtual TSecond SecondItem => SecondEntity;
 
         public override int Id { get => FirstEntity.Id; set => FirstEntity.Id = value; }
-        public override byte[] Timestamp { get => FirstEntity.Timestamp; set => FirstEntity.Timestamp = value; }
+        public override byte[] RowVersion { get => FirstEntity.RowVersion; set => FirstEntity.RowVersion = value; }
     }
 }
 //MdEnd

@@ -30,29 +30,29 @@ namespace QuickNSmart.AspMvc.Models
 		partial void OnIdChanging(ref bool handled, ref System.Int32 _id);
 		partial void OnIdChanged();
 
-		private byte[] _timestamp;
+		private byte[] _rowVersion;
 		[ScaffoldColumn(false)]
-		public virtual byte[] Timestamp
+		public virtual byte[] RowVersion
 		{
 			get
 			{
-				OnTimestampReading();
-				return _timestamp;
+				OnRowVersionReading();
+				return _rowVersion;
 			}
 			set
 			{
 				bool handled = false;
-				OnTimestampChanging(ref handled, ref _timestamp);
+				OnRowVersionChanging(ref handled, ref _rowVersion);
 				if (handled == false)
 				{
-					this._timestamp = value;
+					this._rowVersion = value;
 				}
-				OnTimestampChanged();
+				OnRowVersionChanged();
 			}
 		}
-		partial void OnTimestampReading();
-		partial void OnTimestampChanging(ref bool handled, ref byte[] _timestamp);
-		partial void OnTimestampChanged();
+		partial void OnRowVersionReading();
+		partial void OnRowVersionChanging(ref bool handled, ref byte[] _rowVersion);
+		partial void OnRowVersionChanged();
 
 	}
 }

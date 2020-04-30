@@ -380,7 +380,7 @@ namespace QuickNSmart.Logic.Entities.Modules.Language
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				AppName = other.AppName;
 				KeyLanguage = other.KeyLanguage;
 				Key = other.Key;
@@ -405,11 +405,11 @@ namespace QuickNSmart.Logic.Entities.Modules.Language
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(Timestamp, other.Timestamp) && IsEqualsWith(AppName, other.AppName) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IsEqualsWith(AppName, other.AppName) && KeyLanguage == other.KeyLanguage && IsEqualsWith(Key, other.Key) && ValueLanguage == other.ValueLanguage && IsEqualsWith(Value, other.Value);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, Timestamp, AppName, KeyLanguage, Key, ValueLanguage, HashCode.Combine(Value));
+			return HashCode.Combine(Id, RowVersion, AppName, KeyLanguage, Key, ValueLanguage, HashCode.Combine(Value));
 		}
 	}
 }

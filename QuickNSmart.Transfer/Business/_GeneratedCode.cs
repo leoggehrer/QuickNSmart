@@ -28,7 +28,7 @@ namespace QuickNSmart.Transfer.Business.TestOneToMany
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				ClearSecondItems();
 				foreach (var item in other.SecondItems)
@@ -78,7 +78,7 @@ namespace QuickNSmart.Transfer.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				ClearSecondItems();
 				foreach (var item in other.SecondItems)
@@ -128,7 +128,7 @@ namespace QuickNSmart.Transfer.Business.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				FirstItem.CopyProperties(other.FirstItem);
 				SecondItem.CopyProperties(other.SecondItem);
 			}

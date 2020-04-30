@@ -11,7 +11,10 @@ namespace QuickNSmart.Contracts
         /// Gets the identity of the component.
         /// </summary>
         int Id { get; }
-        byte[] Timestamp { get; }
+        /// <summary>
+        /// Gets the row stamp.
+        /// </summary>
+        byte[] RowVersion { get; }
     }
 }
 //MdEnd

@@ -1,7 +1,7 @@
 
 # QuickNSmart
 
-Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Die Struktur des Frameworks besteht aus folgende Komponeneten:
+Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Der Framework unterstützt die Entwicklung einfacher Service Anwendungen als auch die Erstellung von großen System Anwendungen unter zur Hilfenahme eines Code-Generator (Details dazu folgen in den nächste Kapiteln). Die Struktur des Frameworks besteht aus folgende Komponeneten:
 
 |Projekt|Beschreibung|Typ|Abhängigkeit
 |---|---|---|---|

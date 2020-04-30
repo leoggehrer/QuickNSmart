@@ -138,7 +138,7 @@ namespace QuickNSmart.Transfer.Persistence.TestOneToMany
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Date = other.Date;
 				Subject = other.Subject;
 				Street = other.Street;
@@ -319,7 +319,7 @@ namespace QuickNSmart.Transfer.Persistence.TestOneToMany
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				InvoiceId = other.InvoiceId;
 				Order = other.Order;
 				Text = other.Text;
@@ -479,7 +479,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Time = other.Time;
 				Subject = other.Subject;
@@ -682,7 +682,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Guid = other.Guid;
 				Name = other.Name;
 				Email = other.Email;
@@ -777,7 +777,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				RoleId = other.RoleId;
 			}
@@ -1043,7 +1043,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				IsRemoteAuth = other.IsRemoteAuth;
 				Origin = other.Origin;
@@ -1141,7 +1141,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				Designation = other.Designation;
 				Description = other.Description;
 			}
@@ -1297,7 +1297,7 @@ namespace QuickNSmart.Transfer.Persistence.Account
 			if (handled == false)
 			{
 				Id = other.Id;
-				Timestamp = other.Timestamp;
+				RowVersion = other.RowVersion;
 				IdentityId = other.IdentityId;
 				Firstname = other.Firstname;
 				Lastname = other.Lastname;
