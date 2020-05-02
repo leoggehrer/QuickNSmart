@@ -97,7 +97,7 @@ namespace QuickNSmart.Logic.Controllers.Business
 		}
 		protected virtual PropertyInfo GetForeignKeyToOne()
 		{
-			return typeof(TSecondEntity).GetProperty($"{typeof(TFirstEntity).Name}Id");
+			return typeof(TSecond).GetProperty($"{typeof(TFirstEntity).Name}Id");
 		}
 		protected virtual async Task LoadDetailsAsync(E entity, int masterId)
 		{

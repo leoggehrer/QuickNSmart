@@ -37,6 +37,8 @@
     {
         <span class="field-validation-error" data-valmsg-for="Error" data-valmsg-replace="true">@translate(Model.ActionError)</span>
     }
+    <input asp-for="Id" type="hidden" />
+    <input asp-for="RowVersion" type="hidden" />
     <div style="margin-top: 1em;">
         @await Html.PartialAsync("_IdentityEdit", Model.FirstItem)
     </div>
@@ -59,5 +61,8 @@
 @*End:Footer*@
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+        await Html.RenderPartialAsync("_EditScriptsPartial");
+    }
 }

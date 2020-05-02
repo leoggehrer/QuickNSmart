@@ -2,7 +2,7 @@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
 @using QuickNSmart.AspMvc.Modules.Session
-@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+@model QuickNSmart.AspMvc.Models.Business.Account.IdentityUser
 @*Begin:Header*@
 @{
 #if DEBUG
@@ -45,13 +45,15 @@
         @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
     </div>
 
+    <div style="margin-top: 1em;">
+        <hr />
+        <h4>@translateFor("User")</h4>
+        @await Html.PartialAsync("_UserDetails", Model.SecondItem)
+    </div>
+
     @await Html.PartialAsync("_SubmitBack", new SubmitBackCmd() { SubmitText = "Delete", SubmitCss = "btn btn-danger" })
 </form>
 
-<div style="margin-top: 1em;">
-    <h4>Rolen</h4>
-    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
-</div>
 @*Begin:Footer*@
 @{
 #if DEBUG

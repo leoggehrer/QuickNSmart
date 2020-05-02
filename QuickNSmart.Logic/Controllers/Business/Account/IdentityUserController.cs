@@ -12,7 +12,6 @@ namespace QuickNSmart.Logic.Controllers.Business.Account
             var result = await base.CreateAsync().ConfigureAwait(false);
 
             result.FirstItem.State = Contracts.Modules.Common.State.Active;
-            result.SecondItem.State = Contracts.Modules.Common.State.Active;
             return result;
         }
     }

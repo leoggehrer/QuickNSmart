@@ -1479,50 +1479,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 		partial void OnLastnameReading();
 		partial void OnLastnameChanging(ref bool handled, ref System.String _lastname);
 		partial void OnLastnameChanged();
-		public System.String Fullname
-		{
-			get
-			{
-				OnFullnameReading();
-				return _fullname;
-			}
-			set
-			{
-				bool handled = false;
-				OnFullnameChanging(ref handled, ref _fullname);
-				if (handled == false)
-				{
-					this._fullname = value;
-				}
-				OnFullnameChanged();
-			}
-		}
-		private System.String _fullname;
-		partial void OnFullnameReading();
-		partial void OnFullnameChanging(ref bool handled, ref System.String _fullname);
-		partial void OnFullnameChanged();
-		public QuickNSmart.Contracts.Modules.Common.State State
-		{
-			get
-			{
-				OnStateReading();
-				return _state;
-			}
-			set
-			{
-				bool handled = false;
-				OnStateChanging(ref handled, ref _state);
-				if (handled == false)
-				{
-					this._state = value;
-				}
-				OnStateChanged();
-			}
-		}
-		private QuickNSmart.Contracts.Modules.Common.State _state;
-		partial void OnStateReading();
-		partial void OnStateChanging(ref bool handled, ref QuickNSmart.Contracts.Modules.Common.State _state);
-		partial void OnStateChanged();
 		public void CopyProperties(QuickNSmart.Contracts.Persistence.Account.IUser other)
 		{
 			if (other == null)
@@ -1538,8 +1494,6 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 				IdentityId = other.IdentityId;
 				Firstname = other.Firstname;
 				Lastname = other.Lastname;
-				Fullname = other.Fullname;
-				State = other.State;
 			}
 			AfterCopyProperties(other);
 		}
@@ -1559,11 +1513,11 @@ namespace QuickNSmart.Logic.Entities.Persistence.Account
 			{
 				return false;
 			}
-			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname) && IsEqualsWith(Fullname, other.Fullname) && State == other.State;
+			return Id == other.Id && IsEqualsWith(RowVersion, other.RowVersion) && IdentityId == other.IdentityId && IsEqualsWith(Firstname, other.Firstname) && IsEqualsWith(Lastname, other.Lastname);
 		}
 		public override int GetHashCode()
 		{
-			return HashCode.Combine(Id, RowVersion, IdentityId, Firstname, Lastname, Fullname, HashCode.Combine(State));
+			return HashCode.Combine(Id, RowVersion, IdentityId, Firstname, Lastname);
 		}
 	}
 }

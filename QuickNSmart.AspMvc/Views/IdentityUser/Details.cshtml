@@ -1,7 +1,7 @@
 @*@QnSBaseCode*@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using QuickNSmart.AspMvc.Modules.Session
-@model QuickNSmart.AspMvc.Models.Business.Account.AppAccess
+@model QuickNSmart.AspMvc.Models.Business.Account.IdentityUser
 @*Begin:Header*@
 @{
 #if DEBUG
@@ -44,9 +44,10 @@
     @await Html.PartialAsync("_IdentityDetails", Model.FirstItem)
 </div>
 
-<div style="margin-top: 1em;">
-    <h4>Rolen</h4>
-    @await Html.PartialAsync("_RoleListDetails", Model.SecondItems)
+<div style="margin-top: 2em;">
+    <h4>@translateFor("User")</h4>
+    <hr />
+    @await Html.PartialAsync("_UserDetails", Model.SecondItem)
 </div>
 
 @*Begin:Footer*@

@@ -13,7 +13,7 @@ namespace QuickNSmart.Logic.DataContext.Db
         static QuickNSmartDbContext()
         {
             ClassConstructing();
-            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString, DefaultConnectionString);
+            ConnectionString = Modules.Configuration.Settings.Get(CommonBase.StaticLiterals.ConnectionString);
             ClassConstructed();
         }
         static partial void ClassConstructing();
@@ -29,9 +29,6 @@ namespace QuickNSmart.Logic.DataContext.Db
                     && level == LogLevel.Information)
                 .AddDebug();
         });
-        private static string DefaultConnectionString => "Data Source=(localdb)\\MSSQLLocalDb;Database=QuickNSmartDb;Integrated Security=True;";
-#else
-        private static string DefaultConnectionString => "Data Source=dbserver;Database=QuickNSmartDb;User Id=sa;Password=Passme123!";
 #endif
         private static string ConnectionString { get; set; }
 
@@ -143,9 +140,6 @@ namespace QuickNSmart.Logic.DataContext.Db
             entityTypeBuilder
                 .Property(p => p.Lastname)
                 .HasMaxLength(64);
-
-            entityTypeBuilder
-                .Ignore(p => p.Fullname);
         }
         #endregion Configuration
     }

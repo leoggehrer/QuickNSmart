@@ -1,8 +1,6 @@
 @*@QnSBaseCode*@
 @using Microsoft.AspNetCore.Mvc.Razor
 @using Microsoft.AspNetCore.Mvc.Rendering
-@using CommonBase.Extensions
-@using QuickNSmart.AspMvc.Extensions
 @using QuickNSmart.AspMvc.Modules.Session
 @model QuickNSmart.AspMvc.Models.Persistence.Account.User
 @*Begin:Header*@
@@ -21,7 +19,6 @@
     string controller = ViewContext.RouteData.Values["controller"].ToString();
     string action = ViewContext.RouteData.Values["action"].ToString();
     Func<string, string> translateFor = pn => translate($"{controller}.{pn}");
-    var options = EnumExtensions.ToList<QuickNSmart.Contracts.Modules.Common.State>();
 }
 
 <div class="row">
@@ -38,10 +35,6 @@
             <label class="control-label">@translateFor(nameof(Model.Lastname))</label>
             <input asp-for="Lastname" class="form-control" />
             <span asp-validation-for="Lastname" class="text-danger"></span>
-        </div>
-        <div class="form-group">
-            <label class="control-label">@translateFor(nameof(Model.State))</label>
-            @Html.ToSelect("form-control", string.Empty, "State", options, Model.State)
         </div>
     </div>
 </div>
