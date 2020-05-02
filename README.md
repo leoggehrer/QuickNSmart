@@ -1,7 +1,7 @@
 
 # QuickNSmart
 
-Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Der Framework unterstützt die Entwicklung einfacher Service Anwendungen als auch die Erstellung von großen System Anwendungen unter zur Hilfenahme eines Code-Generator. Details zur Arbitsweise des Generators folgen in den nächste Kapiteln.  
+Das Projekt 'QuickNSmart' ist ein kleiner Framework für die Erstellung von datenzentrierten Anwendungen. Ausgehen von diesem System können neue Anwendungen erstellt und erweitert werden. Der Framework unterstützt die Entwicklung einfacher Service-Anwendungen als auch die Erstellung von großen System-Anwendungen. Bei der Herstellung solcher Systeme wird der Entwickler von einem Code-Generator unterstützt. Details zur Arbitsweise des Generators folgen in den nächste Kapiteln.  
 Die Struktur des Frameworks besteht aus folgende Komponeneten:
 
 |Projekt|Beschreibung|Typ|Abhängigkeit
@@ -15,6 +15,7 @@ Die Struktur des Frameworks besteht aus folgende Komponeneten:
 |**QuickNSmart.ConApp**|Dieses Projekt ist eine einfache Test-Anwendung zum Kopieren und Ausgeben der Daten. |Console|QuickNSmart.Contracts, QuickNSmart.Logic
 |**CSharpCodeGenerator.ConApp**|In diesem Projekt ist die Code-Generierung implementiert. Für alle System-Komponenten werden Standard-Komponenten generieriert. Diese Standard-Komponenten werden als 'partial'-Klasse generiert und können somit durch überschreiben von Eigenschaften und/oder Methoden bzw. durch das Schreiben von 'partial'-Methoden angepasst werden. Als Eingabe für den Generator dient das Schnittstellen-Projekt. Aus den Schnittstellen werden alle Informationen für die Generierung ermittelt. Der Generator wird automatisch bei einer Änderung der Schnittstellen ausgeführt.|Console|CommonBase
 |**QuickNSmart.AspMvc**|Diese Projekt beinhaltet die Basisfunktionen für eine Web-Anwendung und kann als Vorlage für die Entwicklung einer einer Web-Anwendung mit dem QuickNSmart Framework verwendet werden.|Host|CommonBase, QuickNSmart.Contracts, QuickNSmart.Adapter
+|**QuickNSmart.XxxYyy**|Es folgen noch weitere Vorlagen von Client-Anwendungen wie Angular, Blazor und mobile Apps. Zum jetzigen Zeitpunkt existiert nur die AspMvc-Anwendung. Die Erstellung und Beschreibung der anderen Client-Anwendungen erfolgt zu einem späteren Zeitpunk.|Host|CommonBase, QuickNSmart.Contracts, QuickNSmart.Adapter
 
 ## Projekt
 
