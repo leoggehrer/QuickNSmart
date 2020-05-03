@@ -9,11 +9,11 @@ namespace QuickNSmart.ConApp
     partial class Program
     {
         static string SaUser => "SysAdmin";
-        static string SaEmail => "SysAdmin@QuickNSmart.gmx.at";
+        static string SaEmail => "SysAdmin.QuickNSmart@gmx.at";
         static string SaPwd => "Sys2189!Admin";
 
         static string AaUser => "AppAdmin";
-        static string AaEmail => "AppAdmin@QuickNSmart.gmx.at";
+        static string AaEmail => "AppAdmin.QuickNSmart@gmx.at";
         static string AaPwd => "App2189!Admin";
         static string AaRole => "AppAdmin";
         static bool AaEnableJwt => true;

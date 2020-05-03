@@ -21,6 +21,29 @@ Die Struktur des Frameworks besteht aus folgende Komponeneten:
 
 Zur Umsetzung des Projektes wird DotNetCore (3.1) als Framework, die Programmiersprache CSharp (C#) und die Entwicklungsumgebung Visual Studio 2019 Community verwendet. Alle Komponenten können kostenlos aus dem Internet heruntergeladen werden.
 
+## Kommunikation der Layer
+
+Die Client-Anwendung interagiert mit dem Backend-System über den Adapters Layer. Der Client kann diesen Layer so konfigurieren, dass der Zugriff auf die Logik direkt oder indirekt über einen REST-Service erfolgt. Der Vorteil eines direkten Zugriffs liegt in der geringeren Datenübertragung zwischen der Logik und dem Client. Nachteilig ist allerdings, dass der Client und das Backend-System am gleichen Gerät ausgeführt werden müssen. Die nachfolgende Abbildung zeigt den Kommunikations-Pfad zwischen den einzelnen Ebenen.  
+
+![KommunikationsPath](QuickNSmart_Communication_Path.png)
+
+Die Konfiguration des Zugriffs auf das Backend-System kann über die Factory-Klasse des Layers Adapters gesteuert werden:
+
+````csharp
+// Access via the service (indirect).
+Adapters.Factory.BaseUri = "https://localhost:5001/api";
+Adapters.Factory.Adapter = Adapters.AdapterType.Service;
+````
+
+Oder
+
+````csharp
+// Access via the controller (direct).
+Adapters.Factory.Adapter = Adapters.AdapterType.Controller;
+````
+
+Der Zugriff über den Service erfordert natürlich die Angabe der Adresse vom REST-Service. Die Angabe der Web-Adresse ist für den direkten Zugriff nicht von Bedeutung.
+
 ## System-Erstellungs-Prozess
 
 ### Übersicht  
@@ -52,6 +75,7 @@ Nach dem Ausführen vom SolutionCopier (*sc.Copy(sourcePath, targetPath)*) befin
 - QnSTravelCount.WebApi
 - QnSTravelCount.Adapters
 - QnSTravelCount.ConApp
+- QnSTravelCount.AspMvc
 
 Im Projekt 'QuickNSmart' sind alle Code-Teile, welche als Basis-Code in andere Projekte verwendet werden können, mit einem Label '//@QnSBaseCode' markiert. Dieser Label wird im Zielprojekt mit dem Label '//@QnSCodeCopy' ersetzt. Das hat den Vorteil, dass Änderungen im Framework auf die bereits bestehenden Projekte übertragen werden können (nähere Informationen dazu gibt es später).  
 

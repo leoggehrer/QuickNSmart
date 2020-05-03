@@ -1,4 +1,4 @@
-//@QnSCustomizeCode
+//@QnSBaseCode
 //MdStart
 using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
